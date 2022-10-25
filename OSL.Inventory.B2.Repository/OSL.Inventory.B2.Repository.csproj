@@ -71,7 +71,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Contracts\" />
+    <Folder Include="Interfaces\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202210250814170_InitialInventoryDbCreate.resx">
