@@ -18,5 +18,15 @@ namespace OSL.Inventory.B2.Repository.Data
 
         public DbSet<Category> Categories { get; set; }
         public DbSet<User> Users { get; set; }
+
+        public override int SaveChanges()
+        {
+            return base.SaveChanges();
+        }
+
+        public override Task<int> SaveChangesAsync()
+        {
+            return base.SaveChangesAsync();
+        }
     }
 }

@@ -20,7 +20,7 @@ namespace OSL.Inventory.B2.Web.Controllers
         {
             return View(await db.Categories.ToListAsync());
         }
-
+         
         // GET: Category/Details/5
         public async Task<ActionResult> Details(long? id)
         {
