@@ -13,7 +13,7 @@ namespace OSL.Inventory.B2.Repository.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "202210250814170_InitialInventoryDbCreate"; }
+            get { return "202210260636294_InitialInventoryDbCreate"; }
         }
         
         string IMigrationMetadata.Source

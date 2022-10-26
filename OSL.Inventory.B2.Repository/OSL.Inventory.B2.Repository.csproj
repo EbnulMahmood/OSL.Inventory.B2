@@ -52,10 +52,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CategoryRepository.cs" />
+    <Compile Include="Data\Interfaces\IInventoryDbContext.cs" />
     <Compile Include="Data\InventoryDbContext.cs" />
-    <Compile Include="Migrations\202210250814170_InitialInventoryDbCreate.cs" />
-    <Compile Include="Migrations\202210250814170_InitialInventoryDbCreate.designer.cs">
-      <DependentUpon>202210250814170_InitialInventoryDbCreate.cs</DependentUpon>
+    <Compile Include="Interfaces\ICategoryRepository.cs" />
+    <Compile Include="Migrations\202210260636294_InitialInventoryDbCreate.cs" />
+    <Compile Include="Migrations\202210260636294_InitialInventoryDbCreate.designer.cs">
+      <DependentUpon>202210260636294_InitialInventoryDbCreate.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -70,12 +72,10 @@
       <Name>OSL.Inventory.B2.Entity</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Interfaces\" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\202210250814170_InitialInventoryDbCreate.resx">
-      <DependentUpon>202210250814170_InitialInventoryDbCreate.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202210260636294_InitialInventoryDbCreate.resx">
+      <DependentUpon>202210260636294_InitialInventoryDbCreate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

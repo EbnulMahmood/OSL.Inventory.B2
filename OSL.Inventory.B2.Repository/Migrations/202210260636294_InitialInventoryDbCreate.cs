@@ -17,8 +17,8 @@
                         Status = c.Int(nullable: false),
                         CreatedAt = c.DateTime(nullable: false),
                         ModifiedAt = c.DateTime(),
-                        CreatedBy = c.Long(),
-                        ModifiedBy = c.Long(),
+                        CreatedBy = c.Long(nullable: false),
+                        ModifiedBy = c.Long(nullable: false),
                     })
                 .PrimaryKey(t => t.Id);
             
@@ -36,9 +36,8 @@
                         Status = c.Int(nullable: false),
                         CreatedAt = c.DateTime(nullable: false),
                         ModifiedAt = c.DateTime(),
-                        AspNetUserId = c.Long(),
-                        CreatedBy = c.Long(),
-                        ModifiedBy = c.Long(),
+                        CreatedBy = c.Long(nullable: false),
+                        ModifiedBy = c.Long(nullable: false),
                     })
                 .PrimaryKey(t => t.Id);
             

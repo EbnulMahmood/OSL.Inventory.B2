@@ -1,4 +1,5 @@
 ﻿using OSL.Inventory.B2.Entity.BaseEntity.Interfaces;
+using OSL.Inventory.B2.Entity.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,16 +11,16 @@ namespace OSL.Inventory.B2.Entity.BaseEntity
     public abstract class BaseEntity<T> : IEntity
     {
         public T Id { get; set; }
-        public int Status { get; set; } = 1;
+        public Status Status { get; set; } = Status.Active;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public DateTime ModifiedAt { get; set; }
-        public object CreatedBy { get; set; }
-        public object ModifiedBy { get; set; }
+        public DateTime? ModifiedAt { get; set; }
+        public T CreatedBy { get; set; }
+        public T ModifiedBy { get; set; } = default;
 
         object IEntity.Id
         {
             get { return Id; }
-            set { }
+            set {  }
         }
 
         object IEntity.CreatedBy
