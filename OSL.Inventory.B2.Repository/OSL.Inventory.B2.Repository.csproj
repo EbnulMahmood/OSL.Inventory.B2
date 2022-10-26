@@ -55,11 +55,6 @@
     <Compile Include="Data\Interfaces\IInventoryDbContext.cs" />
     <Compile Include="Data\InventoryDbContext.cs" />
     <Compile Include="Interfaces\ICategoryRepository.cs" />
-    <Compile Include="Migrations\202210260636294_InitialInventoryDbCreate.cs" />
-    <Compile Include="Migrations\202210260636294_InitialInventoryDbCreate.designer.cs">
-      <DependentUpon>202210260636294_InitialInventoryDbCreate.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -68,15 +63,9 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OSL.Inventory.B2.Entity\OSL.Inventory.B2.Entity.csproj">
-      <Project>{18AE78EA-41FF-4F51-85BB-2F9C63CBA186}</Project>
+      <Project>{d85fdeb2-33b9-4905-a108-d74cca728ed5}</Project>
       <Name>OSL.Inventory.B2.Entity</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup />
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\202210260636294_InitialInventoryDbCreate.resx">
-      <DependentUpon>202210260636294_InitialInventoryDbCreate.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

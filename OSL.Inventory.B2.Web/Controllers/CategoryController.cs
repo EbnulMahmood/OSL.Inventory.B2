@@ -1,33 +1,24 @@
-﻿using System;
+﻿using OSL.Inventory.B2.Entity;
+using OSL.Inventory.B2.Repository.Data;
+using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Entity;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using OSL.Inventory.B2.Entity;
-using OSL.Inventory.B2.Repository.Data;
-using OSL.Inventory.B2.Repository.Interfaces;
 
 namespace OSL.Inventory.B2.Web.Controllers
 {
     public class CategoryController : Controller
     {
         private InventoryDbContext db = new InventoryDbContext("InventoryConnection");
-        private readonly ICategoryRepository _repository;
-
-        public CategoryController(ICategoryRepository repository)
-        {
-            _repository = repository;
-        }
 
         // GET: Category
         public async Task<ActionResult> Index()
         {
-            var entities = await _repository.ListCategoriesAsync();
-            return View(entities);
+            return View(await db.Categories.ToListAsync());
         }
 
         // GET: Category/Details/5

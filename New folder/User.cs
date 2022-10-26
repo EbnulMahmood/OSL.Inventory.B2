@@ -1,5 +1,10 @@
 ﻿using OSL.Inventory.B2.Entity.BaseEntity;
 using OSL.Inventory.B2.Entity.BaseEntity.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace OSL.Inventory.B2.Entity
 {

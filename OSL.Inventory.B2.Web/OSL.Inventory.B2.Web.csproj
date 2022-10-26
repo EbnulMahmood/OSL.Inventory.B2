@@ -318,7 +318,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OSL.Inventory.B2.Entity\OSL.Inventory.B2.Entity.csproj">
-      <Project>{18ae78ea-41ff-4f51-85bb-2f9c63cba186}</Project>
+      <Project>{d85fdeb2-33b9-4905-a108-d74cca728ed5}</Project>
       <Name>OSL.Inventory.B2.Entity</Name>
     </ProjectReference>
     <ProjectReference Include="..\OSL.Inventory.B2.Repository\OSL.Inventory.B2.Repository.csproj">
