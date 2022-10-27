@@ -1,17 +1,14 @@
 ﻿using OSL.Inventory.B2.Entity;
-using OSL.Inventory.B2.Repository.Data;
 using OSL.Inventory.B2.Repository.Data.Interfaces;
 using OSL.Inventory.B2.Repository.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace OSL.Inventory.B2.Repository
 {
-    public class CategoryRepository : ICategoryRepository
+    public sealed class CategoryRepository : ICategoryRepository
     {
         private readonly IInventoryDbContext _context;
 
@@ -33,11 +30,11 @@ namespace OSL.Inventory.B2.Repository
             }
         }
         
-        public async Task<Category> GetCategoryByIdAsync(long id)
+        public async Task<Category> GetCategoryByIdAsync(long? entityToGetId)
         {
             try
             {
-                return await _context.Categories.FirstOrDefaultAsync(x => x.Id == id);
+                return await _context.Categories.FirstOrDefaultAsync(x => x.Id == entityToGetId);
             }
             catch (Exception)
             {
@@ -46,12 +43,53 @@ namespace OSL.Inventory.B2.Repository
             }
         }
 
-        public async Task<bool> CreateCategoryAsync(Category entityToCreate)
+        public async Task<Category> CreateCategoryAsync(Category entityToCreate)
         {
             try
             {
                 var entity = _context.Categories.Add(entityToCreate);
                 if (entity == null) throw new Exception();
+                
+                await _context.SaveChangesAsync();
+                return entity;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<Category> UpdateCategoryAsync(Category entityToUpdate)
+        {
+            try
+            {
+                var entity = await _context.Categories.FirstOrDefaultAsync(x => x.Id == entityToUpdate.Id);
+                if (entity == null) throw new Exception();
+                
+                entity.Name = entityToUpdate.Name;
+                entity.Description = entityToUpdate.Description;
+                entity.Status = entityToUpdate.Status;
+
+                await _context.SaveChangesAsync();
+                return entity;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        
+        public async Task<bool> DeleteCategoryByIdAsync(long entityToDeleteId)
+        {
+            try
+            {
+                var entity = await _context.Categories.FirstOrDefaultAsync(x => x.Id == entityToDeleteId);
+                if (entity == null) throw new Exception();
+
+                _context.Categories.Remove(entity);
+
                 await _context.SaveChangesAsync();
                 return true;
             }
@@ -60,17 +98,6 @@ namespace OSL.Inventory.B2.Repository
 
                 throw;
             }
-            return false;
-        }
-
-        public Task<bool> UpdateCategoryAsync(Category entity)
-        {
-            throw new NotImplementedException();
-        }
-        
-        public Task<bool> DeleteCategoryByIdAsync(long id)
-        {
-            throw new NotImplementedException();
         }
     }
 }

@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OSL.Inventory.B2.Entity.BaseEntity.Interfaces
+namespace OSL.Inventory.B2.Service.DTOs.BaseDto.Interfaces
 {
-    public interface IEntity
+    public interface IDto
     {
         object Id { get; set; }
         Status Status { get; set; }

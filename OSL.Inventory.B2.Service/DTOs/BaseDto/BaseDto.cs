@@ -1,14 +1,15 @@
 ﻿using OSL.Inventory.B2.Entity.BaseEntity.Interfaces;
 using OSL.Inventory.B2.Entity.Enums;
+using OSL.Inventory.B2.Service.DTOs.BaseDto.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OSL.Inventory.B2.Entity.BaseEntity
+namespace OSL.Inventory.B2.Service.DTOs.BaseDto
 {
-    public abstract class BaseEntity<T> : IEntity
+    public abstract class BaseDto<T> : IDto
     {
         public T Id { get; set; }
         public Status Status { get; set; } = Status.Active;
@@ -17,19 +18,19 @@ namespace OSL.Inventory.B2.Entity.BaseEntity
         public T CreatedBy { get; set; }
         public T ModifiedBy { get; set; } = default;
 
-        object IEntity.Id
+        object IDto.Id
         {
             get { return Id; }
-            set {  }
+            set { }
         }
 
-        object IEntity.CreatedBy
+        object IDto.CreatedBy
         {
             get { return CreatedBy; }
             set { }
         }
 
-        object IEntity.ModifiedBy
+        object IDto.ModifiedBy
         {
             get { return ModifiedBy; }
             set { }

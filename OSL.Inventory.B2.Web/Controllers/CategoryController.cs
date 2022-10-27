@@ -1,39 +1,54 @@
-﻿using OSL.Inventory.B2.Entity;
-using OSL.Inventory.B2.Repository.Data;
+﻿using OSL.Inventory.B2.Service.DTOs;
+using OSL.Inventory.B2.Service.Extensions;
+using OSL.Inventory.B2.Service.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 
 namespace OSL.Inventory.B2.Web.Controllers
 {
     public class CategoryController : Controller
     {
-        private InventoryDbContext db = new InventoryDbContext("InventoryConnection");
+        private readonly ICategoryService _service;
+
+        public CategoryController(ICategoryService service)
+        {
+            _service = service;
+        }
 
         // GET: Category
         public async Task<ActionResult> Index()
         {
-            return View(await db.Categories.ToListAsync());
+            try
+            {
+                return View(await _service.ListCategoriesServiceAsync());
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
          
         // GET: Category/Details/5
         public async Task<ActionResult> Details(long? id)
         {
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+                var entityDto = await _service.GetCategoryByIdServiceAsync(id);
+                if (entityDto == null) return HttpNotFound();
+                
+                return View(entityDto);
             }
-            Category category = await db.Categories.FindAsync(id);
-            if (category == null)
+            catch (Exception)
             {
-                return HttpNotFound();
+
+                throw;
             }
-            return View(category);
         }
 
         // GET: Category/Create
@@ -47,31 +62,48 @@ namespace OSL.Inventory.B2.Web.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Id,Name,Description,Status,CreatedAt,ModifiedAt,CreatedBy,ModifiedBy")] Category category)
+        public async Task<ActionResult> Create([Bind(Include = "Id,Name,Description,Status")]
+            CategoryDto categoryDto)
         {
-            if (ModelState.IsValid)
+            try
             {
-                db.Categories.Add(category);
-                await db.SaveChangesAsync();
-                return RedirectToAction("Index");
-            }
+                IDictionary<string, string> errors = _service.ValidateCategoryDtoService(categoryDto);
+                
+                if (errors.Count > 0) ModelState.MergeError(errors);
+                if (!ModelState.IsValid) return View(categoryDto);
 
-            return View(category);
+                await _service.CreateCategoryServiceAsync(categoryDto);
+                
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         // GET: Category/Edit/5
         public async Task<ActionResult> Edit(long? id)
         {
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                var categoryDto = await _service.GetCategoryByIdServiceAsync(id);
+                if (categoryDto == null)
+                {
+                    return HttpNotFound();
+                }
+                return View(categoryDto);
             }
-            Category category = await db.Categories.FindAsync(id);
-            if (category == null)
+            catch (Exception)
             {
-                return HttpNotFound();
+
+                throw;
             }
-            return View(category);
         }
 
         // POST: Category/Edit/5
@@ -79,30 +111,48 @@ namespace OSL.Inventory.B2.Web.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Id,Name,Description,Status,CreatedAt,ModifiedAt,CreatedBy,ModifiedBy")] Category category)
+        public async Task<ActionResult> Edit([Bind(Include = "Id,Name,Description,Status")]
+            CategoryDto categoryDto)
         {
-            if (ModelState.IsValid)
+            try
             {
-                db.Entry(category).State = EntityState.Modified;
-                await db.SaveChangesAsync();
-                return RedirectToAction("Index");
+                IDictionary<string, string> errors = _service.ValidateCategoryDtoService(categoryDto);
+
+                if (errors.Count > 0) ModelState.MergeError(errors);
+                if (!ModelState.IsValid) return View(categoryDto);
+
+                await _service.UpdateCategoryServiceAsync(categoryDto);
+
+                return RedirectToAction(nameof(Index));
             }
-            return View(category);
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         // GET: Category/Delete/5
         public async Task<ActionResult> Delete(long? id)
         {
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                var categoryDto = await _service.GetCategoryByIdServiceAsync(id);
+                if (categoryDto == null)
+                {
+                    return HttpNotFound();
+                }
+                return View(categoryDto);
             }
-            Category category = await db.Categories.FindAsync(id);
-            if (category == null)
+            catch (Exception)
             {
-                return HttpNotFound();
+
+                throw;
             }
-            return View(category);
         }
 
         // POST: Category/Delete/5
@@ -110,19 +160,16 @@ namespace OSL.Inventory.B2.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(long id)
         {
-            Category category = await db.Categories.FindAsync(id);
-            db.Categories.Remove(category);
-            await db.SaveChangesAsync();
-            return RedirectToAction("Index");
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
+            try
             {
-                db.Dispose();
+                await _service.DeleteCategoryByIdServiceAsync(id);
+                return RedirectToAction(nameof(Index));
             }
-            base.Dispose(disposing);
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 }

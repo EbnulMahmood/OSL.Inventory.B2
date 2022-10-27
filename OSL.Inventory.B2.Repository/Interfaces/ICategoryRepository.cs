@@ -7,9 +7,9 @@ namespace OSL.Inventory.B2.Repository.Interfaces
     public interface ICategoryRepository
     {
         Task<IEnumerable<Category>> ListCategoriesAsync();
-        Task<Category> GetCategoryByIdAsync(long id);
-        Task<bool> CreateCategoryAsync(Category entity);
-        Task<bool> UpdateCategoryAsync(Category entity);
-        Task<bool> DeleteCategoryByIdAsync(long id);
+        Task<Category> GetCategoryByIdAsync(long? entityToGetId);
+        Task<Category> CreateCategoryAsync(Category entityToCreate);
+        Task<Category> UpdateCategoryAsync(Category entityToUpdate);
+        Task<bool> DeleteCategoryByIdAsync(long entityToDeleteId);
     }
 }

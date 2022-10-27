@@ -1,6 +1,6 @@
 ﻿using Autofac;
 using Autofac.Integration.Mvc;
-using OSL.Inventory.B2.Service.Modules;
+using OSL.Inventory.B2.Service.DependencyRegistry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,13 +14,12 @@ namespace OSL.Inventory.B2.Web.Configurations
         public static void ConfigureContainer()
         {
             var builder = new ContainerBuilder();
-            string connectionString = "InventoryConnection";
 
             // Register dependencies in controllers
             builder.RegisterControllers(typeof(MvcApplication).Assembly);
 
             // Register our dependencies
-            builder.RegisterModule(new AutofacModule(connectionString));
+            builder.RegisterModule(new AutofacModule());
 
             var container = builder.Build();
 
