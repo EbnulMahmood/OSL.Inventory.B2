@@ -16,12 +16,17 @@ namespace OSL.Inventory.B2.Service.DependencyRegistry
         protected override void Load(ContainerBuilder builder)
         {
             // register dbcontext
-            builder.Register(c => new InventoryDbContext()).
-                             As<IInventoryDbContext>().InstancePerRequest();
+            builder.RegisterType<InventoryDbContext>()
+                .AsSelf()
+                .InstancePerDependency();
             // register repositories
-            builder.RegisterType<CategoryRepository>().As<ICategoryRepository>().InstancePerRequest();
+            builder.RegisterType<UnitOfWork>()
+               .As<IUnitOfWork>()
+               .InstancePerLifetimeScope();
             // register services
-            builder.RegisterType<CategoryService>().As<ICategoryService>().InstancePerRequest();
+            builder.RegisterType<CategoryService>()
+                .As<ICategoryService>()
+                .InstancePerLifetimeScope();
 
             base.Load(builder);
         }

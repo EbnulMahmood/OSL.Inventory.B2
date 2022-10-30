@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OSL.Inventory.B2.Repository.Data
 {
-    public sealed class InventoryDbContext : DbContext, IInventoryDbContext
+    public sealed class InventoryDbContext : DbContext
     {
         public InventoryDbContext() : base("InventoryConnection")
         {
@@ -34,6 +34,12 @@ namespace OSL.Inventory.B2.Repository.Data
         {
             return base.Set(entityType);
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+        }
+
         protected override void OnModelCreating(DbModelBuilder builder)
         {
             // category constraints

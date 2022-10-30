@@ -12,11 +12,11 @@ namespace OSL.Inventory.B2.Service
 {
     public sealed class CategoryService : ICategoryService
     {
-        private readonly ICategoryRepository _repository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CategoryService(ICategoryRepository repository)
+        public CategoryService(IUnitOfWork unitOfWork)
         {
-            _repository = repository;
+            _unitOfWork = unitOfWork;
         }
 
         public IDictionary<string, string> ValidateCategoryDtoService(CategoryDto entityDto)
@@ -36,7 +36,7 @@ namespace OSL.Inventory.B2.Service
         {
             try
             {
-                var entities = await _repository.ListCategoriesAsync();
+                var entities = await _unitOfWork.CategoryRepository.ListEntitiesAsync();
                 if (!entities.Any()) return null;
 
                 var entitiesDto = entities.ConvertToDto();
@@ -53,7 +53,7 @@ namespace OSL.Inventory.B2.Service
         {
             try
             {
-                var entity = await _repository.GetCategoryByIdAsync(entityDtoToGetId);
+                var entity = await _unitOfWork.CategoryRepository.GetEntityByIdAsync(entityDtoToGetId);
                 if (entity == null) throw new Exception();
 
                 var entityDto = entity.ConvertToDto();
@@ -72,7 +72,9 @@ namespace OSL.Inventory.B2.Service
             {
                 var entity = entityDtoToCreate.ConvertToEntity();
 
-                if (await _repository.CreateCategoryAsync(entity) == null) throw new Exception();
+                if (!_unitOfWork.CategoryRepository.CreateEntity(entity)) throw new Exception();
+
+                await _unitOfWork.SaveAsync();
                 return true;
             }
             catch (Exception)
@@ -88,7 +90,9 @@ namespace OSL.Inventory.B2.Service
             {
                 var entity = entityDtoToUpdate.ConvertToEntity();
 
-                if (await _repository.UpdateCategoryAsync(entity) == null) throw new Exception();
+                if (!_unitOfWork.CategoryRepository.UpdateEntity(entity)) throw new Exception();
+
+                await _unitOfWork.SaveAsync();
                 return true;
             }
             catch (Exception)
@@ -102,7 +106,11 @@ namespace OSL.Inventory.B2.Service
         {
             try
             {
-                if (!await _repository.DeleteCategoryByIdAsync(entityDtoToDeleteId)) return false;
+                var entity = await _unitOfWork.CategoryRepository.GetEntityByIdAsync(entityDtoToDeleteId);
+                if (entity == null) throw new Exception();
+
+                if (!await _unitOfWork.CategoryRepository.DeleteEntityAsync(entity)) return false;
+                await _unitOfWork.SaveAsync();
                 return true;
             }
             catch (Exception)
