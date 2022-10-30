@@ -69,7 +69,6 @@
   <ItemGroup>
     <Compile Include="BaseRepository.cs" />
     <Compile Include="CategoryRepository.cs" />
-    <Compile Include="Data\Interfaces\IInventoryDbContext.cs" />
     <Compile Include="Data\InventoryDbContext.cs" />
     <Compile Include="Interfaces\IBaseRepository.cs" />
     <Compile Include="Interfaces\ICategoryRepository.cs" />

@@ -21,11 +21,14 @@ namespace OSL.Inventory.B2.Web.Controllers
         }
 
         public async Task<JsonResult> ListCategoriesAsync(int draw, int start, int length,
-            string filter_keywords, int filter_option = 0)
+            string filter_keywords, StatusDto filter_option = 0)
         {
             var entities = await _service.ListCategoriesServiceAsync();
             int totalRecord = 0;
             int filterRecord = 0;
+
+            string order = Request.Form.GetValues("order[0][column]")[0];
+            string orderDir = Request.Form.GetValues("order[0][dir]")[0];
 
             //get total count of data in table
             totalRecord = entities.Count();
@@ -37,17 +40,20 @@ namespace OSL.Inventory.B2.Web.Controllers
             }
             if (filter_option != 0)
             {
-                //entities = entities.Where(d => d.Status == filter_option)
-                //.Where(d => d.Status != deleteStatusCode);
+                entities = entities.Where(d => d.Status == filter_option)
+                .Where(d => d.Status != StatusDto.Delete);
             }
+
+            // Sorting.   
+            entities = SortByColumnWithOrder(order, orderDir, entities);
 
             // get total count of records after search 
             filterRecord = entities.Count();
 
             //pagination
             IEnumerable<CategoryDto> paginatdEntities = entities.Skip(start).Take(length)
-                .OrderByDescending(d => d.CreatedAt).ToList();
-                //.Where(d => d.Status != 404);
+                .OrderByDescending(d => d.CreatedAt).ToList()
+                .Where(d => d.Status != StatusDto.Delete);
 
             List<object> entitiesList = new List<object>();
             foreach (var item in paginatdEntities)
@@ -80,6 +86,50 @@ namespace OSL.Inventory.B2.Web.Controllers
                 recordsFiltered = filterRecord,
                 data = entitiesList
             });
+        }
+
+        private IEnumerable<CategoryDto> SortByColumnWithOrder(string order, string orderDir, IEnumerable<CategoryDto> data)
+        {
+            // Initialization.   
+            //ICollection<CategoryDto> sortedEntities = new Collection<CategoryDto>();
+            IEnumerable<CategoryDto> sortedEntities = Enumerable.Empty<CategoryDto>();
+            try
+            {
+                // Sorting   
+                switch (order)
+                {
+                    case "0":
+                        // Setting.   
+                        sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ?
+                            data.OrderByDescending(p => p.Name).ToList() : data.OrderBy(p => p.Name).ToList();
+                        break;
+                    case "1":
+                        // Setting.   
+                        sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ?
+                            data.OrderByDescending(p => p.Description).ToList() :
+                            data.OrderBy(p => p.Description).ToList();
+                        break;
+                    case "2":
+                        // Setting.   
+                        sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? 
+                            data.OrderByDescending(p => p.Status).ToList() : 
+                            data.OrderBy(p => p.Status).ToList();
+                        break;
+                    default:
+                        // Setting.   
+                        sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? 
+                            data.OrderByDescending(p => p.Name).ToList() : 
+                            data.OrderBy(p => p.Name).ToList();
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                // info.   
+                Console.Write(ex);
+            }
+            // info.   
+            return sortedEntities;
         }
 
         // GET: Category

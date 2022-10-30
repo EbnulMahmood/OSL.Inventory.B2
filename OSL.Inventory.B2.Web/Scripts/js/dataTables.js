@@ -2,12 +2,15 @@
 $(document).ready(function () {
     // server side
     // Developer
-    const myDevTable = $('#myDevTable').DataTable({
+    const CategoryDataTable = $('#categoryDatatable').DataTable({
         processing: true,
         bServerSide: true,
         serverSide: true,
-        sort: false,
+        sort: true,
         searching: false,
+        columnDefs: [
+            { orderable: false, targets: -1 }
+        ],
         dom: '<"top"l>rt<"bottom"ip><"clear">',
         ajax: {
             url: "Category/ListCategoriesAsync",
@@ -21,6 +24,6 @@ $(document).ready(function () {
             }
         },
     });
-    myDevTable.draw();
-    $("#search-input, #sort-by").bind("keyup change clear", () => myDevTable.draw());
+    CategoryDataTable.draw();
+    $("#search-input, #sort-by").bind("keyup change clear", () => CategoryDataTable.draw());
 });

@@ -1,5 +1,4 @@
 ﻿using OSL.Inventory.B2.Entity;
-using OSL.Inventory.B2.Repository.Data.Interfaces;
 using System;
 using System.Data.Entity;
 using System.Threading.Tasks;

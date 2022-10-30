@@ -1,7 +1,6 @@
 ﻿using Autofac;
 using OSL.Inventory.B2.Repository;
 using OSL.Inventory.B2.Repository.Data;
-using OSL.Inventory.B2.Repository.Data.Interfaces;
 using OSL.Inventory.B2.Repository.Interfaces;
 using OSL.Inventory.B2.Service.Interfaces;
 

@@ -17,14 +17,14 @@
     <div class="col-md-3">
         <select class="form-control" id="sort-by">
             <option selected value="">Select Status</option>
-            <option value="1">Active</option>
-            <option value="-1">Inactive</option>
+            <option value="@OSL.Inventory.B2.Service.DTOs.Enums.StatusDto.Active">Active</option>
+            <option value="@OSL.Inventory.B2.Service.DTOs.Enums.StatusDto.Inactive">Inactive</option>
         </select>
     </div>
 </div>
 
 <div class="table-responsive pt-4">
-    <table id="myDevTable" class="table table-responsive">
+    <table id="categoryDatatable" class="table table-responsive">
         <thead>
             <tr>
                 <th>Name</th>
