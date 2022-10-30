@@ -1,18 +1,13 @@
-﻿using OSL.Inventory.B2.Entity.BaseEntity.Interfaces;
-using OSL.Inventory.B2.Entity.Enums;
-using OSL.Inventory.B2.Service.DTOs.BaseDto.Interfaces;
+﻿using OSL.Inventory.B2.Service.DTOs.BaseDto.Interfaces;
+using OSL.Inventory.B2.Service.DTOs.Enums;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OSL.Inventory.B2.Service.DTOs.BaseDto
 {
     public abstract class BaseDto<T> : IDto
     {
         public T Id { get; set; }
-        public Status Status { get; set; } = Status.Active;
+        public StatusDto Status { get; set; } = StatusDto.Active;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime? ModifiedAt { get; set; }
         public T CreatedBy { get; set; }

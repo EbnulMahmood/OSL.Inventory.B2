@@ -116,6 +116,7 @@
     <Compile Include="DTOs\BaseDto\BaseDto.cs" />
     <Compile Include="DTOs\BaseDto\Interfaces\IDto.cs" />
     <Compile Include="DTOs\CategoryDto.cs" />
+    <Compile Include="DTOs\Enums\StatusDto.cs" />
     <Compile Include="Extensions\DtoConversions.cs" />
     <Compile Include="DependencyRegistry\AutofacModule.cs" />
     <Compile Include="Extensions\ModelExtensions.cs" />

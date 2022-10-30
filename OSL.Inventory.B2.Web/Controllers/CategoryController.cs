@@ -3,9 +3,11 @@ using OSL.Inventory.B2.Service.Extensions;
 using OSL.Inventory.B2.Service.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using OSL.Inventory.B2.Service.DTOs.Enums;
 
 namespace OSL.Inventory.B2.Web.Controllers
 {
@@ -18,12 +20,74 @@ namespace OSL.Inventory.B2.Web.Controllers
             _service = service;
         }
 
+        public async Task<JsonResult> ListCategoriesAsync(int draw, int start, int length,
+            string filter_keywords, int filter_option = 0)
+        {
+            var entities = await _service.ListCategoriesServiceAsync();
+            int totalRecord = 0;
+            int filterRecord = 0;
+
+            //get total count of data in table
+            totalRecord = entities.Count();
+
+            if (!string.IsNullOrEmpty(filter_keywords))
+            {
+                entities = entities.Where(d => d.Name.ToLower().Contains(filter_keywords.ToLower()))
+                .Where(d => d.Status != StatusDto.Delete);
+            }
+            if (filter_option != 0)
+            {
+                //entities = entities.Where(d => d.Status == filter_option)
+                //.Where(d => d.Status != deleteStatusCode);
+            }
+
+            // get total count of records after search 
+            filterRecord = entities.Count();
+
+            //pagination
+            IEnumerable<CategoryDto> paginatdEntities = entities.Skip(start).Take(length)
+                .OrderByDescending(d => d.CreatedAt).ToList();
+                //.Where(d => d.Status != 404);
+
+            List<object> entitiesList = new List<object>();
+            foreach (var item in paginatdEntities)
+            {
+                string actionLink = $"<div class='w-75 btn-group' role='group'>" +
+                    $"<a href='Developer/Edit/{item.Id}' class='btn btn-primary mx-2'><i class='bi bi-pencil-square'></i>Edit</a>" +
+                    $"<button data-bs-target='#deleteDev' data-bs-toggle='ajax-modal' class='btn btn-danger mx-2 btn-dev-delete'" +
+                    $"data-dev-id='{item.Id}'><i class='bi bi-trash-fill'></i>Delete</button><a href='Developer/Details/{item.Id}'" +
+                    $"class='btn btn-secondary mx-2'><i class='bi bi-ticket-detailed-fill'></i>Details</a></div>";
+
+                string statusConditionClass = item.Status == StatusDto.Active ? "text-success" : "text-danger";
+                string statusConditionText = item.Status == StatusDto.Active ? "Active" : "Inactive";
+                string status = $"<span class='{statusConditionClass}'>{statusConditionText}</span>";
+
+                List<string> dataItems = new List<string>
+                {
+                    item.Name,
+                    item.Description,
+                    status,
+                    actionLink
+                };
+
+                entitiesList.Add(dataItems);
+            }
+
+            return Json(new
+            {
+                draw = draw,
+                recordsTotal = totalRecord,
+                recordsFiltered = filterRecord,
+                data = entitiesList
+            });
+        }
+
         // GET: Category
         public async Task<ActionResult> Index()
         {
             try
             {
-                return View(await _service.ListCategoriesServiceAsync());
+                return View();
             }
             catch (Exception)
             {
