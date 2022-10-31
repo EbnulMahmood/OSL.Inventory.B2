@@ -20,6 +20,7 @@ namespace OSL.Inventory.B2.Web.Controllers
             _service = service;
         }
 
+        [HttpPost, ActionName("Index")]
         public async Task<JsonResult> ListCategoriesAsync(int draw, int start, int length,
             string filter_keywords, StatusDto filter_option = 0)
         {
@@ -36,12 +37,12 @@ namespace OSL.Inventory.B2.Web.Controllers
             if (!string.IsNullOrEmpty(filter_keywords))
             {
                 entities = entities.Where(d => d.Name.ToLower().Contains(filter_keywords.ToLower()))
-                .Where(d => d.Status != StatusDto.Delete);
+                .Where(d => d.Status != StatusDto.Deleted);
             }
             if (filter_option != 0)
             {
                 entities = entities.Where(d => d.Status == filter_option)
-                .Where(d => d.Status != StatusDto.Delete);
+                .Where(d => d.Status != StatusDto.Deleted);
             }
 
             // Sorting.   
@@ -53,15 +54,15 @@ namespace OSL.Inventory.B2.Web.Controllers
             //pagination
             IEnumerable<CategoryDto> paginatdEntities = entities.Skip(start).Take(length)
                 .OrderByDescending(d => d.CreatedAt).ToList()
-                .Where(d => d.Status != StatusDto.Delete);
+                .Where(d => d.Status != StatusDto.Deleted);
 
             List<object> entitiesList = new List<object>();
             foreach (var item in paginatdEntities)
             {
                 string actionLink = $"<div class='w-75 btn-group' role='group'>" +
-                    $"<a href='Developer/Edit/{item.Id}' class='btn btn-primary mx-2'><i class='bi bi-pencil-square'></i>Edit</a>" +
-                    $"<button data-bs-target='#deleteDev' data-bs-toggle='ajax-modal' class='btn btn-danger mx-2 btn-dev-delete'" +
-                    $"data-dev-id='{item.Id}'><i class='bi bi-trash-fill'></i>Delete</button><a href='Developer/Details/{item.Id}'" +
+                    $"<a href='Category/Edit/{item.Id}' class='btn btn-primary mx-2'><i class='bi bi-pencil-square'></i>Edit</a>" +
+                    $"<button type='button' data-bs-target='#deleteCategory' data-bs-toggle='ajax-modal' class='btn btn-danger mx-2 btn-category-delete'" +
+                    $"data-category-id='{item.Id}'><i class='bi bi-trash-fill'></i>Delete</button><a href='Category/Details/{item.Id}'" +
                     $"class='btn btn-secondary mx-2'><i class='bi bi-ticket-detailed-fill'></i>Details</a></div>";
 
                 string statusConditionClass = item.Status == StatusDto.Active ? "text-success" : "text-danger";
@@ -81,7 +82,7 @@ namespace OSL.Inventory.B2.Web.Controllers
 
             return Json(new
             {
-                draw = draw,
+                draw,
                 recordsTotal = totalRecord,
                 recordsFiltered = filterRecord,
                 data = entitiesList
@@ -91,7 +92,6 @@ namespace OSL.Inventory.B2.Web.Controllers
         private IEnumerable<CategoryDto> SortByColumnWithOrder(string order, string orderDir, IEnumerable<CategoryDto> data)
         {
             // Initialization.   
-            //ICollection<CategoryDto> sortedEntities = new Collection<CategoryDto>();
             IEnumerable<CategoryDto> sortedEntities = Enumerable.Empty<CategoryDto>();
             try
             {
@@ -133,17 +133,9 @@ namespace OSL.Inventory.B2.Web.Controllers
         }
 
         // GET: Category
-        public async Task<ActionResult> Index()
+        public ActionResult Index()
         {
-            try
-            {
-                return View();
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
+            return View();
         }
          
         // GET: Category/Details/5
@@ -163,6 +155,19 @@ namespace OSL.Inventory.B2.Web.Controllers
 
                 throw;
             }
+        }
+
+        [HttpGet]
+        public ActionResult AddOrEdit(long id = 0)
+        {
+            return View(new CategoryDto());
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> AddOrEdit(CategoryDto categoryDto)
+        {
+            await _service.CreateCategoryServiceAsync(categoryDto);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Category/Create
@@ -255,12 +260,14 @@ namespace OSL.Inventory.B2.Web.Controllers
                 {
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
                 }
+                string categoryDeletePartial = "_CategoryDeletePartial";
                 var categoryDto = await _service.GetCategoryByIdServiceAsync(id);
                 if (categoryDto == null)
                 {
                     return HttpNotFound();
                 }
-                return View(categoryDto);
+                return PartialView(categoryDeletePartial, categoryDto);
+                //return View(categoryDto);
             }
             catch (Exception)
             {
