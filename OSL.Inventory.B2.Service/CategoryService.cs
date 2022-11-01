@@ -106,10 +106,7 @@ namespace OSL.Inventory.B2.Service
         {
             try
             {
-                var entity = await _unitOfWork.CategoryRepository.GetEntityByIdAsync(entityDtoToDeleteId);
-                if (entity == null) throw new Exception();
-
-                if (!await _unitOfWork.CategoryRepository.DeleteEntityAsync(entity)) return false;
+                if (!await _unitOfWork.CategoryRepository.DeleteEntityAsync(entityDtoToDeleteId)) return false;
                 await _unitOfWork.SaveAsync();
                 return true;
             }

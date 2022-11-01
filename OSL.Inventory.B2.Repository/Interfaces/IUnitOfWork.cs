@@ -1,5 +1,4 @@
-﻿using OSL.Inventory.B2.Repository.Interfaces;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace OSL.Inventory.B2.Repository.Interfaces
 {
@@ -8,6 +7,6 @@ namespace OSL.Inventory.B2.Repository.Interfaces
         ICategoryRepository CategoryRepository { get; }
 
         void Dispose();
-        Task SaveAsync();
+        Task<bool> SaveAsync();
     }
 }
