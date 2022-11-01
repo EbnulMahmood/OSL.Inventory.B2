@@ -5,33 +5,10 @@
 }
 
 <div class="container">
-    <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary" id="addCategoryBtn">
-        Launch demo modal
-    </button>
 
+    <!-- modal palaceholder -->
     <div id="modal-placeholder-category"></div>
 
-    <!-- Modal -->
-    <div class="modal fade" id="categoryModal" tabindex="-1" role="dialog" aria-labelledby="categoryModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="categoryModalLabel">Modal title</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    ...
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
-                </div>
-            </div>
-        </div>
-    </div>
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         <h1 class="h2">Categories</h1>
         <div class="btn-toolbar mb-2 mb-md-0">
@@ -45,27 +22,35 @@
             </button>
         </div>
     </div>
+    
+    <p>
+        @Html.ActionLink("Create New", "Create")
+    </p>
 
-    <nav>
-        <div class="nav nav-tabs" id="nav-tab" role="tablist">
-            <a class="nav-link active" id="nav-index-tab"
-               data-bs-toggle="tab" href="#nav-index" role="tab" aria-controls="nav-index" aria-selected="true">View All</a>
-            <a class="nav-link" id="nav-create-tab"
-               data-bs-toggle="tab" href="#nav-create" role="tab" aria-controls="nav-create" aria-selected="false">Add New</a>
-            <a class="nav-link" id="nav-edit-tab"
-               data-bs-toggle="tab" href="#nav-edit" role="tab" aria-controls="nav-edit" aria-selected="false">Contact</a>
+    <div class="row pt-3">
+        <div class="col-md-3 p-3">
+            <input class="form-control" type="text" id="search-input" placeholder="Search Name" />
         </div>
-    </nav>
-    <div class="tab-content" id="nav-tabContent">
-        <div class="tab-pane fade show active" id="nav-index" role="tabpanel" aria-labelledby="nav-index-tab">
-            @Html.Partial("_ListCategories")
+        <div class="col-md-3 p-3">
+            <select class="form-control" id="sort-by">
+                <option selected value="">Select Status</option>
+                <option value="@OSL.Inventory.B2.Service.DTOs.Enums.StatusDto.Active">Active</option>
+                <option value="@OSL.Inventory.B2.Service.DTOs.Enums.StatusDto.Inactive">Inactive</option>
+            </select>
         </div>
-        <div class="tab-pane fade" id="nav-create" role="tabpanel" aria-labelledby="nav-create-tab">
-            @Html.Action("AddOrEdit")
-        </div>
-        <div class="tab-pane fade" id="nav-edit" role="tabpanel" aria-labelledby="nav-edit-tab">
-            <p>clicked contact</p>
-        </div>
+    </div>
+
+    <div class="pt-4">
+        <table id="categoryDatatable" class="table table-condensed table-striped table-responsive">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+        </table>
     </div>
 
 
@@ -79,6 +64,7 @@
         $(document).ready(function () {
 
             const categoryDataTable = (tableId, url) => {
+
                 const customDataTable = $(tableId).DataTable({
                     processing: true,
                     bServerSide: true,
@@ -111,10 +97,6 @@
         });
 
         // modal
-        $('#addCategoryBtn').on('click', () => {
-            $('#categoryModal').modal('show');
-        })
-
         const showModal = (url, PlaceHolderElement) => {
             const decodeUrl = decodeURIComponent(url);
             $.get(decodeUrl).done(function (data) {

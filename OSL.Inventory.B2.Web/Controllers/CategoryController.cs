@@ -157,19 +157,6 @@ namespace OSL.Inventory.B2.Web.Controllers
             }
         }
 
-        [HttpGet]
-        public ActionResult AddOrEdit(long id = 0)
-        {
-            return View(new CategoryDto());
-        }
-
-        [HttpPost]
-        public async Task<ActionResult> AddOrEdit(CategoryDto categoryDto)
-        {
-            await _service.CreateCategoryServiceAsync(categoryDto);
-            return RedirectToAction(nameof(Index));
-        }
-
         // GET: Category/Create
         public ActionResult Create()
         {

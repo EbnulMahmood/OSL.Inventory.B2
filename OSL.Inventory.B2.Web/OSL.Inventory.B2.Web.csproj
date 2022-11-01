@@ -286,8 +286,6 @@
     <Content Include="Views\Category\Details.cshtml" />
     <Content Include="Views\Category\Edit.cshtml" />
     <Content Include="Views\Category\Index.cshtml" />
-    <Content Include="Views\Category\_ListCategories.cshtml" />
-    <Content Include="Views\Category\AddOrEdit.cshtml" />
     <Content Include="Views\Category\_CategoryDeletePartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
