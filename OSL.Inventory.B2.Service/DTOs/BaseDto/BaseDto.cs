@@ -1,6 +1,7 @@
 ﻿using OSL.Inventory.B2.Service.DTOs.BaseDto.Interfaces;
 using OSL.Inventory.B2.Service.DTOs.Enums;
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace OSL.Inventory.B2.Service.DTOs.BaseDto
 {
@@ -8,7 +9,9 @@ namespace OSL.Inventory.B2.Service.DTOs.BaseDto
     {
         public T Id { get; set; }
         public StatusDto Status { get; set; } = StatusDto.Active;
+        [Display(Name = "Created")]
         public DateTime CreatedAt { get; set; }
+        [Display(Name = "Modified")]
         public DateTime? ModifiedAt { get; set; }
         public T CreatedBy { get; set; }
         public T ModifiedBy { get; set; } = default;

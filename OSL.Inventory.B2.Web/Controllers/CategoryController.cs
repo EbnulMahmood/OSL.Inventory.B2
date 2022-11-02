@@ -59,11 +59,11 @@ namespace OSL.Inventory.B2.Web.Controllers
             List<object> entitiesList = new List<object>();
             foreach (var item in paginatdEntities)
             {
-                string actionLink = $"<div class='w-75 btn-group' role='group'>" +
-                    $"<a href='Category/Edit/{item.Id}' class='btn btn-primary mx-2'><i class='bi bi-pencil-square'></i>Edit</a>" +
-                    $"<button type='button' data-bs-target='#deleteCategory' data-bs-toggle='ajax-modal' class='btn btn-danger mx-2 btn-category-delete'" +
+                string actionLink = $"<div class='btn-toolbar w-30' role='toolbar'>" +
+                    $"<a href='Category/Edit/{item.Id}' class='btn btn-primary btn-sm mx-auto'><i class='bi bi-pencil-square'></i>Edit</a>" +
+                    $"<button type='button' data-bs-target='#deleteCategory' data-bs-toggle='ajax-modal' class='btn btn-danger btn-sm mx-auto btn-category-delete'" +
                     $"data-category-id='{item.Id}'><i class='bi bi-trash-fill'></i>Delete</button><a href='Category/Details/{item.Id}'" +
-                    $"class='btn btn-secondary mx-2'><i class='bi bi-ticket-detailed-fill'></i>Details</a></div>";
+                    $"class='btn btn-secondary btn-sm mx-auto'><i class='bi bi-ticket-detailed-fill'></i>Details</a></div>";
 
                 string statusConditionClass = item.Status == StatusDto.Active ? "text-success" : "text-danger";
                 string statusConditionText = item.Status == StatusDto.Active ? "Active" : "Inactive";
@@ -103,12 +103,6 @@ namespace OSL.Inventory.B2.Web.Controllers
                             data.OrderByDescending(p => p.Name).ToList() : data.OrderBy(p => p.Name).ToList();
                         break;
                     case "1":
-                        // Setting.   
-                        sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ?
-                            data.OrderByDescending(p => p.Description).ToList() :
-                            data.OrderBy(p => p.Description).ToList();
-                        break;
-                    case "2":
                         // Setting.   
                         sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? 
                             data.OrderByDescending(p => p.Status).ToList() : 
@@ -179,7 +173,7 @@ namespace OSL.Inventory.B2.Web.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Id,Name,Description,Status")]
+        public async Task<ActionResult> Create([Bind(Include = "Id,Name,Description")]
             CategoryDto categoryDto)
         {
             try
@@ -190,7 +184,8 @@ namespace OSL.Inventory.B2.Web.Controllers
                 if (!ModelState.IsValid) return View(categoryDto);
 
                 await _service.CreateCategoryServiceAsync(categoryDto);
-                
+
+                TempData["message"] = $"'{categoryDto.Name}' has been created successfully!";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception)
@@ -220,7 +215,6 @@ namespace OSL.Inventory.B2.Web.Controllers
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
@@ -230,7 +224,7 @@ namespace OSL.Inventory.B2.Web.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Id,Name,Description,Status,CreatedAt,ModifiedAt,CreatedBy,ModifiedBy")]
+        public async Task<ActionResult> Edit([Bind(Include = "Id,Name,Description,Status,CreatedAt,CreatedBy")]
             CategoryDto categoryDto)
         {
             try
@@ -241,6 +235,7 @@ namespace OSL.Inventory.B2.Web.Controllers
                 if (!ModelState.IsValid) return View(categoryDto);
 
                 await _service.UpdateCategoryServiceAsync(categoryDto);
+                TempData["message"] = $"'{categoryDto.Name}' has been updated successfully!";
 
                 return RedirectToAction(nameof(Index));
             }
@@ -267,7 +262,6 @@ namespace OSL.Inventory.B2.Web.Controllers
                     return HttpNotFound();
                 }
                 return PartialView(categoryDeletePartial, categoryDto);
-                //return View(categoryDto);
             }
             catch (Exception)
             {
@@ -283,8 +277,15 @@ namespace OSL.Inventory.B2.Web.Controllers
         {
             try
             {
+                var categoryDto = await _service.GetCategoryByIdServiceAsync(id);
+                if (categoryDto == null)
+                {
+                    return HttpNotFound();
+                }
+
                 await _service.DeleteCategoryByIdServiceAsync(id);
-                return RedirectToAction(nameof(Index));
+
+                return Json(new { message = $"'{categoryDto.Name}' has been deleted successfully!" });
             }
             catch (Exception)
             {

@@ -1,74 +1,56 @@
 ﻿@model OSL.Inventory.B2.Service.DTOs.CategoryDto
+@using Humanizer
 
 @{
     ViewBag.Title = "Details";
 }
 
-<h2>Details</h2>
-
-<div>
-    <h4>Category</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Status)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Status)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.CreatedAt)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.CreatedAt)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.ModifiedAt)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.ModifiedAt)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.CreatedBy)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.CreatedBy)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.ModifiedBy)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.ModifiedBy)
-        </dd>
-
-    </dl>
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Details Category</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar align-text-bottom" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            This week
+        </button>
+    </div>
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
+
+<div class="col-12">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            @Html.ActionLink("Home", "Index", "Home", new { area = "Home" }, new { @class = "breadcrumb-item" })
+            @Html.ActionLink("Categories", "Index", "Category", new { @class = "breadcrumb-item" })
+            <li class="breadcrumb-item active" aria-current="page">Details</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="card text-center">
+    <div class="card-body">
+        <h5 class="card-title">
+            @Html.DisplayFor(model => model.Name)
+            @Html.ActionLink("Edit", "Edit", new { id = Model.Id }, new { @class = "badge bg-secondary" })
+        </h5>
+        <p class="card-text">
+            @Html.DisplayFor(model => model.Description)
+        </p>
+        <span class="badge rounded-pill bg-success">
+            @Html.DisplayFor(model => model.Status)
+        </span>
+    </div>
+    <div class="card-footer text-muted">
+        @Html.DisplayNameFor(model => model.CreatedAt):
+        @Model.CreatedAt.ToUniversalTime().Humanize()
+    </div>
+    @if (Model.ModifiedAt != null)
+    {
+        <div class="card-footer text-muted">
+            @Html.DisplayNameFor(model => model.ModifiedAt):
+            @Model.CreatedAt.ToUniversalTime().Humanize()
+        </div>
+    }
+</div>

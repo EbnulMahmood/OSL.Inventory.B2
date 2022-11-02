@@ -70,6 +70,8 @@ namespace OSL.Inventory.B2.Service
             try
             {
                 var entity = entityDtoToCreate.ConvertToEntity();
+                entity.CreatedAt = DateTime.Now;
+                entity.CreatedBy = 1;
 
                 if (!_unitOfWork.CategoryRepository.CreateEntity(entity)) throw new Exception();
 
@@ -87,6 +89,8 @@ namespace OSL.Inventory.B2.Service
             try
             {
                 var entity = entityDtoToUpdate.ConvertToEntity();
+                entity.ModifiedAt = DateTime.Now;
+                entity.ModifiedBy = 2;
 
                 if (!_unitOfWork.CategoryRepository.UpdateEntity(entity)) throw new Exception();
 
@@ -103,7 +107,7 @@ namespace OSL.Inventory.B2.Service
         {
             try
             {
-                if (!await _unitOfWork.CategoryRepository.DeleteEntityAsync(entityDtoToDeleteId)) return false;
+                if (!await _unitOfWork.CategoryRepository.SoftDeleteEntity(entityDtoToDeleteId)) return false;
                 return await _unitOfWork.SaveAsync();
             }
             catch (Exception)

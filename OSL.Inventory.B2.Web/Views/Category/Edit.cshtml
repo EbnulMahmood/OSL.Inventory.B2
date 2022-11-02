@@ -5,7 +5,7 @@
 }
 
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Edit</h1>
+    <h1 class="h2">Edit Category</h1>
     <div class="btn-toolbar mb-2 mb-md-0">
         <div class="btn-group me-2">
             <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
@@ -18,20 +18,26 @@
     </div>
 </div>
 
+<div class="col-12">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            @Html.ActionLink("Home", "Index", "Home", new { area = "Home" }, new { @class = "breadcrumb-item" })
+            @Html.ActionLink("Categories", "Index", "Category", new { @class = "breadcrumb-item" })
+            <li class="breadcrumb-item active" aria-current="page">Edit</li>
+        </ol>
+    </nav>
+</div>
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
     
 <div class="form-horizontal">
-    <h4>Category</h4>
     <hr />
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     @Html.HiddenFor(model => model.Id)
     @Html.HiddenFor(model => model.CreatedAt)
-    @Html.HiddenFor(model => model.ModifiedAt)
     @Html.HiddenFor(model => model.CreatedBy)
-    @Html.HiddenFor(model => model.ModifiedBy)
 
     <div class="form-group">
         @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -60,15 +66,11 @@
 
     <div class="form-group pt-4">
         <div class="col-md-offset-2 col-md-12">
-            <input type="submit" value="Save" class="btn btn-success" />
+            <input type="submit" value="Update" class="btn btn-success" />
         </div>
     </div>
 </div>
 }
-
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
