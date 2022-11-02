@@ -194,6 +194,15 @@ namespace OSL.Inventory.B2.Web.Controllers
         {
             try
             {
+                var selectList = Enum.GetValues(typeof(StatusDto))
+                        .Cast<StatusDto>()
+                        .Where(e => e != StatusDto.Deleted)
+                        .Select(e => new SelectListItem
+                        {
+                            Value = ((int)e).ToString(),
+                            Text = e.ToString()
+                        });
+
                 if (id == null)
                 {
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -203,6 +212,7 @@ namespace OSL.Inventory.B2.Web.Controllers
                 {
                     return HttpNotFound();
                 }
+                ViewBag.SelectList = selectList;
                 return View(categoryDto);
             }
             catch (Exception)
