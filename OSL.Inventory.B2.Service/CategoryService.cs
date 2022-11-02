@@ -5,7 +5,6 @@ using OSL.Inventory.B2.Service.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace OSL.Inventory.B2.Service
@@ -74,8 +73,7 @@ namespace OSL.Inventory.B2.Service
 
                 if (!_unitOfWork.CategoryRepository.CreateEntity(entity)) throw new Exception();
 
-                await _unitOfWork.SaveAsync();
-                return true;
+                return await _unitOfWork.SaveAsync();
             }
             catch (Exception)
             {
@@ -92,8 +90,7 @@ namespace OSL.Inventory.B2.Service
 
                 if (!_unitOfWork.CategoryRepository.UpdateEntity(entity)) throw new Exception();
 
-                await _unitOfWork.SaveAsync();
-                return true;
+                return await _unitOfWork.SaveAsync();
             }
             catch (Exception)
             {
@@ -107,8 +104,7 @@ namespace OSL.Inventory.B2.Service
             try
             {
                 if (!await _unitOfWork.CategoryRepository.DeleteEntityAsync(entityDtoToDeleteId)) return false;
-                await _unitOfWork.SaveAsync();
-                return true;
+                return await _unitOfWork.SaveAsync();
             }
             catch (Exception)
             {

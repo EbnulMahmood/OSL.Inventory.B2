@@ -72,7 +72,6 @@ namespace OSL.Inventory.B2.Web.Controllers
                 List<string> dataItems = new List<string>
                 {
                     item.Name,
-                    item.Description,
                     status,
                     actionLink
                 };
@@ -130,6 +129,18 @@ namespace OSL.Inventory.B2.Web.Controllers
             }
             // info.   
             return sortedEntities;
+        }
+
+        private IEnumerable<SelectListItem> FilterStatusDto()
+        {
+             return Enum.GetValues(typeof(StatusDto))
+                        .Cast<StatusDto>()
+                        .Where(e => e != StatusDto.Deleted)
+                        .Select(e => new SelectListItem
+                        {
+                            Value = ((int)e).ToString(),
+                            Text = e.ToString()
+                        });
         }
 
         // GET: Category
@@ -194,14 +205,6 @@ namespace OSL.Inventory.B2.Web.Controllers
         {
             try
             {
-                var selectList = Enum.GetValues(typeof(StatusDto))
-                        .Cast<StatusDto>()
-                        .Where(e => e != StatusDto.Deleted)
-                        .Select(e => new SelectListItem
-                        {
-                            Value = ((int)e).ToString(),
-                            Text = e.ToString()
-                        });
 
                 if (id == null)
                 {
@@ -212,7 +215,7 @@ namespace OSL.Inventory.B2.Web.Controllers
                 {
                     return HttpNotFound();
                 }
-                ViewBag.SelectList = selectList;
+                ViewBag.SelectList = FilterStatusDto();
                 return View(categoryDto);
             }
             catch (Exception)
@@ -227,7 +230,7 @@ namespace OSL.Inventory.B2.Web.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Id,Name,Description,Status")]
+        public async Task<ActionResult> Edit([Bind(Include = "Id,Name,Description,Status,CreatedAt,ModifiedAt,CreatedBy,ModifiedBy")]
             CategoryDto categoryDto)
         {
             try

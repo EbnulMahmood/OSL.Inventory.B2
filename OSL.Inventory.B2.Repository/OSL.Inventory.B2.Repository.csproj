@@ -73,9 +73,9 @@
     <Compile Include="Interfaces\IBaseRepository.cs" />
     <Compile Include="Interfaces\ICategoryRepository.cs" />
     <Compile Include="Interfaces\IUnitOfWork.cs" />
-    <Compile Include="Migrations\202210271055207_InitialInventoryDbCreate.cs" />
-    <Compile Include="Migrations\202210271055207_InitialInventoryDbCreate.designer.cs">
-      <DependentUpon>202210271055207_InitialInventoryDbCreate.cs</DependentUpon>
+    <Compile Include="Migrations\202211020448002_InitialInventoryDbCreateUpdate_2.cs" />
+    <Compile Include="Migrations\202211020448002_InitialInventoryDbCreateUpdate_2.designer.cs">
+      <DependentUpon>202211020448002_InitialInventoryDbCreateUpdate_2.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -92,8 +92,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202210271055207_InitialInventoryDbCreate.resx">
-      <DependentUpon>202210271055207_InitialInventoryDbCreate.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202211020448002_InitialInventoryDbCreateUpdate_2.resx">
+      <DependentUpon>202211020448002_InitialInventoryDbCreateUpdate_2.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

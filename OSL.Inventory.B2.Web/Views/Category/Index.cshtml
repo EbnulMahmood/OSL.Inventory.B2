@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<OSL.Inventory.B2.Service.DTOs.CategoryDto>
+@using OSL.Inventory.B2.Service.DTOs.Enums
 
 @{
     ViewBag.Title = "Categories";
@@ -17,7 +18,7 @@
         </button>
     </div>
 </div>
- 
+
 <!-- modal palaceholder -->
 <div id="modal-placeholder-category"></div>
 
@@ -32,8 +33,8 @@
     <div class="col-md-3 p-3">
         <select class="form-control" id="sort-by">
             <option selected value="">Select Status</option>
-            <option value="@OSL.Inventory.B2.Service.DTOs.Enums.StatusDto.Active">Active</option>
-            <option value="@OSL.Inventory.B2.Service.DTOs.Enums.StatusDto.Inactive">Inactive</option>
+            <option value="StatusDto.Active">Active</option>
+            <option value="StatusDto.Inactive">Inactive</option>
         </select>
     </div>
 </div>
@@ -43,7 +44,6 @@
         <thead>
             <tr>
                 <th>Name</th>
-                <th>Description</th>
                 <th>Status</th>
                 <th>Action</th>
             </tr>

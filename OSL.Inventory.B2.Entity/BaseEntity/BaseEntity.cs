@@ -8,7 +8,7 @@ namespace OSL.Inventory.B2.Entity.BaseEntity
     {
         public T Id { get; set; }
         public Status Status { get; set; } = Status.Active;
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; }
         public DateTime? ModifiedAt { get; set; }
         public T CreatedBy { get; set; }
         public T ModifiedBy { get; set; } = default;

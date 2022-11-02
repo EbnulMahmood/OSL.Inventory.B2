@@ -8,7 +8,7 @@ namespace OSL.Inventory.B2.Service.DTOs.BaseDto
     {
         public T Id { get; set; }
         public StatusDto Status { get; set; } = StatusDto.Active;
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; }
         public DateTime? ModifiedAt { get; set; }
         public T CreatedBy { get; set; }
         public T ModifiedBy { get; set; } = default;

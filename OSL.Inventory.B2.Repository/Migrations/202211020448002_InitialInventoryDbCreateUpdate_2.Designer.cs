@@ -7,13 +7,13 @@ namespace OSL.Inventory.B2.Repository.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.4.4")]
-    public sealed partial class InitialInventoryDbCreate : IMigrationMetadata
+    public sealed partial class InitialInventoryDbCreateUpdate_2 : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(InitialInventoryDbCreate));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(InitialInventoryDbCreateUpdate_2));
         
         string IMigrationMetadata.Id
         {
-            get { return "202210271055207_InitialInventoryDbCreate"; }
+            get { return "202211020448002_InitialInventoryDbCreateUpdate_2"; }
         }
         
         string IMigrationMetadata.Source
