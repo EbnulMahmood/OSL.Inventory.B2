@@ -3,7 +3,6 @@ using OSL.Inventory.B2.Entity.Enums;
 using OSL.Inventory.B2.Repository.Data;
 using OSL.Inventory.B2.Repository.Interfaces;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -41,14 +40,15 @@ namespace OSL.Inventory.B2.Repository
         // list with paging
         private async Task<(IEnumerable<Category>, int)> ListCategoriesWithPaginationAsync(int start, int length)
         {
+            // count records exclude deleted
+            var recordCount = await _context.Categories.CountAsync(x => x.Status != Status.Deleted);
+            
             var categories = await _context.Categories.Where(d => d.Status != Status.Deleted)
                     .OrderByDescending(d => d.CreatedAt)
+                    .Skip(start).Take(length)
                     .ToListAsync();
             
-            // count records
-            int recordCount = categories.Count;
-
-            return (categories.Skip(start).Take(length).ToList(), recordCount);
+            return (categories, recordCount);
         }
 
         // sort by order desc
@@ -93,7 +93,7 @@ namespace OSL.Inventory.B2.Repository
             string order, string orderDir, string searchByName, Status filterByStatus = 0)
         {
             // get total count of data in table
-            int totalRecord = _context.Categories.Count();
+            int totalRecord = await _context.Categories.CountAsync();
             // filter record counter
             int filterRecord = 0;
 
@@ -150,7 +150,7 @@ namespace OSL.Inventory.B2.Repository
                 var entity = await _context.Categories.FindAsync(id) ??
                     throw new Exception("Category does not exist in the database");
 
-                entity.Status = Entity.Enums.Status.Deleted;
+                entity.Status = Status.Deleted;
                 entity.ModifiedAt = DateTime.Now;
                 entity.ModifiedBy = 2;
                 

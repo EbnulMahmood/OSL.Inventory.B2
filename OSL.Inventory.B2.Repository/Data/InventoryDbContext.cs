@@ -13,6 +13,7 @@ namespace OSL.Inventory.B2.Repository.Data
 
         public DbSet<Category> Categories { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Product> Products { get; set; }
 
         public override int SaveChanges()
         {
@@ -52,6 +53,12 @@ namespace OSL.Inventory.B2.Repository.Data
             builder.Entity<User>().Property(c => c.City).HasMaxLength(80);
             builder.Entity<User>().Property(c => c.State).HasMaxLength(80);
             builder.Entity<User>().Property(c => c.ZipCode).HasMaxLength(20);
+
+            // product constraints
+            builder.Entity<Product>().Property(x => x.Name).HasMaxLength(255);
+            builder.Entity<Product>().Property(x => x.Description).HasMaxLength(500);
+            builder.Entity<Product>().Property(x => x.ImageUrl).HasMaxLength(255);
+            builder.Entity<Product>().Property(x => x.BasicUnit).HasMaxLength(50);
         }
     }
 }

@@ -77,6 +77,10 @@
     <Compile Include="Migrations\202211020448002_InitialInventoryDbCreateUpdate_2.designer.cs">
       <DependentUpon>202211020448002_InitialInventoryDbCreateUpdate_2.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202211030836273_AddProductTableToDatabase.cs" />
+    <Compile Include="Migrations\202211030836273_AddProductTableToDatabase.designer.cs">
+      <DependentUpon>202211030836273_AddProductTableToDatabase.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnitOfWork.cs" />
@@ -94,6 +98,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202211020448002_InitialInventoryDbCreateUpdate_2.resx">
       <DependentUpon>202211020448002_InitialInventoryDbCreateUpdate_2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202211030836273_AddProductTableToDatabase.resx">
+      <DependentUpon>202211030836273_AddProductTableToDatabase.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

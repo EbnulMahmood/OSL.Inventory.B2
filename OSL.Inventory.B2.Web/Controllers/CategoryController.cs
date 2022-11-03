@@ -22,48 +22,21 @@ namespace OSL.Inventory.B2.Web.Controllers
 
         [HttpPost, ActionName("Index")]
         public async Task<JsonResult> ListCategoriesAsync(int draw, int start, int length,
-            string filter_keywords, StatusDto filter_option = 0)
+            string searchByName, StatusDto filterByStatus = 0)
         {
             string order = Request.Form.GetValues("order[0][column]")[0];
             string orderDir = Request.Form.GetValues("order[0][dir]")[0];
-            /*
-            //get total count of data in table
-            totalRecord = entities.Count();
 
-            if (!string.IsNullOrEmpty(filter_keywords))
-            {
-                entities = entities.Where(d => d.Name.ToLower().Contains(filter_keywords.ToLower()))
-                .Where(d => d.Status != StatusDto.Deleted);
-            }
-            if (filter_option != 0)
-            {
-                entities = entities.Where(d => d.Status == filter_option)
-                .Where(d => d.Status != StatusDto.Deleted);
-            }
+            var listCategoriesTuple = await _service.ListCategoriesWithSortingFilteringPagingServiceAsync(start, length, order, orderDir,
+                searchByName, filterByStatus);
 
-            // Sorting.   
-            entities = SortByColumnWithOrder(order, orderDir, entities);
+            IEnumerable<CategoryDto> listCategories = listCategoriesTuple.Item1;
 
-            // get total count of records after search 
-            filterRecord = entities.Count();
-
-            //pagination
-            IEnumerable<CategoryDto> paginatdEntities = entities.Skip(start).Take(length)
-                .OrderByDescending(d => d.CreatedAt).ToList()
-                .Where(d => d.Status != StatusDto.Deleted);
-            */
-            var tuple = await _service.ListCategoriesWithSortingFilteringPagingServiceAsync(start, length, order, orderDir,
-                filter_keywords, filter_option);
-
-            var paginatdEntities = tuple.Item1;
-            /*
-            var entities = await _service.ListCategoriesServiceAsync();
-            */
-            int totalRecord = tuple.Item2;
-            int filterRecord = tuple.Item3;
+            int totalRecord = listCategoriesTuple.Item2;
+            int filterRecord = listCategoriesTuple.Item3;
 
             List<object> entitiesList = new List<object>();
-            foreach (var item in paginatdEntities)
+            foreach (var item in listCategories)
             {
                 string actionLink = $"<div class='btn-toolbar w-30' role='toolbar'>" +
                     $"<a href='Category/Edit/{item.Id}' class='btn btn-primary btn-sm mx-auto'><i class='bi bi-pencil-square'></i>Edit</a>" +
@@ -92,43 +65,6 @@ namespace OSL.Inventory.B2.Web.Controllers
                 recordsFiltered = filterRecord,
                 data = entitiesList
             });
-        }
-
-        private IEnumerable<CategoryDto> SortByColumnWithOrder(string order, string orderDir, IEnumerable<CategoryDto> data)
-        {
-            // Initialization.   
-            IEnumerable<CategoryDto> sortedEntities = Enumerable.Empty<CategoryDto>();
-            try
-            {
-                // Sorting   
-                switch (order)
-                {
-                    case "0":
-                        // Setting.   
-                        sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ?
-                            data.OrderByDescending(p => p.Name).ToList() : data.OrderBy(p => p.Name).ToList();
-                        break;
-                    case "1":
-                        // Setting.   
-                        sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? 
-                            data.OrderByDescending(p => p.Status).ToList() : 
-                            data.OrderBy(p => p.Status).ToList();
-                        break;
-                    default:
-                        // Setting.   
-                        sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? 
-                            data.OrderByDescending(p => p.Name).ToList() : 
-                            data.OrderBy(p => p.Name).ToList();
-                        break;
-                }
-            }
-            catch (Exception ex)
-            {
-                // info.   
-                Console.Write(ex);
-            }
-            // info.   
-            return sortedEntities;
         }
 
         private IEnumerable<SelectListItem> FilterStatusDto()

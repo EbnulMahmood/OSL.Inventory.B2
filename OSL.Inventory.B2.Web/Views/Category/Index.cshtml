@@ -90,8 +90,8 @@
                         dataType: "json",
                         data: (data) => {
                             return $.extend({}, data, {
-                                "filter_keywords": $("#search-input").val().toLowerCase(),
-                                "filter_option": $("#sort-by").val().toLowerCase(),
+                                "searchByName": $("#search-input").val().toLowerCase(),
+                                "filterByStatus": $("#sort-by").val().toLowerCase(),
                             })
                         }
                     },
