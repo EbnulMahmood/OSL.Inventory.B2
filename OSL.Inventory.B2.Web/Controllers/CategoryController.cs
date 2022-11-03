@@ -24,13 +24,9 @@ namespace OSL.Inventory.B2.Web.Controllers
         public async Task<JsonResult> ListCategoriesAsync(int draw, int start, int length,
             string filter_keywords, StatusDto filter_option = 0)
         {
-            var entities = await _service.ListCategoriesServiceAsync();
-            int totalRecord = 0;
-            int filterRecord = 0;
-
             string order = Request.Form.GetValues("order[0][column]")[0];
             string orderDir = Request.Form.GetValues("order[0][dir]")[0];
-
+            /*
             //get total count of data in table
             totalRecord = entities.Count();
 
@@ -55,6 +51,16 @@ namespace OSL.Inventory.B2.Web.Controllers
             IEnumerable<CategoryDto> paginatdEntities = entities.Skip(start).Take(length)
                 .OrderByDescending(d => d.CreatedAt).ToList()
                 .Where(d => d.Status != StatusDto.Deleted);
+            */
+            var tuple = await _service.ListCategoriesWithSortingFilteringPagingServiceAsync(start, length, order, orderDir,
+                filter_keywords, filter_option);
+
+            var paginatdEntities = tuple.Item1;
+            /*
+            var entities = await _service.ListCategoriesServiceAsync();
+            */
+            int totalRecord = tuple.Item2;
+            int filterRecord = tuple.Item3;
 
             List<object> entitiesList = new List<object>();
             foreach (var item in paginatdEntities)

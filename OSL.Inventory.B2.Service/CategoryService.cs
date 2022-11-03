@@ -1,5 +1,7 @@
-﻿using OSL.Inventory.B2.Repository.Interfaces;
+﻿using OSL.Inventory.B2.Entity.Enums;
+using OSL.Inventory.B2.Repository.Interfaces;
 using OSL.Inventory.B2.Service.DTOs;
+using OSL.Inventory.B2.Service.DTOs.Enums;
 using OSL.Inventory.B2.Service.Extensions;
 using OSL.Inventory.B2.Service.Interfaces;
 using System;
@@ -40,6 +42,28 @@ namespace OSL.Inventory.B2.Service
 
                 var entitiesDto = entities.ConvertToDto();
                 return entitiesDto;
+                
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<(IEnumerable<CategoryDto>, int, int)> ListCategoriesWithSortingFilteringPagingServiceAsync(int start, int length,
+            string order, string orderDir, string searchByName, StatusDto filterByStatusDto = 0)
+        {
+            try
+            {
+                var tuple = await _unitOfWork.CategoryRepository.ListCategoriesWithSortingFilteringPagingAsync(start, length, order, orderDir,
+                    searchByName, (Status)filterByStatusDto);
+
+                var categoriesDto = tuple.Item1.ConvertToDto();
+                int totalRecord = tuple.Item2;
+                int filterRecord = tuple.Item3;
+
+                return (categoriesDto, totalRecord, filterRecord);
             }
             catch (Exception)
             {
