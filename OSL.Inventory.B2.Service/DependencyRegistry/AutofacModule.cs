@@ -28,6 +28,9 @@ namespace OSL.Inventory.B2.Service.DependencyRegistry
             builder.RegisterType<CategoryService>()
                 .As<ICategoryService>()
                 .InstancePerLifetimeScope();
+            builder.RegisterType<ProductService>()
+                .As<IProductService>()
+                .InstancePerLifetimeScope();
 
             base.Load(builder);
         }

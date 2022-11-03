@@ -6,21 +6,20 @@ using OSL.Inventory.B2.Service.Extensions;
 using OSL.Inventory.B2.Service.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace OSL.Inventory.B2.Service
 {
-    public sealed class CategoryService : ICategoryService
+    public class ProductService : IProductService
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public CategoryService(IUnitOfWork unitOfWork)
+        public ProductService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
 
-        public IDictionary<string, string> ValidateCategoryDtoService(CategoryDto entityDto)
+        public IDictionary<string, string> ValidateProductDtoService(ProductDto entityDto)
         {
             Guard.AgainstNullParameter(entityDto, nameof(entityDto));
 
@@ -33,19 +32,20 @@ namespace OSL.Inventory.B2.Service
             return errors;
         }
 
-        public async Task<(IEnumerable<CategoryDto>, int, int)> ListCategoriesWithSortingFilteringPagingServiceAsync(int start, int length,
-            string order, string orderDir, string searchByName, StatusDto filterByStatusDto = 0)
+        public async Task<(IEnumerable<ProductDto>, int, int)> ListProductsWithSortingFilteringPagingServiceAsync(int start,
+            int length, string order, string orderDir, string searchByName, StatusDto filterByStatusDto = 0)
         {
             try
             {
-                var tuple = await _unitOfWork.CategoryRepository.ListCategoriesWithSortingFilteringPagingAsync(start, length, order, orderDir,
+                var listProductsTuple = await _unitOfWork.ProductRepository
+                    .ListProductsWithSortingFilteringPagingAsync(start, length, order, orderDir,
                     searchByName, (Status)filterByStatusDto);
 
-                var categoriesDto = tuple.Item1.ConvertToDto();
-                int totalRecord = tuple.Item2;
-                int filterRecord = tuple.Item3;
+                var listProductsDto = listProductsTuple.Item1.ConvertToDto();
+                int totalRecord = listProductsTuple.Item2;
+                int filterRecord = listProductsTuple.Item3;
 
-                return (categoriesDto, totalRecord, filterRecord);
+                return (listProductsDto, totalRecord, filterRecord);
             }
             catch (Exception)
             {
@@ -54,11 +54,11 @@ namespace OSL.Inventory.B2.Service
             }
         }
 
-        public async Task<CategoryDto> GetCategoryByIdServiceAsync(long? entityDtoToGetId)
+        public async Task<ProductDto> GetProductByIdServiceAsync(long? entityDtoToGetId)
         {
             try
             {
-                var entity = await _unitOfWork.CategoryRepository.GetEntityByIdAsync(entityDtoToGetId);
+                var entity = await _unitOfWork.ProductRepository.GetEntityByIdAsync(entityDtoToGetId);
                 if (entity == null) throw new Exception();
 
                 var entityDto = entity.ConvertToDto();
@@ -71,7 +71,7 @@ namespace OSL.Inventory.B2.Service
             }
         }
 
-        public async Task<bool> CreateCategoryServiceAsync(CategoryDto entityDtoToCreate)
+        public async Task<bool> CreateProductServiceAsync(ProductDto entityDtoToCreate)
         {
             try
             {
@@ -79,7 +79,7 @@ namespace OSL.Inventory.B2.Service
                 entity.CreatedAt = DateTime.Now;
                 entity.CreatedBy = 1;
 
-                if (!_unitOfWork.CategoryRepository.CreateEntity(entity)) throw new Exception();
+                if (!_unitOfWork.ProductRepository.CreateEntity(entity)) throw new Exception();
 
                 return await _unitOfWork.SaveAsync();
             }
@@ -90,7 +90,7 @@ namespace OSL.Inventory.B2.Service
             }
         }
 
-        public async Task<bool> UpdateCategoryServiceAsync(CategoryDto entityDtoToUpdate)
+        public async Task<bool> UpdateProductServiceAsync(ProductDto entityDtoToUpdate)
         {
             try
             {
@@ -98,7 +98,7 @@ namespace OSL.Inventory.B2.Service
                 entity.ModifiedAt = DateTime.Now;
                 entity.ModifiedBy = 2;
 
-                if (!_unitOfWork.CategoryRepository.UpdateEntity(entity)) throw new Exception();
+                if (!_unitOfWork.ProductRepository.UpdateEntity(entity)) throw new Exception();
 
                 return await _unitOfWork.SaveAsync();
             }
@@ -109,11 +109,11 @@ namespace OSL.Inventory.B2.Service
             }
         }
 
-        public async Task<bool> DeleteCategoryByIdServiceAsync(long entityDtoToDeleteId)
+        public async Task<bool> DeleteProductByIdServiceAsync(long entityDtoToDeleteId)
         {
             try
             {
-                if (!await _unitOfWork.CategoryRepository.SoftDeleteEntity(entityDtoToDeleteId)) return false;
+                if (!await _unitOfWork.ProductRepository.SoftDeleteEntity(entityDtoToDeleteId)) return false;
                 return await _unitOfWork.SaveAsync();
             }
             catch (Exception)

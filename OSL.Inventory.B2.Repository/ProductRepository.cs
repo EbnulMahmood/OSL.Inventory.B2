@@ -1,61 +1,60 @@
 ﻿using OSL.Inventory.B2.Entity;
 using OSL.Inventory.B2.Entity.Enums;
 using OSL.Inventory.B2.Repository.Data;
-using OSL.Inventory.B2.Repository.Interfaces;
-using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
+using System;
+using OSL.Inventory.B2.Repository.Interfaces;
 
 namespace OSL.Inventory.B2.Repository
 {
-    public class CategoryRepository : BaseRepository<Category>, ICategoryRepository
+    public class ProductRepository : BaseRepository<Product>, IProductRepository
     {
         private readonly InventoryDbContext _context;
 
-        public CategoryRepository(InventoryDbContext context) :
-            base(context)
+        public ProductRepository(InventoryDbContext context) : base(context)
         {
             _context = context;
         }
 
         // search by name
-        private async Task<IEnumerable<Category>> SearchCategoriesByName(string name)
+        private async Task<IEnumerable<Product>> SearchProductsByName(string name)
         {
-            return await _context.Categories
+            return await _context.Products
                     .Where(x => x.Name.ToLower().Contains(name.ToLower()))
                     .Where(x => x.Status != Status.Deleted)
                     .ToListAsync();
         }
 
         // filter by status
-        private async Task<IEnumerable<Category>> FilterCategoriesByStatus(Status status)
+        private async Task<IEnumerable<Product>> FilterProductsByStatus(Status status)
         {
-            return await _context.Categories.Where(x => x.Status == status)
+            return await _context.Products.Where(x => x.Status == status)
                     .Where(x => x.Status != Status.Deleted)
                     .ToListAsync();
         }
 
         // list with paging
-        private async Task<(IEnumerable<Category>, int)> ListCategoriesWithPaginationAsync(int start, int length)
+        private async Task<(IEnumerable<Product>, int)> ListProductsWithPaginationAsync(int start, int length)
         {
             // count records exclude deleted
-            var recordCount = await _context.Categories.CountAsync(x => x.Status != Status.Deleted);
-            
-            var categories = await _context.Categories.Where(d => d.Status != Status.Deleted)
+            var recordCount = await _context.Products.CountAsync(x => x.Status != Status.Deleted);
+
+            var products = await _context.Products.Where(d => d.Status != Status.Deleted)
                     .OrderByDescending(d => d.CreatedAt)
                     .Skip(start).Take(length)
                     .ToListAsync();
-            
-            return (categories, recordCount);
+
+            return (products, recordCount);
         }
 
         // sort by order desc
-        private IEnumerable<Category> SortByColumnWithOrder(string order, string orderDir, IEnumerable<Category> data)
+        private IEnumerable<Product> SortByColumnWithOrder(string order, string orderDir, IEnumerable<Product> data)
         {
             // Initialization.   
-            IEnumerable<Category> sortedEntities = Enumerable.Empty<Category>();
+            IEnumerable<Product> sortedEntities = Enumerable.Empty<Product>();
             try
             {
                 // Sorting   
@@ -68,14 +67,14 @@ namespace OSL.Inventory.B2.Repository
                         break;
                     case "1":
                         // Setting.   
-                        sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? 
-                            data.OrderByDescending(p => p.Status).ToList() : 
+                        sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ?
+                            data.OrderByDescending(p => p.Status).ToList() :
                             data.OrderBy(p => p.Status).ToList();
                         break;
                     default:
                         // Setting.   
-                        sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? 
-                            data.OrderByDescending(p => p.CreatedAt).ToList() : 
+                        sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ?
+                            data.OrderByDescending(p => p.CreatedAt).ToList() :
                             data.OrderBy(p => p.CreatedAt).ToList();
                         break;
                 }
@@ -89,38 +88,38 @@ namespace OSL.Inventory.B2.Repository
             return sortedEntities;
         }
 
-        public async Task<(IEnumerable<Category>, int, int)> ListCategoriesWithSortingFilteringPagingAsync(int start, int length,
+        public async Task<(IEnumerable<Product>, int, int)> ListProductsWithSortingFilteringPagingAsync(int start, int length,
             string order, string orderDir, string searchByName, Status filterByStatus = 0)
         {
             // get total count of data in table
-            int totalRecord = await _context.Categories.CountAsync();
+            int totalRecord = await _context.Products.CountAsync();
             // filter record counter
             int filterRecord = 0;
 
             // Initialization.   
-            IEnumerable<Category> listCategories = Enumerable.Empty<Category>();
+            IEnumerable<Product> listProducts = Enumerable.Empty<Product>();
             bool isFiltered = false;
 
-            // search by category name
+            // search by Product name
             if (!string.IsNullOrEmpty(searchByName))
             {
-                listCategories = await SearchCategoriesByName(searchByName);
+                listProducts = await SearchProductsByName(searchByName);
                 isFiltered = true;
             }
 
             // filter by status
             if (filterByStatus != 0)
             {
-                listCategories = await FilterCategoriesByStatus(filterByStatus);
+                listProducts = await FilterProductsByStatus(filterByStatus);
                 isFiltered = true;
             }
 
             //pagination
             if (!isFiltered)
             {
-                var tuple = await ListCategoriesWithPaginationAsync(start, length);
+                var tuple = await ListProductsWithPaginationAsync(start, length);
 
-                listCategories = tuple.Item1;
+                listProducts = tuple.Item1;
 
                 // get total count of records
                 filterRecord = tuple.Item2;
@@ -128,16 +127,16 @@ namespace OSL.Inventory.B2.Repository
             else
             {
                 // get total count of records after searching, sorting and filtering
-                filterRecord = listCategories.Count();
+                filterRecord = listProducts.Count();
 
-                listCategories = listCategories.Where(x => x.Status != Status.Deleted)
+                listProducts = listProducts.Where(x => x.Status != Status.Deleted)
                     .OrderByDescending(d => d.CreatedAt)
                     .Skip(start).Take(length)
                     .ToList();
             }
 
             // Sorting 
-            var result = SortByColumnWithOrder(order, orderDir, listCategories);
+            var result = SortByColumnWithOrder(order, orderDir, listProducts);
 
             return (result, totalRecord, filterRecord);
         }
@@ -146,13 +145,13 @@ namespace OSL.Inventory.B2.Repository
         {
             try
             {
-                var entity = await _context.Categories.FindAsync(id) ??
-                    throw new Exception("Category does not exist in the database");
+                var entity = await _context.Products.FindAsync(id) ??
+                    throw new Exception("Product does not exist in the database");
 
                 entity.Status = Status.Deleted;
                 entity.ModifiedAt = DateTime.Now;
                 entity.ModifiedBy = 2;
-                
+
                 return true;
             }
             catch (Exception)

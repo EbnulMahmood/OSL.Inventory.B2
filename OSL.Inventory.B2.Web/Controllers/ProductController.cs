@@ -1,33 +1,33 @@
-﻿using OSL.Inventory.B2.Service.DTOs;
-using OSL.Inventory.B2.Service.Extensions;
+﻿using System;
+using System.Threading.Tasks;
+using System.Net;
+using System.Web.Mvc;
+using OSL.Inventory.B2.Service.DTOs;
 using OSL.Inventory.B2.Service.Interfaces;
-using System;
+using OSL.Inventory.B2.Service.DTOs.Enums;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using System.Web.Mvc;
-using OSL.Inventory.B2.Service.DTOs.Enums;
+using OSL.Inventory.B2.Service.Extensions;
 
 namespace OSL.Inventory.B2.Web.Controllers
 {
-    public class CategoryController : Controller
+    public class ProductController : Controller
     {
-        private readonly ICategoryService _service;
+        private readonly IProductService _service;
 
-        public CategoryController(ICategoryService service)
+        public ProductController(IProductService service)
         {
             _service = service;
         }
 
-        // GET: Category
+        // GET: Product
         public ActionResult Index()
         {
             return View();
         }
 
         [HttpPost, ActionName("Index")]
-        public async Task<JsonResult> ListCategoriesAsync(int draw, int start, int length,
+        public async Task<JsonResult> ListProductsAsync(int draw, int start, int length,
             string searchByName, StatusDto filterByStatus = 0)
         {
             try
@@ -35,21 +35,21 @@ namespace OSL.Inventory.B2.Web.Controllers
                 string order = Request.Form.GetValues("order[0][column]")[0];
                 string orderDir = Request.Form.GetValues("order[0][dir]")[0];
 
-                var listCategoriesTuple = await _service.ListCategoriesWithSortingFilteringPagingServiceAsync(start, length, order, orderDir,
+                var listProductsTuple = await _service.ListProductsWithSortingFilteringPagingServiceAsync(start, length, order, orderDir,
                     searchByName, filterByStatus);
 
-                IEnumerable<CategoryDto> listCategories = listCategoriesTuple.Item1;
+                IEnumerable<ProductDto> listProducts = listProductsTuple.Item1;
 
-                int totalRecord = listCategoriesTuple.Item2;
-                int filterRecord = listCategoriesTuple.Item3;
+                int totalRecord = listProductsTuple.Item2;
+                int filterRecord = listProductsTuple.Item3;
 
                 List<object> entitiesList = new List<object>();
-                foreach (var item in listCategories)
+                foreach (var item in listProducts)
                 {
                     string actionLink = $"<div class='btn-toolbar w-30' role='toolbar'>" +
-                        $"<a href='Category/Edit/{item.Id}' class='btn btn-primary btn-sm mx-auto'><i class='bi bi-pencil-square'></i>Edit</a>" +
-                        $"<button type='button' data-bs-target='#deleteCategory' data-bs-toggle='ajax-modal' class='btn btn-danger btn-sm mx-auto btn-category-delete'" +
-                        $"data-category-id='{item.Id}'><i class='bi bi-trash-fill'></i>Delete</button><a href='Category/Details/{item.Id}'" +
+                        $"<a href='Product/Edit/{item.Id}' class='btn btn-primary btn-sm mx-auto'><i class='bi bi-pencil-square'></i>Edit</a>" +
+                        $"<button type='button' data-bs-target='#deleteProduct' data-bs-toggle='ajax-modal' class='btn btn-danger btn-sm mx-auto btn-product-delete'" +
+                        $"data-product-id='{item.Id}'><i class='bi bi-trash-fill'></i>Delete</button><a href='Product/Details/{item.Id}'" +
                         $"class='btn btn-secondary btn-sm mx-auto'><i class='bi bi-ticket-detailed-fill'></i>Details</a></div>";
 
                     string statusConditionClass = item.Status == StatusDto.Active ? "text-success" : "text-danger";
@@ -80,29 +80,29 @@ namespace OSL.Inventory.B2.Web.Controllers
                 throw;
             }
         }
- 
+
         private IEnumerable<SelectListItem> FilterStatusDto()
         {
-             return Enum.GetValues(typeof(StatusDto))
-                        .Cast<StatusDto>()
-                        .Where(e => e != StatusDto.Deleted)
-                        .Select(e => new SelectListItem
-                        {
-                            Value = ((int)e).ToString(),
-                            Text = e.ToString()
-                        });
+            return Enum.GetValues(typeof(StatusDto))
+                       .Cast<StatusDto>()
+                       .Where(e => e != StatusDto.Deleted)
+                       .Select(e => new SelectListItem
+                       {
+                           Value = ((int)e).ToString(),
+                           Text = e.ToString()
+                       });
         }
-         
-        // GET: Category/Details/5
+
+        // GET: Product/Details/5
         public async Task<ActionResult> Details(long? id)
         {
             try
             {
                 if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-                var entityDto = await _service.GetCategoryByIdServiceAsync(id);
+                var entityDto = await _service.GetProductByIdServiceAsync(id);
                 if (entityDto == null) return HttpNotFound();
-                
+
                 return View(entityDto);
             }
             catch (Exception)
@@ -112,30 +112,29 @@ namespace OSL.Inventory.B2.Web.Controllers
             }
         }
 
-        // GET: Category/Create
+        // GET: Product/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Category/Create
+        // POST: Product/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Id,Name,Description")]
-            CategoryDto categoryDto)
+        public async Task<ActionResult> Create([Bind(Include = "Id,Name,Description,ImageUrl,Limited,InStock,PricePerUnit,BasicUnit,CategoryName")] ProductDto entityDto)
         {
             try
             {
-                IDictionary<string, string> errors = _service.ValidateCategoryDtoService(categoryDto);
-                
+                IDictionary<string, string> errors = _service.ValidateProductDtoService(entityDto);
+
                 if (errors.Count > 0) ModelState.MergeError(errors);
-                if (!ModelState.IsValid) return View(categoryDto);
+                if (!ModelState.IsValid) return View(entityDto);
 
-                await _service.CreateCategoryServiceAsync(categoryDto);
+                await _service.CreateProductServiceAsync(entityDto);
 
-                TempData["message"] = $"'{categoryDto.Name}' has been created successfully!";
+                TempData["message"] = $"'{entityDto.Name}' has been created successfully!";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception)
@@ -145,7 +144,7 @@ namespace OSL.Inventory.B2.Web.Controllers
             }
         }
 
-        // GET: Category/Edit/5
+        // GET: Product/Edit/5
         public async Task<ActionResult> Edit(long? id)
         {
             try
@@ -155,13 +154,13 @@ namespace OSL.Inventory.B2.Web.Controllers
                 {
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
                 }
-                var categoryDto = await _service.GetCategoryByIdServiceAsync(id);
-                if (categoryDto == null)
+                var entitiyDto = await _service.GetProductByIdServiceAsync(id);
+                if (entitiyDto == null)
                 {
                     return HttpNotFound();
                 }
                 ViewBag.SelectList = FilterStatusDto();
-                return View(categoryDto);
+                return View(entitiyDto);
             }
             catch (Exception)
             {
@@ -169,23 +168,22 @@ namespace OSL.Inventory.B2.Web.Controllers
             }
         }
 
-        // POST: Category/Edit/5
+        // POST: Product/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Id,Name,Description,Status,CreatedAt,CreatedBy")]
-            CategoryDto categoryDto)
+        public async Task<ActionResult> Edit([Bind(Include = "Id,Name,Description,ImageUrl,Limited,InStock,PricePerUnit,BasicUnit,CategoryName,Status,CreatedAt,CreatedBy")] ProductDto entityDto)
         {
             try
             {
-                IDictionary<string, string> errors = _service.ValidateCategoryDtoService(categoryDto);
+                IDictionary<string, string> errors = _service.ValidateProductDtoService(entityDto);
 
                 if (errors.Count > 0) ModelState.MergeError(errors);
-                if (!ModelState.IsValid) return View(categoryDto);
+                if (!ModelState.IsValid) return View(entityDto);
 
-                await _service.UpdateCategoryServiceAsync(categoryDto);
-                TempData["message"] = $"'{categoryDto.Name}' has been updated successfully!";
+                await _service.UpdateProductServiceAsync(entityDto);
+                TempData["message"] = $"'{entityDto.Name}' has been updated successfully!";
 
                 return RedirectToAction(nameof(Index));
             }
@@ -196,7 +194,7 @@ namespace OSL.Inventory.B2.Web.Controllers
             }
         }
 
-        // GET: Category/Delete/5
+        // GET: Product/Delete/5
         public async Task<ActionResult> Delete(long? id)
         {
             try
@@ -205,13 +203,13 @@ namespace OSL.Inventory.B2.Web.Controllers
                 {
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
                 }
-                string categoryDeletePartial = "_CategoryDeletePartial";
-                var categoryDto = await _service.GetCategoryByIdServiceAsync(id);
-                if (categoryDto == null)
+                string productDeletePartial = "_ProductDeletePartial";
+                var entityDto = await _service.GetProductByIdServiceAsync(id);
+                if (entityDto == null)
                 {
                     return HttpNotFound();
                 }
-                return PartialView(categoryDeletePartial, categoryDto);
+                return PartialView(productDeletePartial, entityDto);
             }
             catch (Exception)
             {
@@ -220,22 +218,22 @@ namespace OSL.Inventory.B2.Web.Controllers
             }
         }
 
-        // POST: Category/Delete/5
+        // POST: Product/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(long id)
         {
             try
             {
-                var categoryDto = await _service.GetCategoryByIdServiceAsync(id);
-                if (categoryDto == null)
+                var entityDto = await _service.GetProductByIdServiceAsync(id);
+                if (entityDto == null)
                 {
                     return HttpNotFound();
                 }
 
-                await _service.DeleteCategoryByIdServiceAsync(id);
+                await _service.DeleteProductByIdServiceAsync(id);
 
-                return Json(new { message = $"'{categoryDto.Name}' has been deleted successfully!" });
+                return Json(new { message = $"'{entityDto.Name}' has been deleted successfully!" });
             }
             catch (Exception)
             {

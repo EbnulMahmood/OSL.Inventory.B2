@@ -1,0 +1,136 @@
+﻿@model IEnumerable<OSL.Inventory.B2.Service.DTOs.ProductDto>
+@using OSL.Inventory.B2.Service.DTOs.Enums
+
+@{
+    ViewBag.Title = "Products";
+}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Products</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar align-text-bottom" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            This week
+        </button>
+    </div>
+</div>
+
+<!-- modal palaceholder -->
+<div id="modal-placeholder-product"></div>
+
+<div class="col-12">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            @Html.ActionLink("Home", "Index", "Home", new { area = "Home" }, new { @class = "breadcrumb-item" })
+            <li class="breadcrumb-item active" aria-current="page">Products</li>
+        </ol>
+    </nav>
+</div>
+
+@if (TempData["message"] != null)
+{
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+        @TempData["message"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="row pt-3">
+    <div class="col-md-3 p-3">
+        <input class="form-control" type="text" id="search-input" placeholder="Search Name" />
+    </div>
+    <div class="col-md-3 p-3">
+        <select class="form-control" id="sort-by">
+            <option selected value="">Select Status</option>
+            <option value="@StatusDto.Active">Active</option>
+            <option value="@StatusDto.Inactive">Inactive</option>
+        </select>
+    </div>
+    <div class="col p-3 text-end">
+        @Html.ActionLink("Create New", "Create", "Product", new { @class = "btn btn-primary text-end" })
+    </div>
+</div>
+
+<div class="pt-4">
+    <table id="ProductDatatable" class="table table-condensed table-striped table-responsive">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+@section scripts {
+    <script defer src="//cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+
+    <script>
+        // DataTable
+        $(document).ready(function () {
+            const ProductDataTable = (tableId, url) => {
+                const customDataTable = $(tableId).DataTable({
+                    processing: true,
+                    bServerSide: true,
+                    serverSide: true,
+                    sort: true,
+                    searching: false,
+                    columnDefs: [
+                        { orderable: false, targets: -1 }
+                    ],
+                    dom: '<"top"l>rt<"bottom"ip><"clear">',
+                    ajax: {
+                        url: url,
+                        type: "POST",
+                        dataType: "json",
+                        data: (data) => {
+                            return $.extend({}, data, {
+                                "searchByName": $("#search-input").val().toLowerCase(),
+                                "filterByStatus": $("#sort-by").val().toLowerCase(),
+                            })
+                        }
+                    },
+                });
+                customDataTable.draw();
+                $("#search-input, #sort-by").bind("keyup change clear", () => customDataTable.draw());
+            }
+            ProductDataTable('#ProductDatatable', "Product/Index");
+        });
+        // modal
+        const showModal = (url, PlaceHolderElement) => {
+            const decodeUrl = decodeURIComponent(url);
+            $.get(decodeUrl).done(function (data) {
+                PlaceHolderElement.html(data);
+                PlaceHolderElement.find('.modal').modal('show');
+            })
+        }
+        const modalAction = (PlaceHolderElement, that) => {
+            const form = that.parents('.modal').find('form');
+            const actionUrl = form.attr('action');
+            const sendData = form.serialize();
+            $.post(actionUrl, sendData).done(function (data) {
+                PlaceHolderElement.find('.modal').modal('hide');
+                 window.location.reload();
+                console.log(data['message'])
+            })
+        }
+        $(function () {
+            const PlaceHolderElementDev = $('#modal-placeholder-product');
+            $(document).on("click", ".btn-product-delete", function () {
+                const id = $(this).attr('data-product-id');
+                const url = `Product/Delete/${id}`;
+                showModal(url, PlaceHolderElementDev);
+            });
+            PlaceHolderElementDev.on('click', '[data-bs-save="modal"]', function (e) {
+                modalAction(PlaceHolderElementDev, $(this))
+            })
+        })
+    </script>
+
+    @Scripts.Render("~/bundles/jqueryval")
+}

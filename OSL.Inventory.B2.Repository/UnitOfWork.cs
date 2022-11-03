@@ -1,8 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
-using OSL.Inventory.B2.Repository.Data;
+﻿using OSL.Inventory.B2.Repository.Data;
 using OSL.Inventory.B2.Repository.Interfaces;
 using System;
-using System.Runtime.Remoting.Contexts;
 using System.Threading.Tasks;
 
 namespace OSL.Inventory.B2.Repository
@@ -14,11 +12,14 @@ namespace OSL.Inventory.B2.Repository
 
         public ICategoryRepository CategoryRepository { get; private set; }
 
+        public IProductRepository ProductRepository { get; private set; }
+
         public UnitOfWork(InventoryDbContext context)
         {
             _context = context;
 
             CategoryRepository = new CategoryRepository(context);
+            ProductRepository = new ProductRepository(context);
         }
 
         public async Task<bool> SaveAsync()

@@ -7,6 +7,7 @@ namespace OSL.Inventory.B2.Service.Extensions
 {
     public static class DtoConversions
     {
+        // category
         private static CategoryDto NewCategoryDto(Category category)
         {
             return new CategoryDto
@@ -51,6 +52,66 @@ namespace OSL.Inventory.B2.Service.Extensions
         public static Category ConvertToEntity(this CategoryDto categoryDto)
         {
             return NewCategory(categoryDto);
+        }
+
+        // product
+
+        private static ProductDto NewProductDto(Product product)
+        {
+            return new ProductDto
+            {
+                Id = product.Id,
+                Name = product.Name,
+                Description = product.Description,
+                ImageUrl = product.ImageUrl,
+                Limited = product.Limited,
+                InStock = product.InStock,
+                PricePerUnit = product.PricePerUnit,
+                BasicUnit = product.BasicUnit,
+                Status = (DTOs.Enums.StatusDto)product.Status,
+                // CategoryId = product.Category.Id,
+                // CategoryName = product.Category.Name,
+                CreatedAt = product.CreatedAt,
+                ModifiedAt = product.ModifiedAt,
+                CreatedBy = product.CreatedBy,
+                ModifiedBy = product.ModifiedBy,
+            };
+        }
+
+        private static Product NewProduct(ProductDto productDto)
+        {
+            return new Product
+            {
+                Id = productDto.Id,
+                Name = productDto.Name,
+                Description = productDto.Description,
+                ImageUrl = productDto.ImageUrl,
+                Limited = productDto.Limited,
+                InStock = productDto.InStock,
+                PricePerUnit = productDto.PricePerUnit,
+                BasicUnit = productDto.BasicUnit,
+                Status = (Entity.Enums.Status)productDto.Status,
+                // CategoryId = productDto.CategoryId,
+                CreatedAt = productDto.CreatedAt,
+                ModifiedAt = productDto.ModifiedAt,
+                CreatedBy = productDto.CreatedBy,
+                ModifiedBy = productDto.ModifiedBy,
+            };
+        }
+        public static IEnumerable<ProductDto> ConvertToDto(this IEnumerable<Product> products)
+        {
+            return (from product in products
+                    select NewProductDto(product)).ToList();
+        }
+
+        public static ProductDto ConvertToDto(this Product product)
+        {
+            return NewProductDto(product);
+        }
+
+        public static Product ConvertToEntity(this ProductDto productDto)
+        {
+            return NewProduct(productDto);
         }
     }
 }
