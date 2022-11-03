@@ -41,7 +41,12 @@ namespace OSL.Inventory.B2.Service.Extensions
         public static IEnumerable<CategoryDto> ConvertToDto(this IEnumerable<Category> categories)
         {
             return (from category in categories
-                    select NewCategoryDto(category)).ToList();
+                    select new CategoryDto
+                    {
+                        Id = category.Id,
+                        Name = category.Name,
+                        Status = (DTOs.Enums.StatusDto)category.Status,
+                    }).ToList();
         }
 
         public static CategoryDto ConvertToDto(this Category category)
@@ -56,7 +61,30 @@ namespace OSL.Inventory.B2.Service.Extensions
 
         // product
 
-        private static ProductDto NewProductDto(Product product)
+        public static IEnumerable<ProductDto> ConvertToDto(this IEnumerable<Product> products)
+        {
+            return (from product in products
+                    select new ProductDto
+                    {
+                        Id = product.Id,
+                        Name = product.Name,
+                        Description = product.Description,
+                        ImageUrl = product.ImageUrl,
+                        Limited = product.Limited,
+                        InStock = product.InStock,
+                        PricePerUnit = product.PricePerUnit,
+                        BasicUnit = product.BasicUnit,
+                        Status = (DTOs.Enums.StatusDto)product.Status,
+                        CategoryId = product.Category.Id,
+                        CategoryName = product.Category.Name,
+                        CreatedAt = product.CreatedAt,
+                        ModifiedAt = product.ModifiedAt,
+                        CreatedBy = product.CreatedBy,
+                        ModifiedBy = product.ModifiedBy,
+                    }).ToList();
+        }
+
+        public static ProductDto ConvertToDto(this Product product)
         {
             return new ProductDto
             {
@@ -69,8 +97,6 @@ namespace OSL.Inventory.B2.Service.Extensions
                 PricePerUnit = product.PricePerUnit,
                 BasicUnit = product.BasicUnit,
                 Status = (DTOs.Enums.StatusDto)product.Status,
-                // CategoryId = product.Category.Id,
-                // CategoryName = product.Category.Name,
                 CreatedAt = product.CreatedAt,
                 ModifiedAt = product.ModifiedAt,
                 CreatedBy = product.CreatedBy,
@@ -78,7 +104,7 @@ namespace OSL.Inventory.B2.Service.Extensions
             };
         }
 
-        private static Product NewProduct(ProductDto productDto)
+        public static Product ConvertToEntity(this ProductDto productDto)
         {
             return new Product
             {
@@ -97,21 +123,6 @@ namespace OSL.Inventory.B2.Service.Extensions
                 CreatedBy = productDto.CreatedBy,
                 ModifiedBy = productDto.ModifiedBy,
             };
-        }
-        public static IEnumerable<ProductDto> ConvertToDto(this IEnumerable<Product> products)
-        {
-            return (from product in products
-                    select NewProductDto(product)).ToList();
-        }
-
-        public static ProductDto ConvertToDto(this Product product)
-        {
-            return NewProductDto(product);
-        }
-
-        public static Product ConvertToEntity(this ProductDto productDto)
-        {
-            return NewProduct(productDto);
         }
     }
 }

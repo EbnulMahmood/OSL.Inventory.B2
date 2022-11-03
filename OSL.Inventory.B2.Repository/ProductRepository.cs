@@ -25,6 +25,7 @@ namespace OSL.Inventory.B2.Repository
             return await _context.Products
                     .Where(x => x.Name.ToLower().Contains(name.ToLower()))
                     .Where(x => x.Status != Status.Deleted)
+                    .Include(x => x.Category)
                     .ToListAsync();
         }
 
@@ -33,6 +34,7 @@ namespace OSL.Inventory.B2.Repository
         {
             return await _context.Products.Where(x => x.Status == status)
                     .Where(x => x.Status != Status.Deleted)
+                    .Include(x => x.Category)
                     .ToListAsync();
         }
 
@@ -44,6 +46,7 @@ namespace OSL.Inventory.B2.Repository
 
             var products = await _context.Products.Where(d => d.Status != Status.Deleted)
                     .OrderByDescending(d => d.CreatedAt)
+                    .Include(x => x.Category)
                     .Skip(start).Take(length)
                     .ToListAsync();
 

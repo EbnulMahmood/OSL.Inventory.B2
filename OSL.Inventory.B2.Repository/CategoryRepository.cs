@@ -23,18 +23,30 @@ namespace OSL.Inventory.B2.Repository
         // search by name
         private async Task<IEnumerable<Category>> SearchCategoriesByName(string name)
         {
-            return await _context.Categories
+            return (await _context.Categories
                     .Where(x => x.Name.ToLower().Contains(name.ToLower()))
                     .Where(x => x.Status != Status.Deleted)
-                    .ToListAsync();
+                    .ToListAsync())
+                    .Select(c => new Category()
+                    {
+                        Id = c.Id,
+                        Name = c.Name,
+                        Status = c.Status,
+                    });
         }
 
         // filter by status
         private async Task<IEnumerable<Category>> FilterCategoriesByStatus(Status status)
         {
-            return await _context.Categories.Where(x => x.Status == status)
+            return (await _context.Categories.Where(x => x.Status == status)
                     .Where(x => x.Status != Status.Deleted)
-                    .ToListAsync();
+                    .ToListAsync())
+                    .Select(c => new Category()
+                    {
+                        Id = c.Id,
+                        Name = c.Name,
+                        Status = c.Status,
+                    });
         }
 
         // list with paging
@@ -42,11 +54,18 @@ namespace OSL.Inventory.B2.Repository
         {
             // count records exclude deleted
             var recordCount = await _context.Categories.CountAsync(x => x.Status != Status.Deleted);
-            
-            var categories = await _context.Categories.Where(d => d.Status != Status.Deleted)
+
+            var categories = (await _context.Categories
+                    .Where(d => d.Status != Status.Deleted)
                     .OrderByDescending(d => d.CreatedAt)
                     .Skip(start).Take(length)
-                    .ToListAsync();
+                    .ToListAsync())
+                    .Select(c => new Category()
+                    {
+                        Id = c.Id,
+                        Name = c.Name,
+                        Status = c.Status,
+                    });
             
             return (categories, recordCount);
         }

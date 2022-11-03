@@ -41,10 +41,10 @@
 
 <div class="row pt-3">
     <div class="col-md-3 p-3">
-        <input class="form-control" type="text" id="search-input" placeholder="Search Name" />
+        <input class="form-control" type="text" id="search-by-name" placeholder="Search Name" />
     </div>
     <div class="col-md-3 p-3">
-        <select class="form-control" id="sort-by">
+        <select class="form-control" id="filter-by-status">
             <option selected value="">Select Status</option>
             <option value="@StatusDto.Active">Active</option>
             <option value="@StatusDto.Inactive">Inactive</option>
@@ -74,6 +74,10 @@
         // DataTable
         $(document).ready(function () {
             const ProductDataTable = (tableId, url) => {
+
+                const searchByName = '#search-by-name';
+                const filterByStatus = '#filter-by-status';
+
                 const customDataTable = $(tableId).DataTable({
                     processing: true,
                     bServerSide: true,
@@ -90,14 +94,14 @@
                         dataType: "json",
                         data: (data) => {
                             return $.extend({}, data, {
-                                "searchByName": $("#search-input").val().toLowerCase(),
-                                "filterByStatus": $("#sort-by").val().toLowerCase(),
+                                "searchByName": $(searchByName).val().toLowerCase(),
+                                "filterByStatus": $(filterByStatus).val().toLowerCase(),
                             })
                         }
                     },
                 });
                 customDataTable.draw();
-                $("#search-input, #sort-by").bind("keyup change clear", () => customDataTable.draw());
+                $(`${searchByName}, ${filterByStatus}`).bind("keyup change clear", () => customDataTable.draw());
             }
             ProductDataTable('#ProductDatatable', "Product/Index");
         });
