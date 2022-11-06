@@ -32,20 +32,32 @@ namespace OSL.Inventory.B2.Service
             return errors;
         }
 
-        public async Task<(IEnumerable<ProductDto>, int, int)> ListProductsWithSortingFilteringPagingServiceAsync(int start,
+        public async Task<(List<object>, int, int)> ListProductsWithSortingFilteringPagingServiceAsync(int start,
             int length, string order, string orderDir, string searchByName, StatusDto filterByStatusDto = 0)
         {
             try
             {
-                var listProductsTuple = await _unitOfWork.ProductRepository
-                    .ListProductsWithSortingFilteringPagingAsync(start, length, order, orderDir,
+                var listProductsTuple = await _unitOfWork.ProductRepository.ListProductsWithSortingFilteringPagingAsync(start, length, order, orderDir,
                     searchByName, (Status)filterByStatusDto);
 
-                var listProductsDto = listProductsTuple.Item1.ConvertToDto();
                 int totalRecord = listProductsTuple.Item2;
                 int filterRecord = listProductsTuple.Item3;
+                var listProductsDto = listProductsTuple.Item1.ConvertToDto();
 
-                return (listProductsDto, totalRecord, filterRecord);
+                List<object> entitiesList = new List<object>();
+                foreach (var item in listProductsDto)
+                {
+                    List<string> dataItems = new List<string>
+                    {
+                        item.Name,
+                        item.StatusHtml,
+                        item.ActionLinkHtml
+                    };
+
+                    entitiesList.Add(dataItems);
+                }
+
+                return (entitiesList, totalRecord, filterRecord);
             }
             catch (Exception)
             {

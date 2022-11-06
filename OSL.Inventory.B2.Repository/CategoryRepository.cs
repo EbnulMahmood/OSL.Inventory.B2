@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace OSL.Inventory.B2.Repository
 {
@@ -21,11 +22,18 @@ namespace OSL.Inventory.B2.Repository
         }
 
         // search by name
-        private async Task<IEnumerable<Category>> SearchCategoriesByName(string name)
+        private async Task<(IEnumerable<Category>, int)> SearchCategoriesByName(string name, int start, int length)
         {
-            return (await _context.Categories
+            var recordCount = await _context.Categories
+                .CountAsync(x => (x.Status != Status.Deleted) &&
+                    (x.Name.ToLower().Contains(name.ToLower()))
+                );
+
+            var entities = (await _context.Categories
+                    .Where(d => d.Status != Status.Deleted)
                     .Where(x => x.Name.ToLower().Contains(name.ToLower()))
-                    .Where(x => x.Status != Status.Deleted)
+                    .OrderByDescending(d => d.CreatedAt)
+                    .Skip(start).Take(length)
                     .ToListAsync())
                     .Select(c => new Category()
                     {
@@ -33,13 +41,23 @@ namespace OSL.Inventory.B2.Repository
                         Name = c.Name,
                         Status = c.Status,
                     });
+
+            return (entities, recordCount);
         }
 
         // filter by status
-        private async Task<IEnumerable<Category>> FilterCategoriesByStatus(Status status)
+        private async Task<(IEnumerable<Category>, int)> FilterCategoriesByStatus(Status status, int start, int length)
         {
-            return (await _context.Categories.Where(x => x.Status == status)
-                    .Where(x => x.Status != Status.Deleted)
+            var recordCount = await _context.Categories
+                .CountAsync(x => (x.Status != Status.Deleted) &&
+                    (x.Status == status)
+                );
+
+            var entities = (await _context.Categories
+                    .Where(d => d.Status != Status.Deleted)
+                    .Where(x => x.Status == status)
+                    .OrderByDescending(d => d.CreatedAt)
+                    .Skip(start).Take(length)
                     .ToListAsync())
                     .Select(c => new Category()
                     {
@@ -47,6 +65,34 @@ namespace OSL.Inventory.B2.Repository
                         Name = c.Name,
                         Status = c.Status,
                     });
+
+            return (entities, recordCount);
+        }
+
+        // filter by status and name
+        private async Task<(IEnumerable<Category>, int)> CategoriesByNameAndStatus(string name, Status status, int start, int length)
+        {
+            var recordCount = await _context.Categories
+                .CountAsync(x => (x.Status != Status.Deleted) &&
+                    (x.Status == status) &&
+                    (x.Name.ToLower().Contains(name.ToLower()))
+                );
+
+            var entities = (await _context.Categories
+                    .Where(d => d.Status != Status.Deleted)
+                    .Where(x => x.Name.ToLower().Contains(name.ToLower()))
+                    .Where(x => x.Status == status)
+                    .OrderByDescending(d => d.CreatedAt)
+                    .Skip(start).Take(length)
+                    .ToListAsync())
+                    .Select(c => new Category()
+                    {
+                        Id = c.Id,
+                        Name = c.Name,
+                        Status = c.Status,
+                    });
+
+            return (entities, recordCount);
         }
 
         // list with paging
@@ -55,7 +101,7 @@ namespace OSL.Inventory.B2.Repository
             // count records exclude deleted
             var recordCount = await _context.Categories.CountAsync(x => x.Status != Status.Deleted);
 
-            var categories = (await _context.Categories
+            var entities = (await _context.Categories
                     .Where(d => d.Status != Status.Deleted)
                     .OrderByDescending(d => d.CreatedAt)
                     .Skip(start).Take(length)
@@ -66,8 +112,8 @@ namespace OSL.Inventory.B2.Repository
                         Name = c.Name,
                         Status = c.Status,
                     });
-            
-            return (categories, recordCount);
+
+            return (entities, recordCount);
         }
 
         // sort by order desc
@@ -75,6 +121,7 @@ namespace OSL.Inventory.B2.Repository
         {
             // Initialization.   
             IEnumerable<Category> sortedEntities = Enumerable.Empty<Category>();
+
             try
             {
                 // Sorting   
@@ -83,19 +130,62 @@ namespace OSL.Inventory.B2.Repository
                     case "0":
                         // Setting.   
                         sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ?
-                            data.OrderByDescending(p => p.Name).ToList() : data.OrderBy(p => p.Name).ToList();
+                            data.OrderByDescending(p => p.Name)
+                            .ToList()
+                            .Select(c => new Category()
+                            {
+                                Id = c.Id,
+                                Name = c.Name,
+                                Status = c.Status,
+                            }) :
+                            data.OrderBy(p => p.Name)
+                            .ToList()
+                            .Select(c => new Category()
+                            {
+                                Id = c.Id,
+                                Name = c.Name,
+                                Status = c.Status,
+                            });
                         break;
                     case "1":
                         // Setting.   
-                        sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? 
-                            data.OrderByDescending(p => p.Status).ToList() : 
-                            data.OrderBy(p => p.Status).ToList();
+                        sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ?
+                            data.OrderByDescending(p => p.Status)
+                            .ToList()
+                            .Select(c => new Category()
+                            {
+                                Id = c.Id,
+                                Name = c.Name,
+                                Status = c.Status,
+                            }) :
+                            data.OrderBy(p => p.Status)
+                            .ToList()
+                            .Select(c => new Category()
+                            {
+                                Id = c.Id,
+                                Name = c.Name,
+                                Status = c.Status,
+                            });
                         break;
                     default:
                         // Setting.   
-                        sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ? 
-                            data.OrderByDescending(p => p.CreatedAt).ToList() : 
-                            data.OrderBy(p => p.CreatedAt).ToList();
+                        sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ?
+                            data.OrderByDescending(p => p.CreatedAt)
+                            .ToList()
+                            .Select(c => new Category()
+                            {
+                                Id = c.Id,
+                                Name = c.Name,
+                                Status = c.Status,
+                            }) :
+                            data.OrderBy(p => p.CreatedAt)
+                            .ToList()
+                            .Select(c => new Category()
+                            {
+                                Id = c.Id,
+                                Name = c.Name,
+                                Status = c.Status,
+                            });
                         break;
                 }
             }
@@ -117,46 +207,37 @@ namespace OSL.Inventory.B2.Repository
             int filterRecord = 0;
 
             // Initialization.   
-            IEnumerable<Category> listCategories = Enumerable.Empty<Category>();
-            bool isFiltered = false;
+            IEnumerable<Category> listEntites = Enumerable.Empty<Category>();
 
-            // search by category name
-            if (!string.IsNullOrEmpty(searchByName))
+            if (string.IsNullOrEmpty(searchByName) && filterByStatus == 0)
             {
-                listCategories = await SearchCategoriesByName(searchByName);
-                isFiltered = true;
+                var listEntitesTuple = await ListCategoriesWithPaginationAsync(start, length);
+                listEntites = listEntitesTuple.Item1;
+                filterRecord = listEntitesTuple.Item2;
             }
-
-            // filter by status
-            if (filterByStatus != 0)
+            else if (filterByStatus == 0)
             {
-                listCategories = await FilterCategoriesByStatus(filterByStatus);
-                isFiltered = true;
+                // search by category name
+                var listEntitesTuple = await SearchCategoriesByName(searchByName, start, length);
+                listEntites = listEntitesTuple.Item1;
+                filterRecord = listEntitesTuple.Item2;
             }
-
-            //pagination
-            if (!isFiltered)
+            else if (string.IsNullOrEmpty(searchByName))
             {
-                var tuple = await ListCategoriesWithPaginationAsync(start, length);
-
-                listCategories = tuple.Item1;
-
-                // get total count of records
-                filterRecord = tuple.Item2;
+                // filter by status
+                var listEntitesTuple = await FilterCategoriesByStatus(filterByStatus, start, length);
+                listEntites = listEntitesTuple.Item1;
+                filterRecord = listEntitesTuple.Item2;
             }
             else
             {
-                // get total count of records after searching, sorting and filtering
-                filterRecord = listCategories.Count();
-
-                listCategories = listCategories.Where(x => x.Status != Status.Deleted)
-                    .OrderByDescending(d => d.CreatedAt)
-                    .Skip(start).Take(length)
-                    .ToList();
+                var listEntitesTuple = await CategoriesByNameAndStatus(searchByName, filterByStatus, start, length);
+                listEntites = listEntitesTuple.Item1;
+                filterRecord = listEntitesTuple.Item2;
             }
 
             // Sorting 
-            var result = SortByColumnWithOrder(order, orderDir, listCategories);
+            var result = SortByColumnWithOrder(order, orderDir, listEntites);
 
             return (result, totalRecord, filterRecord);
         }

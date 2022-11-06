@@ -35,43 +35,20 @@ namespace OSL.Inventory.B2.Web.Controllers
                 string order = Request.Form.GetValues("order[0][column]")[0];
                 string orderDir = Request.Form.GetValues("order[0][dir]")[0];
 
-                var listCategoriesTuple = await _service.ListCategoriesWithSortingFilteringPagingServiceAsync(start, length, order, orderDir,
-                    searchByName, filterByStatus);
-
-                IEnumerable<CategoryDto> listCategories = listCategoriesTuple.Item1;
+                var listCategoriesTuple = await _service
+                    .ListCategoriesWithSortingFilteringPagingServiceAsync(start, length,
+                    order, orderDir, searchByName, filterByStatus);
 
                 int totalRecord = listCategoriesTuple.Item2;
                 int filterRecord = listCategoriesTuple.Item3;
-
-                List<object> entitiesList = new List<object>();
-                foreach (var item in listCategories)
-                {
-                    string actionLink = $"<div class='btn-toolbar w-30' role='toolbar'>" +
-                        $"<a href='Category/Edit/{item.Id}' class='btn btn-primary btn-sm mx-auto'><i class='bi bi-pencil-square'></i>Edit</a>" +
-                        $"<button type='button' data-bs-target='#deleteCategory' data-bs-toggle='ajax-modal' class='btn btn-danger btn-sm mx-auto btn-category-delete'" +
-                        $"data-category-id='{item.Id}'><i class='bi bi-trash-fill'></i>Delete</button><a href='Category/Details/{item.Id}'" +
-                        $"class='btn btn-secondary btn-sm mx-auto'><i class='bi bi-ticket-detailed-fill'></i>Details</a></div>";
-
-                    string statusConditionClass = item.Status == StatusDto.Active ? "text-success" : "text-danger";
-                    string statusConditionText = item.Status == StatusDto.Active ? "Active" : "Inactive";
-                    string status = $"<span class='{statusConditionClass}'>{statusConditionText}</span>";
-
-                    List<string> dataItems = new List<string>
-                    {
-                        item.Name,
-                        status,
-                        actionLink
-                    };
-
-                    entitiesList.Add(dataItems);
-                }
+                List<object> listCategories = listCategoriesTuple.Item1;
 
                 return Json(new
                 {
                     draw,
                     recordsTotal = totalRecord,
                     recordsFiltered = filterRecord,
-                    data = entitiesList
+                    data = listCategories
                 });
             }
             catch (Exception)
@@ -80,7 +57,7 @@ namespace OSL.Inventory.B2.Web.Controllers
                 throw;
             }
         }
- 
+
         private IEnumerable<SelectListItem> FilterStatusDto()
         {
              return Enum.GetValues(typeof(StatusDto))

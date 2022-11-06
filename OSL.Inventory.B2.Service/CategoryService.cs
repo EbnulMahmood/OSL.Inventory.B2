@@ -6,7 +6,6 @@ using OSL.Inventory.B2.Service.Extensions;
 using OSL.Inventory.B2.Service.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace OSL.Inventory.B2.Service
@@ -33,19 +32,32 @@ namespace OSL.Inventory.B2.Service
             return errors;
         }
 
-        public async Task<(IEnumerable<CategoryDto>, int, int)> ListCategoriesWithSortingFilteringPagingServiceAsync(int start, int length,
+        public async Task<(List<object>, int, int)> ListCategoriesWithSortingFilteringPagingServiceAsync(int start, int length,
             string order, string orderDir, string searchByName, StatusDto filterByStatusDto = 0)
         {
             try
             {
-                var tuple = await _unitOfWork.CategoryRepository.ListCategoriesWithSortingFilteringPagingAsync(start, length, order, orderDir,
+                var listCategoriesTuple = await _unitOfWork.CategoryRepository.ListCategoriesWithSortingFilteringPagingAsync(start, length, order, orderDir,
                     searchByName, (Status)filterByStatusDto);
 
-                var categoriesDto = tuple.Item1.ConvertToDto();
-                int totalRecord = tuple.Item2;
-                int filterRecord = tuple.Item3;
+                int totalRecord = listCategoriesTuple.Item2;
+                int filterRecord = listCategoriesTuple.Item3;
+                var listCategoriesDto = listCategoriesTuple.Item1.ConvertToDto();
 
-                return (categoriesDto, totalRecord, filterRecord);
+                List<object> entitiesList = new List<object>();
+                foreach (var item in listCategoriesDto)
+                {
+                    List<string> dataItems = new List<string>
+                    {
+                        item.Name,
+                        item.StatusHtml,
+                        item.ActionLinkHtml
+                    };
+
+                    entitiesList.Add(dataItems);
+                }
+
+                return (entitiesList, totalRecord, filterRecord);
             }
             catch (Exception)
             {

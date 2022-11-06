@@ -10,7 +10,7 @@ namespace OSL.Inventory.B2.Service.Interfaces
         Task<bool> CreateProductServiceAsync(ProductDto entityDtoToCreate);
         Task<bool> DeleteProductByIdServiceAsync(long entityDtoToDeleteId);
         Task<ProductDto> GetProductByIdServiceAsync(long? entityDtoToGetId);
-        Task<(IEnumerable<ProductDto>, int, int)> ListProductsWithSortingFilteringPagingServiceAsync(int start, int length, string order, string orderDir, string searchByName, StatusDto filterByStatusDto = 0);
+        Task<(List<object>, int, int)> ListProductsWithSortingFilteringPagingServiceAsync(int start, int length, string order, string orderDir, string searchByName, StatusDto filterByStatusDto = 0);
         Task<bool> UpdateProductServiceAsync(ProductDto entityDtoToUpdate);
         IDictionary<string, string> ValidateProductDtoService(ProductDto entityDto);
     }

@@ -39,97 +39,61 @@
     </div>
 }
 
-<div class="row pt-3">
-    <div class="col-md-3 p-3">
-        <input class="form-control" type="text" id="search-input" placeholder="Search Name" />
+<div class="row p-2">
+    <div class="col-md-3 p-2">
+        <input class="form-control" type="text" id="search-by-name" placeholder="Search Name" />
     </div>
-    <div class="col-md-3 p-3">
-        <select class="form-control" id="sort-by">
+    <div class="col-md-3 p-2">
+        <select class="form-control" id="filter-by-status">
             <option selected value="">Select Status</option>
             <option value="@StatusDto.Active">Active</option>
             <option value="@StatusDto.Inactive">Inactive</option>
         </select>
     </div>
-    <div class="col p-3 text-end">
+    <div class="col p-2 text-end">
         @Html.ActionLink("Create New", "Create", "Category", new { @class = "btn btn-primary text-end" })
     </div>
 </div>
 
-<div class="pt-4">
-    <table id="categoryDatatable" class="table table-condensed table-striped table-responsive">
-        <thead>
+<div class=" table-responsive">
+    <table id="categoryDatatable" class=" pt-2 table table-condensed table-striped border-dark">
+        <thead class="table-dark">
             <tr>
-                <th>Name</th>
-                <th>Status</th>
-                <th>Action</th>
+                <th class="w-auto">Name</th>
+                <th class="w-25">Status</th>
+                <th class="w-25">Action</th>
             </tr>
         </thead>
     </table>
 </div>
 
 @section scripts {
-    <script defer src="//cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+    <script src="//cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+    <script src="~/Scripts/js/datatable.js"></script>
+    <script src="~/Scripts/js/modal.js"></script>
 
     <script>
-        // DataTable
         $(document).ready(function () {
-            const categoryDataTable = (tableId, url) => {
-                const customDataTable = $(tableId).DataTable({
-                    processing: true,
-                    bServerSide: true,
-                    serverSide: true,
-                    sort: true,
-                    searching: false,
-                    columnDefs: [
-                        { orderable: false, targets: -1 }
-                    ],
-                    dom: '<"top"l>rt<"bottom"ip><"clear">',
-                    ajax: {
-                        url: url,
-                        type: "POST",
-                        dataType: "json",
-                        data: (data) => {
-                            return $.extend({}, data, {
-                                "searchByName": $("#search-input").val().toLowerCase(),
-                                "filterByStatus": $("#sort-by").val().toLowerCase(),
-                            })
-                        }
-                    },
-                });
-                customDataTable.draw();
-                $("#search-input, #sort-by").bind("keyup change clear", () => customDataTable.draw());
+            // datatable
+            const filterSearchOptionsForCategory = () => {
+                return {
+                    searchByName: "#search-by-name",
+                    filterByStatus: "#filter-by-status",
+                }
             }
-            categoryDataTable('#categoryDatatable', "Category/Index");
+            const categoryDatatableId = '#categoryDatatable';
+            const categoryIndexUrl = 'Category/Index';
+
+            DataTable(categoryDatatableId, categoryIndexUrl,
+                filterSearchOptionsForCategory);
+
+            // modal
+            const url = 'Category/Delete';
+            const idElement = 'data-category-id';
+            const placeHolderId = '#modal-placeholder-category';
+            const btnDeleteClass = '.btn-category-delete';
+            Modal(url, idElement, placeHolderId, btnDeleteClass);
         });
-        // modal
-        const showModal = (url, PlaceHolderElement) => {
-            const decodeUrl = decodeURIComponent(url);
-            $.get(decodeUrl).done(function (data) {
-                PlaceHolderElement.html(data);
-                PlaceHolderElement.find('.modal').modal('show');
-            })
-        }
-        const modalAction = (PlaceHolderElement, that) => {
-            const form = that.parents('.modal').find('form');
-            const actionUrl = form.attr('action');
-            const sendData = form.serialize();
-            $.post(actionUrl, sendData).done(function (data) {
-                PlaceHolderElement.find('.modal').modal('hide');
-                 window.location.reload();
-                console.log(data['message'])
-            })
-        }
-        $(function () {
-            const PlaceHolderElementDev = $('#modal-placeholder-category');
-            $(document).on("click", ".btn-category-delete", function () {
-                const id = $(this).attr('data-category-id');
-                const url = `Category/Delete/${id}`;
-                showModal(url, PlaceHolderElementDev);
-            });
-            PlaceHolderElementDev.on('click', '[data-bs-save="modal"]', function (e) {
-                modalAction(PlaceHolderElementDev, $(this))
-            })
-        })
     </script>
 
     @Scripts.Render("~/bundles/jqueryval")

@@ -35,43 +35,20 @@ namespace OSL.Inventory.B2.Web.Controllers
                 string order = Request.Form.GetValues("order[0][column]")[0];
                 string orderDir = Request.Form.GetValues("order[0][dir]")[0];
 
-                var listProductsTuple = await _service.ListProductsWithSortingFilteringPagingServiceAsync(start, length, order, orderDir,
-                    searchByName, filterByStatus);
-
-                IEnumerable<ProductDto> listProducts = listProductsTuple.Item1;
+                var listProductsTuple = await _service
+                    .ListProductsWithSortingFilteringPagingServiceAsync(start, length,
+                    order, orderDir, searchByName, filterByStatus);
 
                 int totalRecord = listProductsTuple.Item2;
                 int filterRecord = listProductsTuple.Item3;
-
-                List<object> entitiesList = new List<object>();
-                foreach (var item in listProducts)
-                {
-                    string actionLink = $"<div class='btn-toolbar w-30' role='toolbar'>" +
-                        $"<a href='Product/Edit/{item.Id}' class='btn btn-primary btn-sm mx-auto'><i class='bi bi-pencil-square'></i>Edit</a>" +
-                        $"<button type='button' data-bs-target='#deleteProduct' data-bs-toggle='ajax-modal' class='btn btn-danger btn-sm mx-auto btn-product-delete'" +
-                        $"data-product-id='{item.Id}'><i class='bi bi-trash-fill'></i>Delete</button><a href='Product/Details/{item.Id}'" +
-                        $"class='btn btn-secondary btn-sm mx-auto'><i class='bi bi-ticket-detailed-fill'></i>Details</a></div>";
-
-                    string statusConditionClass = item.Status == StatusDto.Active ? "text-success" : "text-danger";
-                    string statusConditionText = item.Status == StatusDto.Active ? "Active" : "Inactive";
-                    string status = $"<span class='{statusConditionClass}'>{statusConditionText}</span>";
-
-                    List<string> dataItems = new List<string>
-                    {
-                        item.Name,
-                        status,
-                        actionLink
-                    };
-
-                    entitiesList.Add(dataItems);
-                }
+                List<object> listProducts = listProductsTuple.Item1;
 
                 return Json(new
                 {
                     draw,
                     recordsTotal = totalRecord,
                     recordsFiltered = filterRecord,
-                    data = entitiesList
+                    data = listProducts
                 });
             }
             catch (Exception)

@@ -14,5 +14,7 @@ namespace OSL.Inventory.B2.Service.DTOs
         public string BasicUnit { get; set; } = string.Empty;
         public long CategoryId { get; set; }
         public string CategoryName { get; set; } = string.Empty;
+        public string ActionLinkHtml { get; set; } = string.Empty;
+        public string StatusHtml { get; set; } = string.Empty;
     }
 }
