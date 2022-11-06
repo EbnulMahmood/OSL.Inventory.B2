@@ -1,15 +1,28 @@
 ﻿using OSL.Inventory.B2.Entity.Enums;
-using OSL.Inventory.B2.Repository.Interfaces;
+using OSL.Inventory.B2.Repository;
 using OSL.Inventory.B2.Service.DTOs;
 using OSL.Inventory.B2.Service.DTOs.Enums;
 using OSL.Inventory.B2.Service.Extensions;
-using OSL.Inventory.B2.Service.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace OSL.Inventory.B2.Service
 {
+    public interface IProductService
+    {
+        Task<bool> CreateProductServiceAsync(ProductDto entityDtoToCreate);
+        Task<bool> DeleteProductByIdServiceAsync(long entityDtoToDeleteId);
+        Task<ProductDto> GetProductByIdServiceAsync(long? entityDtoToGetId);
+        Task<(List<object>, int, int)> ListProductsWithSortingFilteringPagingServiceAsync(int start, int length, string order, 
+            string orderDir, string searchByName, string filterByCategory, StatusDto filterByStatusDto = 0);
+        Task<bool> UpdateProductServiceAsync(ProductDto entityDtoToUpdate);
+        IDictionary<string, string> ValidateProductDtoService(ProductDto entityDto);
+        List<CategoryDto> SelectCategoriesListItems();
+    }
+
     public class ProductService : IProductService
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -32,13 +45,25 @@ namespace OSL.Inventory.B2.Service
             return errors;
         }
 
+        public List<CategoryDto> SelectCategoriesListItems()
+        {
+            var categories = _unitOfWork.CategoryRepository.ListCategoriesDropdown();
+            var categoriesDto = (from category in categories
+                                select new CategoryDto()
+                                {
+                                    Id = category.Id,
+                                    Name = category.Name,
+                                }).ToList();
+            return categoriesDto;
+        }
+
         public async Task<(List<object>, int, int)> ListProductsWithSortingFilteringPagingServiceAsync(int start,
-            int length, string order, string orderDir, string searchByName, StatusDto filterByStatusDto = 0)
+            int length, string order, string orderDir, string searchByName, string filterByCategory, StatusDto filterByStatusDto = 0)
         {
             try
             {
-                var listProductsTuple = await _unitOfWork.ProductRepository.ListProductsWithSortingFilteringPagingAsync(start, length, order, orderDir,
-                    searchByName, (Status)filterByStatusDto);
+                var listProductsTuple = await _unitOfWork.ProductRepository.ListProductsWithSortingFilteringPagingAsync(start, length, 
+                    order, orderDir, searchByName, filterByCategory, (Status)filterByStatusDto);
 
                 int totalRecord = listProductsTuple.Item2;
                 int filterRecord = listProductsTuple.Item3;
@@ -50,6 +75,8 @@ namespace OSL.Inventory.B2.Service
                     List<string> dataItems = new List<string>
                     {
                         item.Name,
+                        item.InStockString,
+                        item.PricePerUnitString,
                         item.StatusHtml,
                         item.ActionLinkHtml
                     };

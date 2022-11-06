@@ -3,32 +3,36 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Web.Mvc;
 using OSL.Inventory.B2.Service.DTOs;
-using OSL.Inventory.B2.Service.Interfaces;
 using OSL.Inventory.B2.Service.DTOs.Enums;
 using System.Collections.Generic;
 using System.Linq;
 using OSL.Inventory.B2.Service.Extensions;
+using OSL.Inventory.B2.Service;
 
 namespace OSL.Inventory.B2.Web.Controllers
 {
     public class ProductController : Controller
     {
         private readonly IProductService _service;
+        private readonly ICategoryService _categoryService;
 
-        public ProductController(IProductService service)
+        public ProductController(IProductService service, ICategoryService categoryService)
         {
             _service = service;
+            _categoryService = categoryService;
         }
 
         // GET: Product
         public ActionResult Index()
         {
+            var entities = _service.SelectCategoriesListItems();
+            ViewBag.Categories = entities;
             return View();
         }
 
         [HttpPost, ActionName("Index")]
         public async Task<JsonResult> ListProductsAsync(int draw, int start, int length,
-            string searchByName, StatusDto filterByStatus = 0)
+            string searchByName, string filterByCategory, StatusDto filterByStatus = 0)
         {
             try
             {
@@ -37,7 +41,7 @@ namespace OSL.Inventory.B2.Web.Controllers
 
                 var listProductsTuple = await _service
                     .ListProductsWithSortingFilteringPagingServiceAsync(start, length,
-                    order, orderDir, searchByName, filterByStatus);
+                    order, orderDir, searchByName, filterByCategory, filterByStatus);
 
                 int totalRecord = listProductsTuple.Item2;
                 int filterRecord = listProductsTuple.Item3;
@@ -89,9 +93,16 @@ namespace OSL.Inventory.B2.Web.Controllers
             }
         }
 
-        // GET: Product/Create
-        public ActionResult Create()
+        private async Task<SelectList> SelectListCategories()
         {
+            var categories = await _categoryService.ListCategoriesAsync();
+            return new SelectList(categories, "Id", "Name");
+        }
+
+        // GET: Product/Create
+        public async Task<ActionResult> Create()
+        {
+            ViewBag.Categories = await SelectListCategories();
             return View();
         }
 
@@ -100,7 +111,7 @@ namespace OSL.Inventory.B2.Web.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Id,Name,Description,ImageUrl,Limited,InStock,PricePerUnit,BasicUnit,CategoryName")] ProductDto entityDto)
+        public async Task<ActionResult> Create([Bind(Include = "Id,Name,Description,ImageUrl,Limited,InStock,PricePerUnit,BasicUnit,CategoryId")] ProductDto entityDto)
         {
             try
             {
@@ -110,7 +121,6 @@ namespace OSL.Inventory.B2.Web.Controllers
                 if (!ModelState.IsValid) return View(entityDto);
 
                 await _service.CreateProductServiceAsync(entityDto);
-
                 TempData["message"] = $"'{entityDto.Name}' has been created successfully!";
                 return RedirectToAction(nameof(Index));
             }

@@ -1,6 +1,5 @@
 ﻿using OSL.Inventory.B2.Service.DTOs;
 using OSL.Inventory.B2.Service.Extensions;
-using OSL.Inventory.B2.Service.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +7,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using OSL.Inventory.B2.Service.DTOs.Enums;
+using OSL.Inventory.B2.Service;
 
 namespace OSL.Inventory.B2.Web.Controllers
 {

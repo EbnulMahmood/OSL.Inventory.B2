@@ -70,10 +70,6 @@
     <Compile Include="BaseRepository.cs" />
     <Compile Include="CategoryRepository.cs" />
     <Compile Include="Data\InventoryDbContext.cs" />
-    <Compile Include="Interfaces\IBaseRepository.cs" />
-    <Compile Include="Interfaces\ICategoryRepository.cs" />
-    <Compile Include="Interfaces\IUnitOfWork.cs" />
-    <Compile Include="Interfaces\IProductRepository.cs" />
     <Compile Include="Migrations\202211020448002_InitialInventoryDbCreateUpdate_2.cs" />
     <Compile Include="Migrations\202211020448002_InitialInventoryDbCreateUpdate_2.designer.cs">
       <DependentUpon>202211020448002_InitialInventoryDbCreateUpdate_2.cs</DependentUpon>

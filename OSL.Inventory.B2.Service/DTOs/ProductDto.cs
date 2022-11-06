@@ -10,7 +10,9 @@ namespace OSL.Inventory.B2.Service.DTOs
         public string ImageUrl { get; set; } = string.Empty;
         public bool Limited { get; set; }
         public int InStock { get; set; }
+        public string InStockString { get; set; }
         public decimal PricePerUnit { get; set; }
+        public string PricePerUnitString { get; set; }
         public string BasicUnit { get; set; } = string.Empty;
         public long CategoryId { get; set; }
         public string CategoryName { get; set; } = string.Empty;

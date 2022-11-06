@@ -1,16 +1,24 @@
 ﻿using OSL.Inventory.B2.Entity;
 using OSL.Inventory.B2.Entity.Enums;
 using OSL.Inventory.B2.Repository.Data;
-using OSL.Inventory.B2.Repository.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Core.Objects;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace OSL.Inventory.B2.Repository
 {
+    public interface ICategoryRepository : IBaseRepository<Category>
+    {
+        Task<bool> SoftDeleteEntity(long id);
+        Task<(IEnumerable<Category>, int, int)> ListCategoriesWithSortingFilteringPagingAsync(int start, int length,
+            string order, string orderDir, string searchByName, Status filterByStatus = 0);
+        IQueryable<Category> ListCategoriesDropdown();
+    }
+
     public class CategoryRepository : BaseRepository<Category>, ICategoryRepository
     {
         private readonly InventoryDbContext _context;
@@ -20,6 +28,8 @@ namespace OSL.Inventory.B2.Repository
         {
             _context = context;
         }
+
+        public IQueryable<Category> ListCategoriesDropdown() { return _context.Categories; }
 
         // search by name
         private async Task<(IEnumerable<Category>, int)> SearchCategoriesByName(string name, int start, int length)

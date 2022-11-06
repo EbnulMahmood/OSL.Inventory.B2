@@ -6,10 +6,16 @@ using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
-using OSL.Inventory.B2.Repository.Interfaces;
 
 namespace OSL.Inventory.B2.Repository
 {
+    public interface IProductRepository : IBaseRepository<Product>
+    {
+        Task<(IEnumerable<Product>, int, int)> ListProductsWithSortingFilteringPagingAsync(int start, int length,
+            string order, string orderDir, string searchByName, string filterByCategory, Status filterByStatus = 0);
+        Task<bool> SoftDeleteEntity(long id);
+    }
+
     public class ProductRepository : BaseRepository<Product>, IProductRepository
     {
         private readonly InventoryDbContext _context;
@@ -26,6 +32,9 @@ namespace OSL.Inventory.B2.Repository
                 Id = product.Id,
                 Name = product.Name,
                 Status = product.Status,
+                InStock = product.InStock,
+                PricePerUnit = product.PricePerUnit,
+                BasicUnit = product.BasicUnit,
                 Category = product.Category,
             };
         }
@@ -62,6 +71,26 @@ namespace OSL.Inventory.B2.Repository
                     .Include(p => p.Category)
                     .Where(d => d.Status != Status.Deleted)
                     .Where(x => x.Status == status)
+                    .OrderByDescending(d => d.CreatedAt)
+                    .Skip(start).Take(length)
+                    .ToListAsync())
+                    .Select(product => SelectProduct(product));
+
+            return (entities, recordCount);
+        }
+
+        // filter by category
+        private async Task<(IEnumerable<Product>, int)> FilterProductsByCategory(long categoryId, int start, int length)
+        {
+            var recordCount = await _context.Products
+                .CountAsync(x => (x.Status != Status.Deleted) &&
+                    (x.CategoryId == categoryId)
+                );
+
+            var entities = (await _context.Products
+                    .Include(p => p.Category)
+                    .Where(d => d.Status != Status.Deleted)
+                    .Where(x => x.Category.Id == categoryId)
                     .OrderByDescending(d => d.CreatedAt)
                     .Skip(start).Take(length)
                     .ToListAsync())
@@ -109,6 +138,7 @@ namespace OSL.Inventory.B2.Repository
             return (entities, recordCount);
         }
 
+        #region Sorting
         // sort by order desc
         private IEnumerable<Product> SortByColumnWithOrder(string order, string orderDir, IEnumerable<Product> data)
         {
@@ -131,6 +161,26 @@ namespace OSL.Inventory.B2.Repository
                             .Select(product => SelectProduct(product));
                         break;
                     case "1":
+                        // Setting.   
+                        sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ?
+                            data.OrderByDescending(p => p.InStock)
+                            .ToList()
+                            .Select(product => SelectProduct(product)) :
+                            data.OrderBy(p => p.InStock)
+                            .ToList()
+                            .Select(product => SelectProduct(product));
+                        break;
+                    case "2":
+                        // Setting.   
+                        sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ?
+                            data.OrderByDescending(p => p.PricePerUnit)
+                            .ToList()
+                            .Select(product => SelectProduct(product)) :
+                            data.OrderBy(p => p.PricePerUnit)
+                            .ToList()
+                            .Select(product => SelectProduct(product));
+                        break;
+                    case "3":
                         // Setting.   
                         sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ?
                             data.OrderByDescending(p => p.Status)
@@ -160,28 +210,41 @@ namespace OSL.Inventory.B2.Repository
             // info.   
             return sortedEntities;
         }
+        #endregion
 
         public async Task<(IEnumerable<Product>, int, int)> ListProductsWithSortingFilteringPagingAsync(int start, int length,
-            string order, string orderDir, string searchByName, Status filterByStatus = 0)
+            string order, string orderDir, string searchByName, string filterByCategory, Status filterByStatus = 0)
         {
             // get total count of data in table
             int totalRecord = await _context.Products.CountAsync();
             // filter record counter
             int filterRecord = 0;
+            long categoryId = 0;
+            if (!string.IsNullOrEmpty(filterByCategory))
+            {
+                categoryId = long.Parse(filterByCategory);
+            }
 
             // Initialization.   
             IEnumerable<Product> listEntites = Enumerable.Empty<Product>();
 
-            if (string.IsNullOrEmpty(searchByName) && filterByStatus == 0)
+            if (string.IsNullOrEmpty(searchByName) && filterByStatus == 0 && categoryId == 0)
             {
                 var listEntitesTuple = await ListProductsWithPaginationAsync(start, length);
                 listEntites = listEntitesTuple.Item1;
                 filterRecord = listEntitesTuple.Item2;
             }
-            else if (filterByStatus == 0)
+            else if (filterByStatus == 0 && categoryId == 0)
             {
                 // search by Product name
                 var listEntitesTuple = await SearchProductsByName(searchByName, start, length);
+                listEntites = listEntitesTuple.Item1;
+                filterRecord = listEntitesTuple.Item2;
+            }
+            else if (filterByStatus == 0)
+            {
+                // search by Product category
+                var listEntitesTuple = await FilterProductsByCategory(categoryId, start, length);
                 listEntites = listEntitesTuple.Item1;
                 filterRecord = listEntitesTuple.Item2;
             }

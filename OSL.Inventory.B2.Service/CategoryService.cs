@@ -1,15 +1,27 @@
 ﻿using OSL.Inventory.B2.Entity.Enums;
-using OSL.Inventory.B2.Repository.Interfaces;
+using OSL.Inventory.B2.Repository;
 using OSL.Inventory.B2.Service.DTOs;
 using OSL.Inventory.B2.Service.DTOs.Enums;
 using OSL.Inventory.B2.Service.Extensions;
-using OSL.Inventory.B2.Service.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace OSL.Inventory.B2.Service
 {
+    public interface ICategoryService
+    {
+        IDictionary<string, string> ValidateCategoryDtoService(CategoryDto entityDto);
+        Task<(List<object>, int, int)> ListCategoriesWithSortingFilteringPagingServiceAsync(int start, int length,
+            string order, string orderDir, string searchByName, StatusDto filterByStatusDto = 0);
+        Task<IEnumerable<CategoryDto>> ListCategoriesAsync();
+        Task<CategoryDto> GetCategoryByIdServiceAsync(long? entityDtoToGetId);
+        Task<bool> CreateCategoryServiceAsync(CategoryDto entityDtoToCreate);
+        Task<bool> UpdateCategoryServiceAsync(CategoryDto entityDtoToUpdate);
+        Task<bool> DeleteCategoryByIdServiceAsync(long entityDtoToDeleteId);
+    }
+
     public sealed class CategoryService : ICategoryService
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -17,6 +29,23 @@ namespace OSL.Inventory.B2.Service
         public CategoryService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
+        }
+        #region SingleInstance
+        public async Task<CategoryDto> GetCategoryByIdServiceAsync(long? entityDtoToGetId)
+        {
+            try
+            {
+                var entity = await _unitOfWork.CategoryRepository.GetEntityByIdAsync(entityDtoToGetId);
+                if (entity == null) throw new Exception();
+
+                var entityDto = entity.ConvertToDto();
+                return entityDto;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         public IDictionary<string, string> ValidateCategoryDtoService(CategoryDto entityDto)
@@ -30,6 +59,28 @@ namespace OSL.Inventory.B2.Service
             if (entityDto.Description.Trim().Length == 0)
                 errors.Add("Description", "Description is required.");
             return errors;
+        }
+        #endregion
+
+        #region LoadInstance
+        public async Task<IEnumerable<CategoryDto>> ListCategoriesAsync()
+        {
+            try
+            {
+                var entities = await _unitOfWork.CategoryRepository.ListEntitiesAsync();
+
+                return from category in entities
+                                  select new CategoryDto
+                                  {
+                                      Id = category.Id,
+                                      Name = category.Name,
+                                  };
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         public async Task<(List<object>, int, int)> ListCategoriesWithSortingFilteringPagingServiceAsync(int start, int length,
@@ -65,24 +116,9 @@ namespace OSL.Inventory.B2.Service
                 throw;
             }
         }
+        #endregion
 
-        public async Task<CategoryDto> GetCategoryByIdServiceAsync(long? entityDtoToGetId)
-        {
-            try
-            {
-                var entity = await _unitOfWork.CategoryRepository.GetEntityByIdAsync(entityDtoToGetId);
-                if (entity == null) throw new Exception();
-
-                var entityDto = entity.ConvertToDto();
-                return entityDto;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-
+        #region Operations
         public async Task<bool> CreateCategoryServiceAsync(CategoryDto entityDtoToCreate)
         {
             try
@@ -134,5 +170,6 @@ namespace OSL.Inventory.B2.Service
                 throw;
             }
         }
+        #endregion
     }
 }

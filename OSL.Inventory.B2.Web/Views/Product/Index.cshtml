@@ -40,10 +40,24 @@
 }
 
 <div class="row p-2">
-    <div class="col-md-3 p-2">
+    <div class="col-md-2 p-2">
         <input class="form-control" type="text" id="search-by-name" placeholder="Search Name" />
     </div>
-    <div class="col-md-3 p-2">
+
+    <div class="col-md-2 p-2">
+        <select class="form-control" id="filter-by-category">
+            <option selected value="">Select Category</option>
+            @foreach(var item in ViewBag.Categories)
+            {
+                <option value="@item.Id">@item.Name</option>
+            }
+        </select>
+    </div>
+    @* <div class="col-md-2 p-2">
+        @Html.DropDownList("Categories", ViewBag.Categories as SelectList, "Select Category",
+            new { @class= "form-control", @id= "filter-by-category" })
+    </div> *@
+    <div class="col-md-2 p-2">
         <select class="form-control" id="filter-by-status">
             <option selected value="">Select Status</option>
             <option value="@StatusDto.Active">Active</option>
@@ -60,7 +74,9 @@
         <thead class="table-dark">
             <tr>
                 <th class="w-auto">Name</th>
-                <th class="w-25">Status</th>
+                <th class="w-auto">In Stock</th>
+                <th class="w-auto">Unit Price (৳)</th>
+                <th class="w-auto">Status</th>
                 <th class="w-25">Action</th>
             </tr>
         </thead>
@@ -78,6 +94,7 @@
             const filterSearchOptionsForProduct = () => {
                 return {
                     searchByName: "#search-by-name",
+                    filterByCategory: "#filter-by-category",
                     filterByStatus: "#filter-by-status",
                 }
             }

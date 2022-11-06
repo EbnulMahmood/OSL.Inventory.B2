@@ -121,8 +121,6 @@
     <Compile Include="Extensions\DtoConversions.cs" />
     <Compile Include="DependencyRegistry\AutofacModule.cs" />
     <Compile Include="Extensions\ModelExtensions.cs" />
-    <Compile Include="Interfaces\ICategoryService.cs" />
-    <Compile Include="Interfaces\IProductService.cs" />
     <Compile Include="ProductService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

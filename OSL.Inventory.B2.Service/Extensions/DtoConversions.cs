@@ -91,6 +91,8 @@ namespace OSL.Inventory.B2.Service.Extensions
                     select new ProductDto
                     {
                         Name = product.Name,
+                        InStockString = $"{product.InStock} {product.BasicUnit}",
+                        PricePerUnitString = product.PricePerUnit.ToString(),
                         StatusHtml = $"<span class='text text-{ConditionClassStatus((StatusDto)product.Status)}'>" +
                              $"{ConditionTextStatus((StatusDto)product.Status)}</span>",
                         ActionLinkHtml = ActionLinks("Product", product.Id),
