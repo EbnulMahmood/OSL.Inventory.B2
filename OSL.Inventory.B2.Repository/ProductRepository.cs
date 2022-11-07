@@ -6,6 +6,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
+using System.Xml.Linq;
 
 namespace OSL.Inventory.B2.Repository
 {
@@ -25,118 +26,10 @@ namespace OSL.Inventory.B2.Repository
             _context = context;
         }
 
-        private Product SelectProduct(Product product)
-        {
-            return new Product()
-            {
-                Id = product.Id,
-                Name = product.Name,
-                Status = product.Status,
-                InStock = product.InStock,
-                PricePerUnit = product.PricePerUnit,
-                BasicUnit = product.BasicUnit,
-                Category = product.Category,
-            };
-        }
+        #region SingleInstance
+        #endregion
 
-        // search by name
-        private async Task<(IEnumerable<Product>, int)> SearchProductsByName(string name, int start, int length)
-        {
-            var recordCount = await _context.Products
-                .CountAsync(x => (x.Status != Status.Deleted) &&
-                    (x.Name.ToLower().Contains(name.ToLower()))
-                );
-
-            var entities = (await _context.Products
-                    .Include(p => p.Category)
-                    .Where(d => d.Status != Status.Deleted)
-                    .Where(x => x.Name.ToLower().Contains(name.ToLower()))
-                    .OrderByDescending(d => d.CreatedAt)
-                    .Skip(start).Take(length)
-                    .ToListAsync())
-                    .Select(product => SelectProduct(product));
-
-            return (entities, recordCount);
-        }
-
-        // filter by status
-        private async Task<(IEnumerable<Product>, int)> FilterProductsByStatus(Status status, int start, int length)
-        {
-            var recordCount = await _context.Products
-                .CountAsync(x => (x.Status != Status.Deleted) &&
-                    (x.Status == status)
-                );
-
-            var entities = (await _context.Products
-                    .Include(p => p.Category)
-                    .Where(d => d.Status != Status.Deleted)
-                    .Where(x => x.Status == status)
-                    .OrderByDescending(d => d.CreatedAt)
-                    .Skip(start).Take(length)
-                    .ToListAsync())
-                    .Select(product => SelectProduct(product));
-
-            return (entities, recordCount);
-        }
-
-        // filter by category
-        private async Task<(IEnumerable<Product>, int)> FilterProductsByCategory(long categoryId, int start, int length)
-        {
-            var recordCount = await _context.Products
-                .CountAsync(x => (x.Status != Status.Deleted) &&
-                    (x.CategoryId == categoryId)
-                );
-
-            var entities = (await _context.Products
-                    .Include(p => p.Category)
-                    .Where(d => d.Status != Status.Deleted)
-                    .Where(x => x.Category.Id == categoryId)
-                    .OrderByDescending(d => d.CreatedAt)
-                    .Skip(start).Take(length)
-                    .ToListAsync())
-                    .Select(product => SelectProduct(product));
-
-            return (entities, recordCount);
-        }
-
-        // filter by status and name
-        private async Task<(IEnumerable<Product>, int)> ProductsByNameAndStatus(string name, Status status, int start, int length)
-        {
-            var recordCount = await _context.Products
-                .CountAsync(x => (x.Status != Status.Deleted) &&
-                    (x.Status == status) &&
-                    (x.Name.ToLower().Contains(name.ToLower()))
-                );
-
-            var entities = (await _context.Products
-                    .Include(p => p.Category)
-                    .Where(d => d.Status != Status.Deleted)
-                    .Where(x => x.Name.ToLower().Contains(name.ToLower()))
-                    .Where(x => x.Status == status)
-                    .OrderByDescending(d => d.CreatedAt)
-                    .Skip(start).Take(length)
-                    .ToListAsync())
-                    .Select(product => SelectProduct(product));
-
-            return (entities, recordCount);
-        }
-
-        // list with paging
-        private async Task<(IEnumerable<Product>, int)> ListProductsWithPaginationAsync(int start, int length)
-        {
-            // count records exclude deleted
-            var recordCount = await _context.Products.CountAsync(x => x.Status != Status.Deleted);
-
-            var entities = (await _context.Products
-                    .Include(p => p.Category)
-                    .Where(d => d.Status != Status.Deleted)
-                    .OrderByDescending(d => d.CreatedAt)
-                    .Skip(start).Take(length)
-                    .ToListAsync())
-                    .Select(product => SelectProduct(product));
-
-            return (entities, recordCount);
-        }
+        #region ListInstance
 
         #region Sorting
         // sort by order desc
@@ -212,62 +105,58 @@ namespace OSL.Inventory.B2.Repository
         }
         #endregion
 
+        private Product SelectProduct(Product product)
+        {
+            return new Product()
+            {
+                Id = product.Id,
+                Name = product.Name,
+                Status = product.Status,
+                InStock = product.InStock,
+                PricePerUnit = product.PricePerUnit,
+                BasicUnit = product.BasicUnit,
+                Category = product.Category,
+            };
+        }
+
         public async Task<(IEnumerable<Product>, int, int)> ListProductsWithSortingFilteringPagingAsync(int start, int length,
             string order, string orderDir, string searchByName, string filterByCategory, Status filterByStatus = 0)
         {
             // get total count of data in table
             int totalRecord = await _context.Products.CountAsync();
-            // filter record counter
-            int filterRecord = 0;
+
             long categoryId = 0;
             if (!string.IsNullOrEmpty(filterByCategory))
             {
                 categoryId = long.Parse(filterByCategory);
             }
 
-            // Initialization.   
-            IEnumerable<Product> listEntites = Enumerable.Empty<Product>();
+            var recordCount = await _context.Products.CountAsync(x =>
+                                                    (x.Status != Status.Deleted) &&
+                                                    (x.Name.ToLower().Contains(searchByName.ToLower()) || string.IsNullOrEmpty(searchByName)) &&
+                                                    (x.Status == filterByStatus || filterByStatus == 0) &&
+                                                    (x.CategoryId == categoryId || categoryId == 0));
 
-            if (string.IsNullOrEmpty(searchByName) && filterByStatus == 0 && categoryId == 0)
-            {
-                var listEntitesTuple = await ListProductsWithPaginationAsync(start, length);
-                listEntites = listEntitesTuple.Item1;
-                filterRecord = listEntitesTuple.Item2;
-            }
-            else if (filterByStatus == 0 && categoryId == 0)
-            {
-                // search by Product name
-                var listEntitesTuple = await SearchProductsByName(searchByName, start, length);
-                listEntites = listEntitesTuple.Item1;
-                filterRecord = listEntitesTuple.Item2;
-            }
-            else if (filterByStatus == 0)
-            {
-                // search by Product category
-                var listEntitesTuple = await FilterProductsByCategory(categoryId, start, length);
-                listEntites = listEntitesTuple.Item1;
-                filterRecord = listEntitesTuple.Item2;
-            }
-            else if (string.IsNullOrEmpty(searchByName))
-            {
-                // filter by status
-                var listEntitesTuple = await FilterProductsByStatus(filterByStatus, start, length);
-                listEntites = listEntitesTuple.Item1;
-                filterRecord = listEntitesTuple.Item2;
-            }
-            else
-            {
-                var listEntitesTuple = await ProductsByNameAndStatus(searchByName, filterByStatus, start, length);
-                listEntites = listEntitesTuple.Item1;
-                filterRecord = listEntitesTuple.Item2;
-            }
+            IEnumerable<Product> listEntites = (await _context.Products
+                                                .Include(p => p.Category)
+                                                .Where(x =>
+                                                    (x.Status != Status.Deleted) &&
+                                                    (x.Name.ToLower().Contains(searchByName.ToLower()) || string.IsNullOrEmpty(searchByName)) &&
+                                                    (x.Status == filterByStatus || filterByStatus == 0) &&
+                                                    (x.CategoryId == categoryId || categoryId == 0))
+                                                .OrderByDescending(d => d.CreatedAt)
+                                                .Skip(start).Take(length)
+                                                .ToListAsync())
+                                                .Select(product => SelectProduct(product));
 
             // Sorting 
             var result = SortByColumnWithOrder(order, orderDir, listEntites);
 
-            return (result, totalRecord, filterRecord);
+            return (result, totalRecord, recordCount);
         }
+        #endregion
 
+        #region Operations
         public async Task<bool> SoftDeleteEntity(long id)
         {
             try
@@ -286,5 +175,6 @@ namespace OSL.Inventory.B2.Repository
                 return false;
             }
         }
+        #endregion
     }
 }

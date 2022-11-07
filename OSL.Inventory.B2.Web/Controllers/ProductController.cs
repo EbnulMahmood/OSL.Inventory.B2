@@ -62,6 +62,16 @@ namespace OSL.Inventory.B2.Web.Controllers
             }
         }
 
+        [HttpGet, ActionName("CategoriesDropdown")]
+        public async Task<JsonResult> ListCategoriesDropdownAsync(string term)
+        {
+            Console.WriteLine("controller search key -> ", term);
+            var entities = await _service.ListCategoriesByNameServiceAsync(term);
+            var entitiesSelectList = new SelectList(entities, "Id", "Name");
+
+            return Json(new { data = entitiesSelectList }, JsonRequestBehavior.AllowGet);
+        }
+
         private IEnumerable<SelectListItem> FilterStatusDto()
         {
             return Enum.GetValues(typeof(StatusDto))

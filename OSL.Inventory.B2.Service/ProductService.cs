@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web.Mvc;
 
 namespace OSL.Inventory.B2.Service
 {
@@ -21,6 +20,7 @@ namespace OSL.Inventory.B2.Service
         Task<bool> UpdateProductServiceAsync(ProductDto entityDtoToUpdate);
         IDictionary<string, string> ValidateProductDtoService(ProductDto entityDto);
         List<CategoryDto> SelectCategoriesListItems();
+        Task<List<CategoryDto>> ListCategoriesByNameServiceAsync(string name);
     }
 
     public class ProductService : IProductService
@@ -31,6 +31,15 @@ namespace OSL.Inventory.B2.Service
         {
             _unitOfWork = unitOfWork;
         }
+
+        #region SingleInstance
+        #endregion
+
+        #region ListInstance
+        #endregion
+
+        #region Operations
+        #endregion
 
         public IDictionary<string, string> ValidateProductDtoService(ProductDto entityDto)
         {
@@ -43,6 +52,40 @@ namespace OSL.Inventory.B2.Service
             if (entityDto.Description.Trim().Length == 0)
                 errors.Add("Description", "Description is required.");
             return errors;
+        }
+
+        public async Task<List<CategoryDto>> ListCategoriesByNameServiceAsync(string name)
+        {
+            try
+            {
+                var entities = await _unitOfWork.CategoryRepository
+                                                   .ListCategoriesByNameAsync(name);
+                var entitiesDto = (from category in entities
+                                   select new CategoryDto()
+                                   {
+                                       Id = category.Id,
+                                       Name = category.Name
+                                   }).ToList();
+
+                
+                List<object> list = new List<object>();
+                foreach (var item in entitiesDto)
+                {
+                    List<string> dataItems = new List<string>
+                    {
+                        item.Id.ToString(),
+                        item.Name,
+                    };
+                    list.Add(dataItems);    
+                }
+
+                return entitiesDto;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         public List<CategoryDto> SelectCategoriesListItems()

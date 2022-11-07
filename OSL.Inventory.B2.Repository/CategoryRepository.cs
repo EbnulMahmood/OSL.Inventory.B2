@@ -17,6 +17,7 @@ namespace OSL.Inventory.B2.Repository
         Task<(IEnumerable<Category>, int, int)> ListCategoriesWithSortingFilteringPagingAsync(int start, int length,
             string order, string orderDir, string searchByName, Status filterByStatus = 0);
         IQueryable<Category> ListCategoriesDropdown();
+        Task<IEnumerable<Category>> ListCategoriesByNameAsync(string name);
     }
 
     public class CategoryRepository : BaseRepository<Category>, ICategoryRepository
@@ -29,103 +30,21 @@ namespace OSL.Inventory.B2.Repository
             _context = context;
         }
 
+        #region SingleInstance
+        #endregion
+
+        #region ListInstance
+        public async Task<IEnumerable<Category>> ListCategoriesByNameAsync(string name)
+        {
+            var entities = await _context.Categories
+                    .ToListAsync();
+            return entities;
+
+        }
+
         public IQueryable<Category> ListCategoriesDropdown() { return _context.Categories; }
 
-        // search by name
-        private async Task<(IEnumerable<Category>, int)> SearchCategoriesByName(string name, int start, int length)
-        {
-            var recordCount = await _context.Categories
-                .CountAsync(x => (x.Status != Status.Deleted) &&
-                    (x.Name.ToLower().Contains(name.ToLower()))
-                );
-
-            var entities = (await _context.Categories
-                    .Where(d => d.Status != Status.Deleted)
-                    .Where(x => x.Name.ToLower().Contains(name.ToLower()))
-                    .OrderByDescending(d => d.CreatedAt)
-                    .Skip(start).Take(length)
-                    .ToListAsync())
-                    .Select(c => new Category()
-                    {
-                        Id = c.Id,
-                        Name = c.Name,
-                        Status = c.Status,
-                    });
-
-            return (entities, recordCount);
-        }
-
-        // filter by status
-        private async Task<(IEnumerable<Category>, int)> FilterCategoriesByStatus(Status status, int start, int length)
-        {
-            var recordCount = await _context.Categories
-                .CountAsync(x => (x.Status != Status.Deleted) &&
-                    (x.Status == status)
-                );
-
-            var entities = (await _context.Categories
-                    .Where(d => d.Status != Status.Deleted)
-                    .Where(x => x.Status == status)
-                    .OrderByDescending(d => d.CreatedAt)
-                    .Skip(start).Take(length)
-                    .ToListAsync())
-                    .Select(c => new Category()
-                    {
-                        Id = c.Id,
-                        Name = c.Name,
-                        Status = c.Status,
-                    });
-
-            return (entities, recordCount);
-        }
-
-        // filter by status and name
-        private async Task<(IEnumerable<Category>, int)> CategoriesByNameAndStatus(string name, Status status, int start, int length)
-        {
-            var recordCount = await _context.Categories
-                .CountAsync(x => (x.Status != Status.Deleted) &&
-                    (x.Status == status) &&
-                    (x.Name.ToLower().Contains(name.ToLower()))
-                );
-
-            var entities = (await _context.Categories
-                    .Where(d => d.Status != Status.Deleted)
-                    .Where(x => x.Name.ToLower().Contains(name.ToLower()))
-                    .Where(x => x.Status == status)
-                    .OrderByDescending(d => d.CreatedAt)
-                    .Skip(start).Take(length)
-                    .ToListAsync())
-                    .Select(c => new Category()
-                    {
-                        Id = c.Id,
-                        Name = c.Name,
-                        Status = c.Status,
-                    });
-
-            return (entities, recordCount);
-        }
-
-        // list with paging
-        private async Task<(IEnumerable<Category>, int)> ListCategoriesWithPaginationAsync(int start, int length)
-        {
-            // count records exclude deleted
-            var recordCount = await _context.Categories.CountAsync(x => x.Status != Status.Deleted);
-
-            var entities = (await _context.Categories
-                    .Where(d => d.Status != Status.Deleted)
-                    .OrderByDescending(d => d.CreatedAt)
-                    .Skip(start).Take(length)
-                    .ToListAsync())
-                    .Select(c => new Category()
-                    {
-                        Id = c.Id,
-                        Name = c.Name,
-                        Status = c.Status,
-                    });
-
-            return (entities, recordCount);
-        }
-
+        #region Sorting
         // sort by order desc
         private IEnumerable<Category> SortByColumnWithOrder(string order, string orderDir, IEnumerable<Category> data)
         {
@@ -207,52 +126,50 @@ namespace OSL.Inventory.B2.Repository
             // info.   
             return sortedEntities;
         }
+        #endregion
+
+        private Category SelectCategory(Category category)
+        {
+            return new Category()
+            {
+                Id = category.Id,
+                Name = category.Name,
+                Status = category.Status,
+            };
+        }
 
         public async Task<(IEnumerable<Category>, int, int)> ListCategoriesWithSortingFilteringPagingAsync(int start, int length,
             string order, string orderDir, string searchByName, Status filterByStatus = 0)
         {
             // get total count of data in table
-            int totalRecord = await _context.Categories.CountAsync();
-            // filter record counter
-            int filterRecord = 0;
+            int totalRecord = await _context.Products.CountAsync();
 
-            // Initialization.   
-            IEnumerable<Category> listEntites = Enumerable.Empty<Category>();
+            var recordCount = await _context.Products.CountAsync(x =>
+                                                    (x.Status != Status.Deleted) &&
+                                                    (x.Name.ToLower().Contains(searchByName.ToLower()) || string.IsNullOrEmpty(searchByName)) &&
+                                                    (x.Status == filterByStatus || filterByStatus == 0));
 
-            if (string.IsNullOrEmpty(searchByName) && filterByStatus == 0)
-            {
-                var listEntitesTuple = await ListCategoriesWithPaginationAsync(start, length);
-                listEntites = listEntitesTuple.Item1;
-                filterRecord = listEntitesTuple.Item2;
-            }
-            else if (filterByStatus == 0)
-            {
-                // search by category name
-                var listEntitesTuple = await SearchCategoriesByName(searchByName, start, length);
-                listEntites = listEntitesTuple.Item1;
-                filterRecord = listEntitesTuple.Item2;
-            }
-            else if (string.IsNullOrEmpty(searchByName))
-            {
-                // filter by status
-                var listEntitesTuple = await FilterCategoriesByStatus(filterByStatus, start, length);
-                listEntites = listEntitesTuple.Item1;
-                filterRecord = listEntitesTuple.Item2;
-            }
-            else
-            {
-                var listEntitesTuple = await CategoriesByNameAndStatus(searchByName, filterByStatus, start, length);
-                listEntites = listEntitesTuple.Item1;
-                filterRecord = listEntitesTuple.Item2;
-            }
+            IEnumerable<Category> listEntites = (await _context.Categories
+                                                .Where(x =>
+                                                    (x.Status != Status.Deleted) &&
+                                                    (x.Name.ToLower().Contains(searchByName.ToLower()) || string.IsNullOrEmpty(searchByName)) &&
+                                                    (x.Status == filterByStatus || filterByStatus == 0))
+                                                .OrderByDescending(d => d.CreatedAt)
+                                                .Skip(start).Take(length)
+                                                .ToListAsync())
+                                                .Select(category => SelectCategory(category));
 
             // Sorting 
             var result = SortByColumnWithOrder(order, orderDir, listEntites);
 
-            return (result, totalRecord, filterRecord);
+            return (result, totalRecord, recordCount);
         }
 
+        #endregion
+
+        #region Operations
         public async Task<bool> SoftDeleteEntity(long id)
+        
         {
             try
             {
@@ -270,5 +187,7 @@ namespace OSL.Inventory.B2.Repository
                 return false;
             }
         }
+
+        #endregion
     }
 }
