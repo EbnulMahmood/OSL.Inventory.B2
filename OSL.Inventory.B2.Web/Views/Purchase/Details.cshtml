@@ -1,0 +1,66 @@
+﻿@model OSL.Inventory.B2.Service.DTOs.PurchaseDto
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>PurchaseDto</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Supplier.FirstName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Supplier.FirstName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PurchaseCode)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PurchaseCode)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PurchaseAmount)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PurchaseAmount)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PurchaseDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PurchaseDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PurchaseAmountPaid)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PurchaseAmountPaid)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AmountPaidTime)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AmountPaidTime)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

@@ -67,6 +67,72 @@
 
             products.ForEach(x => context.Products.AddOrUpdate(c => c.Id, x));
             context.SaveChanges();
+
+            var suppliers = new List<Supplier>
+            {
+                new Supplier { FirstName = "Rakib", LastName = "Khan", EmailAddress = "rakib@example.com", PhoneNumber = "019793979374", CreatedBy = 1, CreatedAt = DateTime.Now },
+                new Supplier { FirstName = "Shakib", LastName = "Khan", EmailAddress = "shakib@example.com", PhoneNumber = "019793979374", CreatedBy = 1, CreatedAt = DateTime.Now },
+                new Supplier { FirstName = "Arif", LastName = "Khan", EmailAddress = "arif@example.com", PhoneNumber = "019793979374", CreatedBy = 1, CreatedAt = DateTime.Now },
+            };
+
+            suppliers.ForEach(x => context.Suppliers.AddOrUpdate(c => c.Id, x));
+            context.SaveChanges();
+
+            var purchases = new List<Purchase>
+            {
+                new Purchase { SupplierId = 1, CreatedBy = 1, CreatedAt = DateTime.Now, PurchaseCode = "12345678834", PurchaseAmount = 20000, PurchaseDate = DateTime.Now, PurchaseAmountPaid = 20000, AmountPaidTime = DateTime.Now },
+                new Purchase { SupplierId = 2, CreatedBy = 1, CreatedAt = DateTime.Now, PurchaseCode = "23498254798", PurchaseAmount = 10000, PurchaseDate = DateTime.Now, PurchaseAmountPaid = 30000, AmountPaidTime = DateTime.Now },
+                new Purchase { SupplierId = 2, CreatedBy = 1, CreatedAt = DateTime.Now, PurchaseCode = "54645654477", PurchaseAmount = 30000, PurchaseDate = DateTime.Now, PurchaseAmountPaid = 50000, AmountPaidTime = DateTime.Now },
+                new Purchase { SupplierId = 2, CreatedBy = 1, CreatedAt = DateTime.Now, PurchaseCode = "23423242444", PurchaseAmount = 40000, PurchaseDate = DateTime.Now, PurchaseAmountPaid = 60000, AmountPaidTime = DateTime.Now },
+                new Purchase { SupplierId = 2, CreatedBy = 1, CreatedAt = DateTime.Now, PurchaseCode = "23424567756", PurchaseAmount = 50000, PurchaseDate = DateTime.Now, PurchaseAmountPaid = 60000, AmountPaidTime = DateTime.Now },
+                new Purchase { SupplierId = 2, CreatedBy = 1, CreatedAt = DateTime.Now, PurchaseCode = "32342323334", PurchaseAmount = 60000, PurchaseDate = DateTime.Now, PurchaseAmountPaid = 70000, AmountPaidTime = DateTime.Now },
+                new Purchase { SupplierId = 2, CreatedBy = 1, CreatedAt = DateTime.Now, PurchaseCode = "21324243435", PurchaseAmount = 70000, PurchaseDate = DateTime.Now, PurchaseAmountPaid = 780000, AmountPaidTime = DateTime.Now },
+                new Purchase { SupplierId = 1, CreatedBy = 1, CreatedAt = DateTime.Now, PurchaseCode = "56756767678", PurchaseAmount = 30000, PurchaseDate = DateTime.Now, PurchaseAmountPaid = 25000, AmountPaidTime = DateTime.Now },
+                new Purchase { SupplierId = 1, CreatedBy = 1, CreatedAt = DateTime.Now, PurchaseCode = "23423434545", PurchaseAmount = 30000, PurchaseDate = DateTime.Now, PurchaseAmountPaid = 20600, AmountPaidTime = DateTime.Now },
+                new Purchase { SupplierId = 3, CreatedBy = 1, CreatedAt = DateTime.Now, PurchaseCode = "54656778886", PurchaseAmount = 60000, PurchaseDate = DateTime.Now, PurchaseAmountPaid = 20600, AmountPaidTime = DateTime.Now },
+                new Purchase { SupplierId = 3, CreatedBy = 1, CreatedAt = DateTime.Now, PurchaseCode = "22423435345", PurchaseAmount = 70000, PurchaseDate = DateTime.Now, PurchaseAmountPaid = 20600, AmountPaidTime = DateTime.Now },
+                new Purchase { SupplierId = 3, CreatedBy = 1, CreatedAt = DateTime.Now, PurchaseCode = "23137888887", PurchaseAmount = 250000, PurchaseDate = DateTime.Now, PurchaseAmountPaid = 26000, AmountPaidTime = DateTime.Now },
+                new Purchase { SupplierId = 1, CreatedBy = 1, CreatedAt = DateTime.Now, PurchaseCode = "43356532233", PurchaseAmount = 20600, PurchaseDate = DateTime.Now, PurchaseAmountPaid = 20060, AmountPaidTime = DateTime.Now },
+                new Purchase { SupplierId = 1, CreatedBy = 1, CreatedAt = DateTime.Now, PurchaseCode = "45656567774", PurchaseAmount = 2700, PurchaseDate = DateTime.Now, PurchaseAmountPaid = 20070, AmountPaidTime = DateTime.Now },
+                new Purchase { SupplierId = 1, CreatedBy = 1, CreatedAt = DateTime.Now, PurchaseCode = "33535454545", PurchaseAmount = 60000, PurchaseDate = DateTime.Now, PurchaseAmountPaid = 20700, AmountPaidTime = DateTime.Now },
+                new Purchase { SupplierId = 1, CreatedBy = 1, CreatedAt = DateTime.Now, PurchaseCode = "34577566756", PurchaseAmount = 28000, PurchaseDate = DateTime.Now, PurchaseAmountPaid = 20700, AmountPaidTime = DateTime.Now },
+                new Purchase { SupplierId = 1, CreatedBy = 1, CreatedAt = DateTime.Now, PurchaseCode = "54656456456", PurchaseAmount = 28000, PurchaseDate = DateTime.Now, PurchaseAmountPaid = 20300, AmountPaidTime = DateTime.Now },
+                new Purchase { SupplierId = 2, CreatedBy = 1, CreatedAt = DateTime.Now, PurchaseCode = "56767676322", PurchaseAmount = 23000, PurchaseDate = DateTime.Now, PurchaseAmountPaid = 203400, AmountPaidTime = DateTime.Now },
+                new Purchase { SupplierId = 2, CreatedBy = 1, CreatedAt = DateTime.Now, PurchaseCode = "54545676878", PurchaseAmount = 26000, PurchaseDate = DateTime.Now, PurchaseAmountPaid = 200300, AmountPaidTime = DateTime.Now },
+            };
+
+            purchases.ForEach(x => context.Purchases.AddOrUpdate(c => c.Id, x));
+            context.SaveChanges();
+
+            var purchaseDetails = new List<PurchaseDetail>
+            {
+                new PurchaseDetail { QuantityPurchased = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 1, PurchaseId = 1 },
+                new PurchaseDetail { QuantityPurchased = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 2, PurchaseId = 1 },
+                new PurchaseDetail { QuantityPurchased = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 3, PurchaseId = 1 },
+                new PurchaseDetail { QuantityPurchased = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 4, PurchaseId = 1 },
+                new PurchaseDetail { QuantityPurchased = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 5, PurchaseId = 1 },
+                new PurchaseDetail { QuantityPurchased = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 1, PurchaseId = 2 },
+                new PurchaseDetail { QuantityPurchased = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 1, PurchaseId = 3 },
+                new PurchaseDetail { QuantityPurchased = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 1, PurchaseId = 4 },
+                new PurchaseDetail { QuantityPurchased = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 1, PurchaseId = 5 },
+                new PurchaseDetail { QuantityPurchased = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 1, PurchaseId = 6 },
+                new PurchaseDetail { QuantityPurchased = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 1, PurchaseId = 7 },
+                new PurchaseDetail { QuantityPurchased = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 1, PurchaseId = 8 },
+                new PurchaseDetail { QuantityPurchased = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 1, PurchaseId = 8 },
+                new PurchaseDetail { QuantityPurchased = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 1, PurchaseId = 10 },
+                new PurchaseDetail { QuantityPurchased = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 1, PurchaseId = 11 },
+                new PurchaseDetail { QuantityPurchased = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 1, PurchaseId = 12 },
+                new PurchaseDetail { QuantityPurchased = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 1, PurchaseId = 13 },
+                new PurchaseDetail { QuantityPurchased = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 1, PurchaseId = 14 },
+                new PurchaseDetail { QuantityPurchased = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 1, PurchaseId = 15 },
+                new PurchaseDetail { QuantityPurchased = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 1, PurchaseId = 16 },
+                new PurchaseDetail { QuantityPurchased = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 1, PurchaseId = 17 },
+                new PurchaseDetail { QuantityPurchased = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 1, PurchaseId = 18 },
+                new PurchaseDetail { QuantityPurchased = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 1, PurchaseId = 19 },
+            };
+
+            purchaseDetails.ForEach(x => context.PurchaseDetails.AddOrUpdate(c => c.Id, x));
+            context.SaveChanges();
         }
     }
 }

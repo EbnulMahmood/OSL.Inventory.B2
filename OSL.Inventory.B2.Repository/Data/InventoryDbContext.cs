@@ -14,6 +14,9 @@ namespace OSL.Inventory.B2.Repository.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<Supplier> Suppliers { get; set; }
+        public DbSet<Purchase> Purchases { get; set; }
+        public DbSet<PurchaseDetail> PurchaseDetails { get; set; }
 
         public override int SaveChanges()
         {
@@ -59,6 +62,19 @@ namespace OSL.Inventory.B2.Repository.Data
             builder.Entity<Product>().Property(x => x.Description).HasMaxLength(500);
             builder.Entity<Product>().Property(x => x.ImageUrl).HasMaxLength(255);
             builder.Entity<Product>().Property(x => x.BasicUnit).HasMaxLength(50);
+
+            // suppliers constraints
+            builder.Entity<Supplier>().Property(c => c.FirstName).HasMaxLength(255);
+            builder.Entity<Supplier>().Property(c => c.LastName).HasMaxLength(255);
+            builder.Entity<Supplier>().Property(c => c.EmailAddress).HasMaxLength(50);
+            builder.Entity<Supplier>().Property(c => c.PhoneNumber).HasMaxLength(30);
+            builder.Entity<Supplier>().Property(c => c.Country).HasMaxLength(50);
+            builder.Entity<Supplier>().Property(c => c.City).HasMaxLength(80);
+            builder.Entity<Supplier>().Property(c => c.State).HasMaxLength(80);
+            builder.Entity<Supplier>().Property(c => c.ZipCode).HasMaxLength(20);
+
+            // Purchases constraints
+            builder.Entity<Purchase>().Property(c => c.PurchaseCode).HasMaxLength(255);
         }
     }
 }

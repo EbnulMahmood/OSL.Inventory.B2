@@ -13,6 +13,6 @@ namespace OSL.Inventory.B2.Entity
         public decimal PricePerUnit { get; set; }
         public string BasicUnit { get; set; } = string.Empty;
         public long CategoryId { get; set; }
-        public Category Category { get; set; }
+        public virtual Category Category { get; set; }
     }
 }

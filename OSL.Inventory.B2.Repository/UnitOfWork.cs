@@ -8,6 +8,7 @@ namespace OSL.Inventory.B2.Repository
     {
         ICategoryRepository CategoryRepository { get; }
         IProductRepository ProductRepository { get; }
+        IPurchaseRepository PurchaseRepository { get; }
 
         void Dispose();
         Task<bool> SaveAsync();
@@ -21,6 +22,7 @@ namespace OSL.Inventory.B2.Repository
         public ICategoryRepository CategoryRepository { get; private set; }
 
         public IProductRepository ProductRepository { get; private set; }
+        public IPurchaseRepository PurchaseRepository { get; private set; }
 
         public UnitOfWork(InventoryDbContext context)
         {
@@ -28,6 +30,7 @@ namespace OSL.Inventory.B2.Repository
 
             CategoryRepository = new CategoryRepository(context);
             ProductRepository = new ProductRepository(context);
+            PurchaseRepository = new PurchaseRepository(context);
         }
 
         public async Task<bool> SaveAsync()

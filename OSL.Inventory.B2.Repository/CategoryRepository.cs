@@ -143,7 +143,7 @@ namespace OSL.Inventory.B2.Repository
         {
             // get total count of data in table
             int totalRecord = await _context.Products.CountAsync();
-
+            // get filtered count
             var recordCount = await _context.Products.CountAsync(x =>
                                                     (x.Status != Status.Deleted) &&
                                                     (x.Name.ToLower().Contains(searchByName.ToLower()) || string.IsNullOrEmpty(searchByName)) &&
