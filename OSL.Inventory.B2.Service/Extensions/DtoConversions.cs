@@ -99,6 +99,21 @@ namespace OSL.Inventory.B2.Service.Extensions
                     }).ToList();
         }
 
+        // purchase
+        public static IEnumerable<PurchaseDto> ConvertToDto(this IEnumerable<Purchase> purchases)
+        {
+            return (from purchase in purchases
+                    select new PurchaseDto
+                    {
+                        PurchaseCode = purchase.PurchaseCode,
+                        PurchaseAmount = purchase.PurchaseAmount,
+                        PurchaseDate = purchase.PurchaseDate,
+                        StatusHtml = $"<span class='text text-{ConditionClassStatus((StatusDto)purchase.Status)}'>" +
+                             $"{ConditionTextStatus((StatusDto)purchase.Status)}</span>",
+                        ActionLinkHtml = ActionLinks("Purchase", purchase.Id),
+                    }).ToList();
+        }
+
         public static ProductDto ConvertToDto(this Product product)
         {
             return new ProductDto

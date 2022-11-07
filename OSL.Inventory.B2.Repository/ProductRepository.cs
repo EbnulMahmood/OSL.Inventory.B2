@@ -16,7 +16,7 @@ namespace OSL.Inventory.B2.Repository
             string order, string orderDir, string searchByName, string filterByCategory, Status filterByStatus = 0);
         Task<bool> SoftDeleteEntity(long id);
     }
-
+     
     public class ProductRepository : BaseRepository<Product>, IProductRepository
     {
         private readonly InventoryDbContext _context;

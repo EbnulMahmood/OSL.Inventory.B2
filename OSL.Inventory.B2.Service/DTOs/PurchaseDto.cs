@@ -12,6 +12,8 @@ namespace OSL.Inventory.B2.Service.DTOs
         public DateTime PurchaseDate { get; set; }
         public decimal PurchaseAmountPaid { get; set; }
         public DateTime AmountPaidTime { get; set; }
+        public string ActionLinkHtml { get; set; } = string.Empty;
+        public string StatusHtml { get; set; } = string.Empty;
         public long SupplierId { get; set; }
         public virtual SupplierDto Supplier { get; set; }
         public virtual ICollection<PurchaseDetailDto> purchaseDetailsDto { get; set; }

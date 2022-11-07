@@ -1,63 +1,155 @@
 ﻿@model IEnumerable<OSL.Inventory.B2.Service.DTOs.PurchaseDto>
+@using OSL.Inventory.B2.Service.DTOs.Enums
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Purchases";
 }
 
-<h2>Index</h2>
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Purchases</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar align-text-bottom" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            This week
+        </button>
+    </div>
+</div>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Supplier.FirstName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.PurchaseCode)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.PurchaseAmount)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.PurchaseDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.PurchaseAmountPaid)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.AmountPaidTime)
-        </th>
-        <th></th>
-    </tr>
+<!-- modal palaceholder -->
+<div id="modal-placeholder-purchase"></div>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Supplier.FirstName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.PurchaseCode)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.PurchaseAmount)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.PurchaseDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.PurchaseAmountPaid)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.AmountPaidTime)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
+<div class="col-12">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            @Html.ActionLink("Home", "Index", "Home", new { area = "Home" }, new { @class = "breadcrumb-item" })
+            <li class="breadcrumb-item active" aria-current="page">Purchases</li>
+        </ol>
+    </nav>
+</div>
+
+@if (TempData["message"] != null)
+{
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+        @TempData["message"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
 }
 
-</table>
+<div class="row p-2">
+    <div class="col-md-2 p-2">
+        <input class="form-control" type="text" id="search-by-PurchaseCode" placeholder="Search Name" />
+    </div>
+    <div class="col-md-2 p-2">
+        <input class="form-control" type="date" id="date-From" name="trip-start" value="" >
+    </div>
+    <div class="col-md-2 p-2">
+        <input class="form-control" type="date" id="date-To" name="trip-start" value="" >
+    </div>
+
+    @* <div class="col-md-2 p-2">
+            <select class="form-control" id="filter-by-category">
+                <option selected value="">Select Category</option>
+                @foreach (var item in ViewBag.Categories)
+                {
+                    <option value="@item.Id">@item.Name</option>
+                }
+            </select>
+        </div> *@
+
+    @* <div class="form-group">
+            <label class="form-label mt-4">Category</label>
+            <input id="selectCategory" class="form-control" />
+        </div> *@
+
+    @* <div class="col-md-2 p-2">
+            @Html.DropDownList("Categories", ViewBag.Categories as SelectList, "Select Category",
+                new { @class= "form-control", @id= "filter-by-category" })
+        </div> *@
+    <div class="col-md-2 p-2">
+        <select class="form-control" id="filter-by-status">
+            <option selected value="">Select Status</option>
+            <option value="@StatusDto.Active">Active</option>
+            <option value="@StatusDto.Inactive">Inactive</option>
+        </select>
+    </div>
+    <div class="col p-2 text-end">
+        @Html.ActionLink("Create New", "Create", "Purchase", new { @class = "btn btn-primary text-end" })
+    </div>
+</div>
+
+<div class=" table-responsive">
+    <table id="purchaseDatatable" class=" pt-2 table table-condensed table-striped border-dark">
+        <thead class="table-dark">
+            <tr>
+                <th class="w-auto">Code</th>
+                <th class="w-auto">Amount (৳)</th>
+                <th class="w-auto">Purchase Date</th>
+                <th class="w-auto">Status</th>
+                <th class="w-25">Action</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+@section scripts {
+    <script src="//cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+    <script src="~/Scripts/js/datatable.js"></script>
+    <script src="~/Scripts/js/modal.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            // datatable
+            const filterSearchOptionsForPurchase = () => {
+                return {
+                    searchByPurchaseCode: "#search-by-PurchaseCode",
+                    dateFrom: "#date-From",
+                    dateTo: "#date-To",
+                    filterByStatus: "#filter-by-status",
+                }
+            }
+            const purchaseDatatableId = '#purchaseDatatable';
+            const purchaseIndexUrl = 'Purchase/Index';
+
+            DataTable(purchaseDatatableId, purchaseIndexUrl,
+                filterSearchOptionsForPurchase);
+
+            // modal
+            const url = 'Purchase/Delete';
+            const idElement = 'data-purchase-id';
+            const placeHolderId = '#modal-placeholder-purchase';
+            const btnDeleteClass = '.btn-purchase-delete';
+            Modal(url, idElement, placeHolderId, btnDeleteClass);
+
+            /*
+            // search category select2
+            $('#selectCategory').select2({
+                placeholder: '--Select Category--',
+                ajax: {
+                    type: "GET",
+                    dataType: 'json',
+                    url: '/Purchase/CategoriesDropdown',
+                    processResults: function (data) {
+                        return {
+                            results: $.map(data.data, function (item) {
+                                return {
+                                    text: item.Text,
+                                    id: item.Value,
+                                }
+                            })
+                        }
+                    }
+                    // Additional AJAX parameters go here; see the end of this chapter for the full code of this example
+                }
+            });
+            */
+        });
+    </script>
+
+    @Scripts.Render("~/bundles/jqueryval")
+}

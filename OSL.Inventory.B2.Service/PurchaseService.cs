@@ -1,19 +1,24 @@
-﻿using OSL.Inventory.B2.Entity.Enums;
-using OSL.Inventory.B2.Repository;
-using OSL.Inventory.B2.Service.DTOs.Enums;
+﻿using OSL.Inventory.B2.Repository;
 using OSL.Inventory.B2.Service.DTOs;
-using OSL.Inventory.B2.Service.Extensions;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using System;
 using OSL.Inventory.B2.Entity;
+using OSL.Inventory.B2.Entity.Enums;
+using System.Collections.Generic;
+using OSL.Inventory.B2.Service.DTOs.Enums;
+using OSL.Inventory.B2.Service.Extensions;
+using Humanizer;
 
 namespace OSL.Inventory.B2.Service
 {
     public interface IPurchaseService
     {
-
+        Task<(List<object>, int, int)> ListPurchasesWithSortingFilteringPagingServiceAsync(int start, int length,
+            string order, string orderDir, string searchByPurchaseCode, Nullable<DateTime> dateFrom, Nullable<DateTime> dateTo,
+            StatusDto filterByStatusDto = 0);
+        Task<bool> CreatePurchaseServiceAsync(PurchaseDto entityDtoToCreate);
+        Task<PurchaseDto> GetPurchaseByIdServiceAsync(long? entityDtoToGetId);
+        Task<bool> UpdatePurchaseServiceAsync(PurchaseDto entityDtoToUpdate);
     }
 
     public class PurchaseService : IPurchaseService
@@ -26,14 +31,6 @@ namespace OSL.Inventory.B2.Service
         }
 
         #region SingleInstance
-        #endregion
-
-        #region ListInstance
-        #endregion
-
-        #region Operations
-        #endregion
-
         public async Task<PurchaseDto> GetPurchaseByIdServiceAsync(long? entityDtoToGetId)
         {
             try
@@ -59,6 +56,48 @@ namespace OSL.Inventory.B2.Service
                 throw;
             }
         }
+        #endregion
+
+        #region ListInstance
+        public async Task<(List<object>, int, int)> ListPurchasesWithSortingFilteringPagingServiceAsync(int start, int length,
+            string order, string orderDir, string searchByPurchaseCode, Nullable<DateTime> dateFrom, Nullable<DateTime> dateTo,
+            StatusDto filterByStatusDto = 0)
+        {
+            try
+            {
+                var listPurchasesTuple = await _unitOfWork.PurchaseRepository.ListPurchasesWithSortingFilteringPagingAsync(start, length,
+                    order, orderDir, searchByPurchaseCode, dateFrom, dateTo, (Status)filterByStatusDto);
+
+                int totalRecord = listPurchasesTuple.Item2;
+                int filterRecord = listPurchasesTuple.Item3;
+                var listPurchasesDto = listPurchasesTuple.Item1.ConvertToDto();
+
+                List<object> entitiesList = new List<object>();
+                foreach (var item in listPurchasesDto)
+                {
+                    List<string> dataItems = new List<string>
+                    {
+                        item.PurchaseCode,
+                        item.PurchaseAmount.ToString(),
+                        item.PurchaseDate.ToUniversalTime().Humanize(),
+                        item.StatusHtml,
+                        item.ActionLinkHtml
+                    };
+
+                    entitiesList.Add(dataItems);
+                }
+
+                return (entitiesList, totalRecord, filterRecord);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        #endregion
+
+        #region Operations
 
         public async Task<bool> CreatePurchaseServiceAsync(PurchaseDto entityDtoToCreate)
         {
@@ -73,9 +112,9 @@ namespace OSL.Inventory.B2.Service
                     PurchaseAmountPaid = entityDtoToCreate.PurchaseAmountPaid,
                     AmountPaidTime = entityDtoToCreate.AmountPaidTime,
                     SupplierId = entityDtoToCreate.SupplierId,
+                    CreatedAt = DateTime.Now,
+                    CreatedBy = 1
                 };
-                entity.CreatedAt = DateTime.Now;
-                entity.CreatedBy = 1;
 
                 if (!_unitOfWork.PurchaseRepository.CreateEntity(entity)) throw new Exception();
 
@@ -101,9 +140,9 @@ namespace OSL.Inventory.B2.Service
                     PurchaseAmountPaid = entityDtoToUpdate.PurchaseAmountPaid,
                     AmountPaidTime = entityDtoToUpdate.AmountPaidTime,
                     SupplierId = entityDtoToUpdate.SupplierId,
+                    ModifiedAt = DateTime.Now,
+                    ModifiedBy = 2
                 };
-                entity.ModifiedAt = DateTime.Now;
-                entity.ModifiedBy = 2;
 
                 if (!_unitOfWork.PurchaseRepository.UpdateEntity(entity)) throw new Exception();
 
@@ -115,5 +154,6 @@ namespace OSL.Inventory.B2.Service
                 throw;
             }
         }
+        #endregion
     }
 }

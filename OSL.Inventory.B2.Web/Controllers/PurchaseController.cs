@@ -1,26 +1,60 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
-using OSL.Inventory.B2.Repository.Data;
 using OSL.Inventory.B2.Service.DTOs;
+using OSL.Inventory.B2.Service;
+using OSL.Inventory.B2.Service.DTOs.Enums;
+using System.Collections.Generic;
+using System;
 
 namespace OSL.Inventory.B2.Web.Controllers
 {
     public class PurchaseController : Controller
     {
-        private InventoryDbContext db = new InventoryDbContext();
+        private readonly IPurchaseService _service;
+
+        public PurchaseController(IPurchaseService service)
+        {
+            _service = service;
+        }
 
         // GET: Purchase
-        public async Task<ActionResult> Index()
+        public ActionResult Index()
         {
-            var purchaseDtoes = db.PurchaseDtoes.Include(p => p.Supplier);
-            return View(await purchaseDtoes.ToListAsync());
+            return View();
+        }
+
+        [HttpPost, ActionName("Index")]
+        public async Task<JsonResult> ListPurchasesAsync(int draw, int start, int length,
+            string searchByPurchaseCode, Nullable<DateTime> dateFrom, Nullable<DateTime> dateTo,
+            StatusDto filterByStatus = 0)
+        {
+            try
+            {
+                string order = Request.Form.GetValues("order[0][column]")[0];
+                string orderDir = Request.Form.GetValues("order[0][dir]")[0];
+
+                var listPurchasesTuple = await _service
+                    .ListPurchasesWithSortingFilteringPagingServiceAsync(start, length,
+                    order, orderDir, searchByPurchaseCode, dateFrom, dateTo, filterByStatus);
+
+                int totalRecord = listPurchasesTuple.Item2;
+                int filterRecord = listPurchasesTuple.Item3;
+                List<object> listPurchases = listPurchasesTuple.Item1;
+
+                return Json(new
+                {
+                    draw,
+                    recordsTotal = totalRecord,
+                    recordsFiltered = filterRecord,
+                    data = listPurchases
+                });
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         // GET: Purchase/Details/5
@@ -30,18 +64,18 @@ namespace OSL.Inventory.B2.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            PurchaseDto purchaseDto = await db.PurchaseDtoes.FindAsync(id);
-            if (purchaseDto == null)
+            var entityDto = await _service.GetPurchaseByIdServiceAsync(id);
+            if (entityDto == null)
             {
                 return HttpNotFound();
             }
-            return View(purchaseDto);
+            return View(entityDto);
         }
 
         // GET: Purchase/Create
         public ActionResult Create()
         {
-            ViewBag.SupplierId = new SelectList(db.SupplierDtoes, "Id", "FirstName");
+            ViewBag.SupplierId = 1;
             return View();
         }
 
@@ -54,12 +88,11 @@ namespace OSL.Inventory.B2.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.PurchaseDtoes.Add(purchaseDto);
-                await db.SaveChangesAsync();
+                await _service.CreatePurchaseServiceAsync(purchaseDto);
                 return RedirectToAction("Index");
             }
 
-            ViewBag.SupplierId = new SelectList(db.SupplierDtoes, "Id", "FirstName", purchaseDto.SupplierId);
+            // ViewBag.SupplierId = new SelectList(db.SupplierDtoes, "Id", "FirstName", purchaseDto.SupplierId);
             return View(purchaseDto);
         }
 
@@ -70,13 +103,13 @@ namespace OSL.Inventory.B2.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            PurchaseDto purchaseDto = await db.PurchaseDtoes.FindAsync(id);
-            if (purchaseDto == null)
+            var entityDto = await _service.GetPurchaseByIdServiceAsync(id);
+            if (entityDto == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.SupplierId = new SelectList(db.SupplierDtoes, "Id", "FirstName", purchaseDto.SupplierId);
-            return View(purchaseDto);
+            // ViewBag.SupplierId = new SelectList(db.SupplierDtoes, "Id", "FirstName", purchaseDto.SupplierId);
+            return View(entityDto);
         }
 
         // POST: Purchase/Edit/5
@@ -88,47 +121,11 @@ namespace OSL.Inventory.B2.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(purchaseDto).State = EntityState.Modified;
-                await db.SaveChangesAsync();
+                await _service.UpdatePurchaseServiceAsync(purchaseDto);
                 return RedirectToAction("Index");
             }
-            ViewBag.SupplierId = new SelectList(db.SupplierDtoes, "Id", "FirstName", purchaseDto.SupplierId);
+            // ViewBag.SupplierId = new SelectList(db.SupplierDtoes, "Id", "FirstName", purchaseDto.SupplierId);
             return View(purchaseDto);
-        }
-
-        // GET: Purchase/Delete/5
-        public async Task<ActionResult> Delete(long? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            PurchaseDto purchaseDto = await db.PurchaseDtoes.FindAsync(id);
-            if (purchaseDto == null)
-            {
-                return HttpNotFound();
-            }
-            return View(purchaseDto);
-        }
-
-        // POST: Purchase/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeleteConfirmed(long id)
-        {
-            PurchaseDto purchaseDto = await db.PurchaseDtoes.FindAsync(id);
-            db.PurchaseDtoes.Remove(purchaseDto);
-            await db.SaveChangesAsync();
-            return RedirectToAction("Index");
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
         }
     }
 }
