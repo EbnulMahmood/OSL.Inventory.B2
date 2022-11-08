@@ -99,23 +99,6 @@ namespace OSL.Inventory.B2.Service.Extensions
                     }).ToList();
         }
 
-        // purchase
-        public static IEnumerable<PurchaseDto> ConvertToDto(this IEnumerable<Purchase> purchases)
-        {
-            return (from purchase in purchases
-                    select new PurchaseDto
-                    {
-                        PurchaseCode = purchase.PurchaseCode,
-                        PurchaseAmount = purchase.PurchaseAmount,
-                        PurchaseDate = purchase.PurchaseDate,
-                        PurchaseAmountPaid = purchase.PurchaseAmountPaid,
-                        AmountPaidTime = purchase.AmountPaidTime,
-                        StatusHtml = $"<span class='text text-{ConditionClassStatus((StatusDto)purchase.Status)}'>" +
-                             $"{ConditionTextStatus((StatusDto)purchase.Status)}</span>",
-                        ActionLinkHtml = ActionLinks("Purchase", purchase.Id),
-                    }).ToList();
-        }
-
         public static ProductDto ConvertToDto(this Product product)
         {
             return new ProductDto
@@ -155,6 +138,40 @@ namespace OSL.Inventory.B2.Service.Extensions
                 CreatedBy = productDto.CreatedBy,
                 ModifiedBy = productDto.ModifiedBy,
             };
+        }
+
+        // purchase
+        public static IEnumerable<PurchaseDto> ConvertToDto(this IEnumerable<Purchase> purchases)
+        {
+            return (from purchase in purchases
+                    select new PurchaseDto
+                    {
+                        PurchaseCode = purchase.PurchaseCode,
+                        PurchaseAmount = purchase.PurchaseAmount,
+                        PurchaseDate = purchase.PurchaseDate,
+                        PurchaseAmountPaid = purchase.PurchaseAmountPaid,
+                        AmountPaidTime = purchase.AmountPaidTime,
+                        StatusHtml = $"<span class='text text-{ConditionClassStatus((StatusDto)purchase.Status)}'>" +
+                             $"{ConditionTextStatus((StatusDto)purchase.Status)}</span>",
+                        ActionLinkHtml = ActionLinks("Purchase", purchase.Id),
+                    }).ToList();
+        }
+        
+        // sale
+        public static IEnumerable<SaleDto> ConvertToDto(this IEnumerable<Sale> sales)
+        {
+            return (from sale in sales
+                    select new SaleDto
+                    {
+                        SaleCode = sale.SaleCode,
+                        SaleAmount = sale.SaleAmount,
+                        SaleDate = sale.SaleDate,
+                        SaleAmountPaid = sale.SaleAmountPaid,
+                        AmountPaidTime = sale.AmountPaidTime,
+                        StatusHtml = $"<span class='text text-{ConditionClassStatus((StatusDto)sale.Status)}'>" +
+                             $"{ConditionTextStatus((StatusDto)sale.Status)}</span>",
+                        ActionLinkHtml = ActionLinks("Sale", sale.Id),
+                    }).ToList();
         }
     }
 }

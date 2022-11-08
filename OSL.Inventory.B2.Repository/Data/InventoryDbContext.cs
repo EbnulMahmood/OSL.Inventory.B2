@@ -92,5 +92,9 @@ namespace OSL.Inventory.B2.Repository.Data
             // Sales constraints
             builder.Entity<Sale>().Property(c => c.SaleCode).HasMaxLength(255);
         }
+
+        public System.Data.Entity.DbSet<OSL.Inventory.B2.Service.DTOs.SaleDto> SaleDtoes { get; set; }
+
+        public System.Data.Entity.DbSet<OSL.Inventory.B2.Service.DTOs.CustomerDto> CustomerDtoes { get; set; }
     }
 }

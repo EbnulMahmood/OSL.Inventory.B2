@@ -205,6 +205,7 @@
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\PurchaseController.cs" />
+    <Compile Include="Controllers\SaleController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -305,6 +306,11 @@
     <Content Include="Views\Purchase\Details.cshtml" />
     <Content Include="Views\Purchase\Edit.cshtml" />
     <Content Include="Views\Purchase\Index.cshtml" />
+    <Content Include="Views\Sale\Create.cshtml" />
+    <Content Include="Views\Sale\Delete.cshtml" />
+    <Content Include="Views\Sale\Details.cshtml" />
+    <Content Include="Views\Sale\Edit.cshtml" />
+    <Content Include="Views\Sale\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -337,6 +343,10 @@
     <Content Include="Scripts\jquery-3.6.0.min.map" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OSL.Inventory.B2.Repository\OSL.Inventory.B2.Repository.csproj">
+      <Project>{465f7b6a-b649-4a13-a762-86aa50a467a5}</Project>
+      <Name>OSL.Inventory.B2.Repository</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OSL.Inventory.B2.Service\OSL.Inventory.B2.Service.csproj">
       <Project>{5E6FDFB6-8F76-451E-95DC-6C342788D8A6}</Project>
       <Name>OSL.Inventory.B2.Service</Name>

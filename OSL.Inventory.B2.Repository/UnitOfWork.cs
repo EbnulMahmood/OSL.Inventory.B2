@@ -10,7 +10,7 @@ namespace OSL.Inventory.B2.Repository
         IProductRepository ProductRepository { get; }
         IPurchaseRepository PurchaseRepository { get; }
         ISaleRepository SaleRepository { get; }
-
+        
         void Dispose();
         Task<bool> SaveAsync();
     }

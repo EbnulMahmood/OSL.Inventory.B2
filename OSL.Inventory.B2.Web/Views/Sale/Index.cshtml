@@ -1,0 +1,105 @@
+﻿@model IEnumerable<OSL.Inventory.B2.Service.DTOs.SaleDto>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Customer.FirstName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SaleCode)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SaleAmount)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SaleDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SaleAmountPaid)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AmountPaidTime)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ActionLinkHtml)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.StatusHtml)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Status)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CreatedAt)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ModifiedAt)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CreatedBy)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ModifiedBy)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Customer.FirstName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.SaleCode)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.SaleAmount)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.SaleDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.SaleAmountPaid)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.AmountPaidTime)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ActionLinkHtml)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.StatusHtml)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Status)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CreatedAt)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ModifiedAt)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CreatedBy)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ModifiedBy)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
+            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+        </td>
+    </tr>
+}
+
+</table>

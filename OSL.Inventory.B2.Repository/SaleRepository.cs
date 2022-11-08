@@ -9,7 +9,7 @@ using System.Data.Entity;
 
 namespace OSL.Inventory.B2.Repository
 {
-    public interface ISaleRepository
+    public interface ISaleRepository : IBaseRepository<Sale>
     {
         Task<(IEnumerable<Sale>, int, int)> ListSalesWithSortingFilteringPagingAsync(int start, int length, string order, string orderDir, 
             string searchBySaleCode, DateTime? dateFrom, DateTime? dateTo, Status filterByStatus = 0);
