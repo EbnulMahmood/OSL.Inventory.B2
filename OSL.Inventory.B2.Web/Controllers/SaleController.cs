@@ -1,22 +1,60 @@
 ﻿using System;
-using System.Data.Entity;
 using System.Threading.Tasks;
 using System.Net;
 using System.Web.Mvc;
-using OSL.Inventory.B2.Repository.Data;
 using OSL.Inventory.B2.Service.DTOs;
+using OSL.Inventory.B2.Service;
+using OSL.Inventory.B2.Service.DTOs.Enums;
+using System.Collections.Generic;
 
 namespace OSL.Inventory.B2.Web.Controllers
 {
     public class SaleController : Controller
     {
-        private InventoryDbContext db = new InventoryDbContext();
+        private readonly ISaleService _service;
+
+        public SaleController(ISaleService service)
+        {
+            _service = service;
+        }
 
         // GET: Sale
-        public async Task<ActionResult> Index()
+        public ActionResult Index()
         {
-            var saleDtoes = db.SaleDtoes.Include(s => s.Customer);
-            return View(await saleDtoes.ToListAsync());
+            return View();
+        }
+
+        [HttpPost, ActionName("Index")]
+        public async Task<JsonResult> ListSalesAsync(int draw, int start, int length,
+            string searchBySaleCode, Nullable<DateTime> dateFrom, Nullable<DateTime> dateTo,
+            StatusDto filterByStatus = 0)
+        {
+            try
+            {
+                string order = Request.Form.GetValues("order[0][column]")[0];
+                string orderDir = Request.Form.GetValues("order[0][dir]")[0];
+
+                var listSalesTuple = await _service
+                    .ListSalesWithSortingFilteringPagingServiceAsync(start, length,
+                    order, orderDir, searchBySaleCode, dateFrom, dateTo, filterByStatus);
+
+                int totalRecord = listSalesTuple.Item2;
+                int filterRecord = listSalesTuple.Item3;
+                List<object> listSales = listSalesTuple.Item1;
+
+                return Json(new
+                {
+                    draw,
+                    recordsTotal = totalRecord,
+                    recordsFiltered = filterRecord,
+                    data = listSales
+                });
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         // GET: Sale/Details/5
@@ -26,18 +64,19 @@ namespace OSL.Inventory.B2.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            SaleDto saleDto = await db.SaleDtoes.FindAsync(id);
-            if (saleDto == null)
+            var entityDto = await _service.GetSaleByIdServiceAsync(id);
+            if (entityDto == null)
             {
                 return HttpNotFound();
             }
-            return View(saleDto);
+            return View(entityDto);
         }
 
         // GET: Sale/Create
         public ActionResult Create()
         {
-            ViewBag.CustomerId = new SelectList(db.CustomerDtoes, "Id", "FirstName");
+            // ViewBag.CustomerId = new SelectList(db.CustomerDtoes, "Id", "FirstName");
+            ViewBag.CustomerId = 1;
             return View();
         }
 
@@ -46,16 +85,15 @@ namespace OSL.Inventory.B2.Web.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Id,SaleCode,SaleAmount,SaleDate,SaleAmountPaid,AmountPaidTime,ActionLinkHtml,StatusHtml,CustomerId,Status,CreatedAt,ModifiedAt,CreatedBy,ModifiedBy")] SaleDto saleDto)
+        public async Task<ActionResult> Create([Bind(Include = "Id,SaleCode,SaleAmount,SaleDate,SaleAmountPaid,AmountPaidTime,CustomerId,Status,CreatedAt,ModifiedAt,CreatedBy,ModifiedBy")] SaleDto saleDto)
         {
             if (ModelState.IsValid)
             {
-                db.SaleDtoes.Add(saleDto);
-                await db.SaveChangesAsync();
+                await _service.CreateSaleServiceAsync(saleDto);   
                 return RedirectToAction("Index");
             }
 
-            ViewBag.CustomerId = new SelectList(db.CustomerDtoes, "Id", "FirstName", saleDto.CustomerId);
+            // ViewBag.CustomerId = new SelectList(db.CustomerDtoes, "Id", "FirstName", saleDto.CustomerId);
             return View(saleDto);
         }
 
@@ -66,13 +104,13 @@ namespace OSL.Inventory.B2.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            SaleDto saleDto = await db.SaleDtoes.FindAsync(id);
-            if (saleDto == null)
+            var entityDto = await _service.GetSaleByIdServiceAsync(id);
+            if (entityDto == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.CustomerId = new SelectList(db.CustomerDtoes, "Id", "FirstName", saleDto.CustomerId);
-            return View(saleDto);
+            // ViewBag.CustomerId = new SelectList(db.CustomerDtoes, "Id", "FirstName", saleDto.CustomerId);
+            return View(entityDto);
         }
 
         // POST: Sale/Edit/5
@@ -80,51 +118,15 @@ namespace OSL.Inventory.B2.Web.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Id,SaleCode,SaleAmount,SaleDate,SaleAmountPaid,AmountPaidTime,ActionLinkHtml,StatusHtml,CustomerId,Status,CreatedAt,ModifiedAt,CreatedBy,ModifiedBy")] SaleDto saleDto)
+        public async Task<ActionResult> Edit([Bind(Include = "Id,SaleCode,SaleAmount,SaleDate,SaleAmountPaid,AmountPaidTime,CustomerId,Status,CreatedAt,ModifiedAt,CreatedBy,ModifiedBy")] SaleDto saleDto)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(saleDto).State = EntityState.Modified;
-                await db.SaveChangesAsync();
+                await _service.UpdateSaleServiceAsync(saleDto);
                 return RedirectToAction("Index");
             }
-            ViewBag.CustomerId = new SelectList(db.CustomerDtoes, "Id", "FirstName", saleDto.CustomerId);
+            // ViewBag.CustomerId = new SelectList(db.CustomerDtoes, "Id", "FirstName", saleDto.CustomerId);
             return View(saleDto);
-        }
-
-        // GET: Sale/Delete/5
-        public async Task<ActionResult> Delete(long? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            SaleDto saleDto = await db.SaleDtoes.FindAsync(id);
-            if (saleDto == null)
-            {
-                return HttpNotFound();
-            }
-            return View(saleDto);
-        }
-
-        // POST: Sale/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeleteConfirmed(long id)
-        {
-            SaleDto saleDto = await db.SaleDtoes.FindAsync(id);
-            db.SaleDtoes.Remove(saleDto);
-            await db.SaveChangesAsync();
-            return RedirectToAction("Index");
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
         }
     }
 }
