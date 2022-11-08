@@ -6,6 +6,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
+using System.Data.Entity.Core.Objects;
 
 namespace OSL.Inventory.B2.Repository
 {
@@ -128,16 +129,16 @@ namespace OSL.Inventory.B2.Repository
             var recordCount = await _context.Purchases.CountAsync(x =>
                                                     (x.Status != Status.Deleted) &&
                                                     (x.PurchaseCode.ToLower().Contains(searchByPurchaseCode.ToLower()) || string.IsNullOrEmpty(searchByPurchaseCode)) &&
-                                                    //(x.PurchaseDate >= dateFrom.Value.Date || !dateFrom.HasValue) &&
-                                                    //(x.PurchaseDate >= dateTo.Value.Date || !dateTo.HasValue) &&
+                                                    (DbFunctions.TruncateTime(x.PurchaseDate) >= dateFrom || dateFrom == null) &&
+                                                    (DbFunctions.TruncateTime(x.PurchaseDate) <= dateTo || dateTo == null) &&
                                                     (x.Status == filterByStatus || filterByStatus == 0));
 
             IEnumerable<Purchase> listEntites = (await _context.Purchases
                                                 .Where(x =>
                                                     (x.Status != Status.Deleted) &&
                                                     (x.PurchaseCode.ToLower().Contains(searchByPurchaseCode.ToLower()) || string.IsNullOrEmpty(searchByPurchaseCode)) &&
-                                                    //(x.PurchaseDate >= dateFrom.Value.Date || !dateFrom.HasValue) &&
-                                                    //(x.PurchaseDate >= dateTo.Value.Date || !dateTo.HasValue) &&
+                                                    (DbFunctions.TruncateTime(x.PurchaseDate) >= dateFrom || dateFrom == null) &&
+                                                    (DbFunctions.TruncateTime(x.PurchaseDate) <= dateTo || dateTo == null) &&
                                                     (x.Status == filterByStatus || filterByStatus == 0))
                                                 .OrderByDescending(d => d.CreatedAt)
                                                 .Skip(start).Take(length)

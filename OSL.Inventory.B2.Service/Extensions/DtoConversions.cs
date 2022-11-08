@@ -108,6 +108,8 @@ namespace OSL.Inventory.B2.Service.Extensions
                         PurchaseCode = purchase.PurchaseCode,
                         PurchaseAmount = purchase.PurchaseAmount,
                         PurchaseDate = purchase.PurchaseDate,
+                        PurchaseAmountPaid = purchase.PurchaseAmountPaid,
+                        AmountPaidTime = purchase.AmountPaidTime,
                         StatusHtml = $"<span class='text text-{ConditionClassStatus((StatusDto)purchase.Status)}'>" +
                              $"{ConditionTextStatus((StatusDto)purchase.Status)}</span>",
                         ActionLinkHtml = ActionLinks("Purchase", purchase.Id),
