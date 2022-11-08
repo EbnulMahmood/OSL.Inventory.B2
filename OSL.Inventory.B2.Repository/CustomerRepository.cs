@@ -12,7 +12,7 @@ namespace OSL.Inventory.B2.Repository
     public interface ICustomerRepository : IBaseRepository<Customer>
     {
         Task<(IEnumerable<Customer>, int, int)> ListCustomersWithSortingFilteringPagingAsync(int start, int length, string order, string orderDir, 
-            string searchByName, string filterByCategory, Status filterByStatus = 0);
+            string searchByName, Status filterByStatus = 0);
         Task<bool> SoftDeleteEntity(long id);
     }
 
@@ -121,16 +121,10 @@ namespace OSL.Inventory.B2.Repository
         }
 
         public async Task<(IEnumerable<Customer>, int, int)> ListCustomersWithSortingFilteringPagingAsync(int start, int length,
-            string order, string orderDir, string searchByName, string filterByCategory, Status filterByStatus = 0)
+            string order, string orderDir, string searchByName, Status filterByStatus = 0)
         {
             // get total count of data in table
             int totalRecord = await _context.Customers.CountAsync();
-
-            long categoryId = 0;
-            if (!string.IsNullOrEmpty(filterByCategory))
-            {
-                categoryId = long.Parse(filterByCategory);
-            }
 
             var recordCount = await _context.Customers.CountAsync(x =>
                                                     (x.Status != Status.Deleted) &&

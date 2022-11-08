@@ -35,14 +35,6 @@ namespace OSL.Inventory.B2.Service
         }
 
         #region SingleInstance
-        #endregion
-
-        #region ListInstance
-        #endregion
-
-        #region Operations
-        #endregion
-
         public IDictionary<string, string> ValidateProductDtoService(ProductDto entityDto)
         {
             Guard.AgainstNullParameter(entityDto, nameof(entityDto));
@@ -56,6 +48,41 @@ namespace OSL.Inventory.B2.Service
             return errors;
         }
 
+        public async Task<ProductDto> GetProductByIdServiceAsync(long? entityDtoToGetId)
+        {
+            try
+            {
+                var entity = await _unitOfWork.ProductRepository.GetEntityByIdAsync(entityDtoToGetId);
+                if (entity == null) throw new Exception();
+
+                var entityDto = new ProductDto
+                {
+                    Id = entity.Id,
+                    Name = entity.Name,
+                    Description = entity.Description,
+                    ImageUrl = entity.ImageUrl,
+                    Limited = entity.Limited,
+                    InStock = entity.InStock,
+                    PricePerUnit = entity.PricePerUnit,
+                    BasicUnit = (BasicUnitDto)entity.BasicUnit,
+                    CategoryId = entity.CategoryId,
+                    Status = (StatusDto)entity.Status,
+                    CreatedAt = entity.CreatedAt,
+                    CreatedBy = entity.CreatedBy,
+                    ModifiedAt = entity.ModifiedAt,
+                    ModifiedBy = entity.ModifiedBy,
+                };
+                return entityDto;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        #endregion
+
+        #region ListInstance
         public async Task<IEnumerable<CategoryDto>> ListCategoriesAsync()
         {
             try
@@ -157,40 +184,9 @@ namespace OSL.Inventory.B2.Service
                 throw;
             }
         }
+        #endregion
 
-        public async Task<ProductDto> GetProductByIdServiceAsync(long? entityDtoToGetId)
-        {
-            try
-            {
-                var entity = await _unitOfWork.ProductRepository.GetEntityByIdAsync(entityDtoToGetId);
-                if (entity == null) throw new Exception();
-
-                var entityDto = new ProductDto
-                {
-                    Id = entity.Id,
-                    Name = entity.Name,
-                    Description = entity.Description,
-                    ImageUrl = entity.ImageUrl,
-                    Limited = entity.Limited,
-                    InStock = entity.InStock,
-                    PricePerUnit = entity.PricePerUnit,
-                    BasicUnit = (BasicUnitDto)entity.BasicUnit,
-                    CategoryId = entity.CategoryId,
-                    Status = (StatusDto)entity.Status,
-                    CreatedAt = entity.CreatedAt,
-                    CreatedBy = entity.CreatedBy,
-                    ModifiedAt = entity.ModifiedAt,
-                    ModifiedBy = entity.ModifiedBy,
-                };
-                return entityDto;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-
+        #region Operations
         public async Task<bool> CreateProductServiceAsync(ProductDto entityDtoToCreate)
         {
             try
@@ -269,5 +265,6 @@ namespace OSL.Inventory.B2.Service
                 throw;
             }
         }
+        #endregion
     }
 }

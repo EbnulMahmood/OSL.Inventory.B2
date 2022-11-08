@@ -130,10 +130,10 @@ namespace OSL.Inventory.B2.Service.Extensions
         }
 
         // purchase
-        public static IEnumerable<PurchaseDto> ConvertToDto(this IEnumerable<Purchase> purchases)
+        public static IEnumerable<PurchaseViewDto> ConvertToDto(this IEnumerable<Purchase> purchases)
         {
             return (from purchase in purchases
-                    select new PurchaseDto
+                    select new PurchaseViewDto
                     {
                         PurchaseCode = purchase.PurchaseCode,
                         PurchaseAmount = purchase.PurchaseAmount,
@@ -147,10 +147,10 @@ namespace OSL.Inventory.B2.Service.Extensions
         }
         
         // sale
-        public static IEnumerable<SaleDto> ConvertToDto(this IEnumerable<Sale> sales)
+        public static IEnumerable<SaleViewDto> ConvertToDto(this IEnumerable<Sale> sales)
         {
             return (from sale in sales
-                    select new SaleDto
+                    select new SaleViewDto
                     {
                         SaleCode = sale.SaleCode,
                         SaleAmount = sale.SaleAmount,
@@ -160,6 +160,38 @@ namespace OSL.Inventory.B2.Service.Extensions
                         StatusHtml = $"<span class='text text-{ConditionClassStatus((StatusDto)sale.Status)}'>" +
                              $"{ConditionTextStatus((StatusDto)sale.Status)}</span>",
                         ActionLinkHtml = ActionLinks("Sale", sale.Id),
+                    }).ToList();
+        }
+
+        // customer
+        public static IEnumerable<CustomerViewDto> ConvertToDto(this IEnumerable<Customer> customers)
+        {
+            return (from customer in customers
+                    select new CustomerViewDto
+                    {
+                        Name = $"{customer.FirstName} {customer.LastName}",
+                        EmailAddress = customer.EmailAddress,
+                        PhoneNumber = customer.PhoneNumber,
+                        Address = $"{customer.City}, {customer.State}, {customer.ZipCode}, {customer.Country}",
+                        StatusHtml = $"<span class='text text-{ConditionClassStatus((StatusDto)customer.Status)}'>" +
+                             $"{ConditionTextStatus((StatusDto)customer.Status)}</span>",
+                        ActionLinkHtml = ActionLinks("Product", customer.Id),
+                    }).ToList();
+        }
+
+        // supplier
+        public static IEnumerable<SupplierViewDto> ConvertToDto(this IEnumerable<Supplier> suppliers)
+        {
+            return (from supplier in suppliers
+                    select new SupplierViewDto
+                    {
+                        Name = $"{supplier.FirstName} {supplier.LastName}",
+                        EmailAddress = supplier.EmailAddress,
+                        PhoneNumber = supplier.PhoneNumber,
+                        Address = $"{supplier.City}, {supplier.State}, {supplier.ZipCode}, {supplier.Country}",
+                        StatusHtml = $"<span class='text text-{ConditionClassStatus((StatusDto)supplier.Status)}'>" +
+                             $"{ConditionTextStatus((StatusDto)supplier.Status)}</span>",
+                        ActionLinkHtml = ActionLinks("Product", supplier.Id),
                     }).ToList();
         }
     }
