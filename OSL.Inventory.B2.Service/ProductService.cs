@@ -1,4 +1,5 @@
-﻿using OSL.Inventory.B2.Entity.Enums;
+﻿using OSL.Inventory.B2.Entity;
+using OSL.Inventory.B2.Entity.Enums;
 using OSL.Inventory.B2.Repository;
 using OSL.Inventory.B2.Service.DTOs;
 using OSL.Inventory.B2.Service.DTOs.Enums;
@@ -157,9 +158,20 @@ namespace OSL.Inventory.B2.Service
         {
             try
             {
-                var entity = entityDtoToCreate.ConvertToEntity();
-                entity.CreatedAt = DateTime.Now;
-                entity.CreatedBy = 1;
+                var entity = new Product
+                {
+                    Name = entityDtoToCreate.Name,
+                    Description = entityDtoToCreate.Description,
+                    ImageUrl = entityDtoToCreate.ImageUrl,
+                    Limited = entityDtoToCreate.Limited,
+                    InStock = entityDtoToCreate.InStock,
+                    PricePerUnit = entityDtoToCreate.PricePerUnit,
+                    BasicUnit = (BasicUnit)entityDtoToCreate.BasicUnit,
+                    CategoryId = entityDtoToCreate.CategoryId,
+                    Status = Status.Active,
+                    CreatedAt = DateTime.Now,
+                    CreatedBy = 1,
+                };
 
                 if (!_unitOfWork.ProductRepository.CreateEntity(entity)) throw new Exception();
 

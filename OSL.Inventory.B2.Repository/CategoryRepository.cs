@@ -140,9 +140,9 @@ namespace OSL.Inventory.B2.Repository
             string order, string orderDir, string searchByName, Status filterByStatus = 0)
         {
             // get total count of data in table
-            int totalRecord = await _context.Products.CountAsync();
+            int totalRecord = await _context.Categories.CountAsync();
             // get filtered count
-            var recordCount = await _context.Products.CountAsync(x =>
+            var recordCount = await _context.Categories.CountAsync(x =>
                                                     (x.Status != Status.Deleted) &&
                                                     (x.Name.ToLower().Contains(searchByName.ToLower()) || string.IsNullOrEmpty(searchByName)) &&
                                                     (x.Status == filterByStatus || filterByStatus == 0));

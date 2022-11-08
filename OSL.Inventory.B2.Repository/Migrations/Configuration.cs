@@ -1,18 +1,20 @@
-﻿namespace OSL.Inventory.B2.Repository.Migrations
-{
-    using OSL.Inventory.B2.Entity;
-    using System;
-    using System.Collections.Generic;
-    using System.Data.Entity.Migrations;
+﻿using OSL.Inventory.B2.Entity;
+using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Data.Entity.Migrations;
+using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<Data.InventoryDbContext>
+namespace OSL.Inventory.B2.Repository.Migrations
+{
+    internal sealed class Configuration : DbMigrationsConfiguration<OSL.Inventory.B2.Repository.Data.InventoryDbContext>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
         }
 
-        protected override void Seed(Data.InventoryDbContext context)
+        protected override void Seed(OSL.Inventory.B2.Repository.Data.InventoryDbContext context)
         {
             //  This method will be called after migrating to the latest version.
 
@@ -42,27 +44,27 @@
             var products = new List<Product>
             {
                 new Product { Name = "Laptop", Description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-                    ImageUrl = null, Limited = false, InStock = 200, PricePerUnit = 54000, BasicUnit = "piece", CreatedBy = 1, CreatedAt = DateTime.Now, CategoryId = 1},
+                    ImageUrl = null, Limited = false, InStock = 200, PricePerUnit = 54000, BasicUnit = Entity.Enums.BasicUnit.Piece, CreatedBy = 1, CreatedAt = DateTime.Now, CategoryId = 1},
                 new Product { Name = "Desktop", Description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-                    ImageUrl = null, Limited = false, InStock = 500, PricePerUnit = 14000, BasicUnit = "piece", CreatedBy = 1, CreatedAt = DateTime.Now, CategoryId = 1},
+                    ImageUrl = null, Limited = false, InStock = 500, PricePerUnit = 14000, BasicUnit = Entity.Enums.BasicUnit.Piece, CreatedBy = 1, CreatedAt = DateTime.Now, CategoryId = 1},
                 new Product { Name = "Samsung Mobile", Description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-                    ImageUrl = null, Limited = false, InStock = 20, PricePerUnit = 54030, BasicUnit = "piece", CreatedBy = 1, CreatedAt = DateTime.Now, CategoryId = 1},
+                    ImageUrl = null, Limited = false, InStock = 20, PricePerUnit = 54030, BasicUnit = Entity.Enums.BasicUnit.Liter, CreatedBy = 1, CreatedAt = DateTime.Now, CategoryId = 1},
                 new Product { Name = "Velit euismod", Description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-                    ImageUrl = null, Limited = false, InStock = 200, PricePerUnit = 52000, BasicUnit = "piece", CreatedBy = 1, CreatedAt = DateTime.Now, CategoryId = 1},
+                    ImageUrl = null, Limited = false, InStock = 200, PricePerUnit = 52000, BasicUnit = Entity.Enums.BasicUnit.Liter, CreatedBy = 1, CreatedAt = DateTime.Now, CategoryId = 1},
                 new Product { Name = "Nibh praesent", Description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-                    ImageUrl = null, Limited = false, InStock = 200, PricePerUnit = 54010, BasicUnit = "piece", CreatedBy = 1, CreatedAt = DateTime.Now, CategoryId = 1},
+                    ImageUrl = null, Limited = false, InStock = 200, PricePerUnit = 54010, BasicUnit = Entity.Enums.BasicUnit.Liter, CreatedBy = 1, CreatedAt = DateTime.Now, CategoryId = 1},
                 new Product { Name = "Nunc aliquet", Description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-                    ImageUrl = null, Limited = false, InStock = 200, PricePerUnit = 4000, BasicUnit = "piece", CreatedBy = 1, CreatedAt = DateTime.Now, CategoryId = 1},
+                    ImageUrl = null, Limited = false, InStock = 200, PricePerUnit = 4000, BasicUnit = Entity.Enums.BasicUnit.Piece, CreatedBy = 1, CreatedAt = DateTime.Now, CategoryId = 1},
                 new Product { Name = "Metus aliquam", Description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-                    ImageUrl = null, Limited = false, InStock = 200, PricePerUnit = 14000, BasicUnit = "piece", CreatedBy = 1, CreatedAt = DateTime.Now, CategoryId = 1},
+                    ImageUrl = null, Limited = false, InStock = 200, PricePerUnit = 14000, BasicUnit = Entity.Enums.BasicUnit.Piece, CreatedBy = 1, CreatedAt = DateTime.Now, CategoryId = 1},
                 new Product { Name = "A iaculis", Description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-                    ImageUrl = null, Limited = false, InStock = 200, PricePerUnit = 24000, BasicUnit = "piece", CreatedBy = 1, CreatedAt = DateTime.Now, CategoryId = 1},
+                    ImageUrl = null, Limited = false, InStock = 200, PricePerUnit = 24000, BasicUnit = Entity.Enums.BasicUnit.Kg, CreatedBy = 1, CreatedAt = DateTime.Now, CategoryId = 1},
                 new Product { Name = "Arcu vitae", Description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-                    ImageUrl = null, Limited = false, InStock = 200, PricePerUnit = 5000, BasicUnit = "piece", CreatedBy = 1, CreatedAt = DateTime.Now, CategoryId = 1},
+                    ImageUrl = null, Limited = false, InStock = 200, PricePerUnit = 5000, BasicUnit = Entity.Enums.BasicUnit.Kg, CreatedBy = 1, CreatedAt = DateTime.Now, CategoryId = 1},
                 new Product { Name = "Orci a scelerisque", Description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-                    ImageUrl = null, Limited = false, InStock = 200, PricePerUnit = 43000, BasicUnit = "piece", CreatedBy = 1, CreatedAt = DateTime.Now, CategoryId = 1},
+                    ImageUrl = null, Limited = false, InStock = 200, PricePerUnit = 43000, BasicUnit = Entity.Enums.BasicUnit.Kg, CreatedBy = 1, CreatedAt = DateTime.Now, CategoryId = 1},
                 new Product { Name = "Dolor magna", Description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-                    ImageUrl = null, Limited = false, InStock = 200, PricePerUnit = 51000, BasicUnit = "piece", CreatedBy = 1, CreatedAt = DateTime.Now, CategoryId = 1},
+                    ImageUrl = null, Limited = false, InStock = 200, PricePerUnit = 51000, BasicUnit = Entity.Enums.BasicUnit.Piece, CreatedBy = 1, CreatedAt = DateTime.Now, CategoryId = 1},
             };
 
             products.ForEach(x => context.Products.AddOrUpdate(c => c.Id, x));

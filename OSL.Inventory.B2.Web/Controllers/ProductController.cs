@@ -121,7 +121,7 @@ namespace OSL.Inventory.B2.Web.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Id,Name,Description,ImageUrl,Limited,InStock,PricePerUnit,BasicUnit,CategoryId")] ProductDto entityDto)
+        public async Task<ActionResult> Create([Bind(Include = "Name,Description,ImageUrl,Limited,InStock,PricePerUnit,BasicUnit,CategoryId")] ProductDto entityDto)
         {
             try
             {

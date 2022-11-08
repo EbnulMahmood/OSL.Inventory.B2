@@ -94,7 +94,7 @@ namespace OSL.Inventory.B2.Web.Controllers
         {
             return View();
         }
-
+         
         // POST: Category/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.

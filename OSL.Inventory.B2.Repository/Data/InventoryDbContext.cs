@@ -64,7 +64,6 @@ namespace OSL.Inventory.B2.Repository.Data
             builder.Entity<Product>().Property(x => x.Name).HasMaxLength(255);
             builder.Entity<Product>().Property(x => x.Description).HasMaxLength(500);
             builder.Entity<Product>().Property(x => x.ImageUrl).HasMaxLength(255);
-            builder.Entity<Product>().Property(x => x.BasicUnit).HasMaxLength(50);
 
             // suppliers constraints
             builder.Entity<Supplier>().Property(c => c.FirstName).HasMaxLength(255);

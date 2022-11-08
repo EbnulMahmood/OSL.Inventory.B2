@@ -7,13 +7,13 @@ namespace OSL.Inventory.B2.Repository.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.4.4")]
-    public sealed partial class AddProductTableToDatabase : IMigrationMetadata
+    public sealed partial class AddBasicUnitEnumToProductTable : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(AddProductTableToDatabase));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(AddBasicUnitEnumToProductTable));
         
         string IMigrationMetadata.Id
         {
-            get { return "202211030836273_AddProductTableToDatabase"; }
+            get { return "202211080710319_AddBasicUnitEnumToProductTable"; }
         }
         
         string IMigrationMetadata.Source

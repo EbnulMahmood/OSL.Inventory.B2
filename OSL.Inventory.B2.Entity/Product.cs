@@ -1,5 +1,6 @@
 ﻿using OSL.Inventory.B2.Entity.BaseEntity;
 using OSL.Inventory.B2.Entity.BaseEntity.Interfaces;
+using OSL.Inventory.B2.Entity.Enums;
 
 namespace OSL.Inventory.B2.Entity
 {
@@ -11,7 +12,7 @@ namespace OSL.Inventory.B2.Entity
         public bool Limited { get; set; }
         public int InStock { get; set; }
         public decimal PricePerUnit { get; set; }
-        public string BasicUnit { get; set; } = string.Empty;
+        public BasicUnit BasicUnit { get; set; }
         public long CategoryId { get; set; }
         public virtual Category Category { get; set; }
     }

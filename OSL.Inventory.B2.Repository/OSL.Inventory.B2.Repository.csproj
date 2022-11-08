@@ -70,21 +70,9 @@
     <Compile Include="BaseRepository.cs" />
     <Compile Include="CategoryRepository.cs" />
     <Compile Include="Data\InventoryDbContext.cs" />
-    <Compile Include="Migrations\202211020448002_InitialInventoryDbCreateUpdate_2.cs" />
-    <Compile Include="Migrations\202211020448002_InitialInventoryDbCreateUpdate_2.designer.cs">
-      <DependentUpon>202211020448002_InitialInventoryDbCreateUpdate_2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202211030836273_AddProductTableToDatabase.cs" />
-    <Compile Include="Migrations\202211030836273_AddProductTableToDatabase.designer.cs">
-      <DependentUpon>202211030836273_AddProductTableToDatabase.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202211070819501_AddPurchaseSupplierPurchaseDetailToDatabase.cs" />
-    <Compile Include="Migrations\202211070819501_AddPurchaseSupplierPurchaseDetailToDatabase.designer.cs">
-      <DependentUpon>202211070819501_AddPurchaseSupplierPurchaseDetailToDatabase.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202211080437327_AddCustomerSaleSaleDetailToDatabase.cs" />
-    <Compile Include="Migrations\202211080437327_AddCustomerSaleSaleDetailToDatabase.designer.cs">
-      <DependentUpon>202211080437327_AddCustomerSaleSaleDetailToDatabase.cs</DependentUpon>
+    <Compile Include="Migrations\202211080710319_AddBasicUnitEnumToProductTable.cs" />
+    <Compile Include="Migrations\202211080710319_AddBasicUnitEnumToProductTable.designer.cs">
+      <DependentUpon>202211080710319_AddBasicUnitEnumToProductTable.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ProductRepository.cs" />
@@ -104,17 +92,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202211020448002_InitialInventoryDbCreateUpdate_2.resx">
-      <DependentUpon>202211020448002_InitialInventoryDbCreateUpdate_2.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202211030836273_AddProductTableToDatabase.resx">
-      <DependentUpon>202211030836273_AddProductTableToDatabase.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202211070819501_AddPurchaseSupplierPurchaseDetailToDatabase.resx">
-      <DependentUpon>202211070819501_AddPurchaseSupplierPurchaseDetailToDatabase.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202211080437327_AddCustomerSaleSaleDetailToDatabase.resx">
-      <DependentUpon>202211080437327_AddCustomerSaleSaleDetailToDatabase.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202211080710319_AddBasicUnitEnumToProductTable.resx">
+      <DependentUpon>202211080710319_AddBasicUnitEnumToProductTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

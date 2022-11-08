@@ -119,8 +119,10 @@
     <Compile Include="DTOs\BaseDto\BaseDto.cs" />
     <Compile Include="DTOs\BaseDto\Interfaces\IDto.cs" />
     <Compile Include="DTOs\CategoryDto.cs" />
+    <Compile Include="DTOs\Enums\BasicUnitDto.cs" />
     <Compile Include="DTOs\Enums\StatusDto.cs" />
     <Compile Include="DTOs\ProductDto.cs" />
+    <Compile Include="DTOs\ProductViewDto.cs" />
     <Compile Include="DTOs\PurchaseDetailDto.cs" />
     <Compile Include="DTOs\SaleDetailDto.cs" />
     <Compile Include="DTOs\SaleDto.cs" />

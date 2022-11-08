@@ -118,7 +118,7 @@ namespace OSL.Inventory.B2.Repository
                 Category = product.Category,
             };
         }
-
+         
         public async Task<(IEnumerable<Product>, int, int)> ListProductsWithSortingFilteringPagingAsync(int start, int length,
             string order, string orderDir, string searchByName, string filterByCategory, Status filterByStatus = 0)
         {

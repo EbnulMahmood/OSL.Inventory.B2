@@ -85,10 +85,10 @@ namespace OSL.Inventory.B2.Service.Extensions
 
         // product
 
-        public static IEnumerable<ProductDto> ConvertToDto(this IEnumerable<Product> products)
+        public static IEnumerable<ProductViewDto> ConvertToDto(this IEnumerable<Product> products)
         {
             return (from product in products
-                    select new ProductDto
+                    select new ProductViewDto
                     {
                         Name = product.Name,
                         InStockString = $"{product.InStock} {product.BasicUnit}",
@@ -103,19 +103,14 @@ namespace OSL.Inventory.B2.Service.Extensions
         {
             return new ProductDto
             {
-                Id = product.Id,
                 Name = product.Name,
                 Description = product.Description,
                 ImageUrl = product.ImageUrl,
                 Limited = product.Limited,
                 InStock = product.InStock,
                 PricePerUnit = product.PricePerUnit,
-                BasicUnit = product.BasicUnit,
-                Status = (DTOs.Enums.StatusDto)product.Status,
-                CreatedAt = product.CreatedAt,
-                ModifiedAt = product.ModifiedAt,
-                CreatedBy = product.CreatedBy,
-                ModifiedBy = product.ModifiedBy,
+                BasicUnit = (BasicUnitDto)product.BasicUnit,
+                CategoryId = product.CategoryId,
             };
         }
 
@@ -123,20 +118,14 @@ namespace OSL.Inventory.B2.Service.Extensions
         {
             return new Product
             {
-                Id = productDto.Id,
                 Name = productDto.Name,
                 Description = productDto.Description,
                 ImageUrl = productDto.ImageUrl,
                 Limited = productDto.Limited,
                 InStock = productDto.InStock,
                 PricePerUnit = productDto.PricePerUnit,
-                BasicUnit = productDto.BasicUnit,
-                Status = (Entity.Enums.Status)productDto.Status,
-                // CategoryId = productDto.CategoryId,
-                CreatedAt = productDto.CreatedAt,
-                ModifiedAt = productDto.ModifiedAt,
-                CreatedBy = productDto.CreatedBy,
-                ModifiedBy = productDto.ModifiedBy,
+                BasicUnit = (Entity.Enums.BasicUnit)productDto.BasicUnit,
+                CategoryId = productDto.CategoryId,
             };
         }
 
