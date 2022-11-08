@@ -133,6 +133,72 @@
 
             purchaseDetails.ForEach(x => context.PurchaseDetails.AddOrUpdate(c => c.Id, x));
             context.SaveChanges();
+
+            var customers = new List<Customer>
+            {
+                new Customer { FirstName = "Sofiq", LastName = "Ahmed", EmailAddress = "sofiq@example.com", PhoneNumber = "794872232234", CreatedBy = 1, CreatedAt = DateTime.Now },
+                new Customer { FirstName = "Abid", LastName = "Ahmed", EmailAddress = "abid@example.com", PhoneNumber = "794872232234", CreatedBy = 1, CreatedAt = DateTime.Now },
+                new Customer { FirstName = "Rafi", LastName = "Ahmed", EmailAddress = "rafi@example.com", PhoneNumber = "794872232234", CreatedBy = 1, CreatedAt = DateTime.Now },
+            };
+
+            customers.ForEach(x => context.Customers.AddOrUpdate(c => c.Id, x));
+            context.SaveChanges();
+
+            var sales = new List<Sale>
+            {
+                new Sale { CustomerId = 1, CreatedBy = 1, CreatedAt = DateTime.Now, SaleCode = "12345678834", SaleAmount = 20000, SaleDate = DateTime.Now, SaleAmountPaid = 20000, AmountPaidTime = DateTime.Now },
+                new Sale { CustomerId = 2, CreatedBy = 1, CreatedAt = DateTime.Now, SaleCode = "23498254798", SaleAmount = 10000, SaleDate = DateTime.Now, SaleAmountPaid = 30000, AmountPaidTime = DateTime.Now },
+                new Sale { CustomerId = 2, CreatedBy = 1, CreatedAt = DateTime.Now, SaleCode = "54645654477", SaleAmount = 30000, SaleDate = DateTime.Now, SaleAmountPaid = 50000, AmountPaidTime = DateTime.Now },
+                new Sale { CustomerId = 2, CreatedBy = 1, CreatedAt = DateTime.Now, SaleCode = "23423242444", SaleAmount = 40000, SaleDate = DateTime.Now, SaleAmountPaid = 60000, AmountPaidTime = DateTime.Now },
+                new Sale { CustomerId = 2, CreatedBy = 1, CreatedAt = DateTime.Now, SaleCode = "23424567756", SaleAmount = 50000, SaleDate = DateTime.Now, SaleAmountPaid = 60000, AmountPaidTime = DateTime.Now },
+                new Sale { CustomerId = 2, CreatedBy = 1, CreatedAt = DateTime.Now, SaleCode = "32342323334", SaleAmount = 60000, SaleDate = DateTime.Now, SaleAmountPaid = 70000, AmountPaidTime = DateTime.Now },
+                new Sale { CustomerId = 2, CreatedBy = 1, CreatedAt = DateTime.Now, SaleCode = "21324243435", SaleAmount = 70000, SaleDate = DateTime.Now, SaleAmountPaid = 780000, AmountPaidTime = DateTime.Now },
+                new Sale { CustomerId = 1, CreatedBy = 1, CreatedAt = DateTime.Now, SaleCode = "56756767678", SaleAmount = 30000, SaleDate = DateTime.Now, SaleAmountPaid = 25000, AmountPaidTime = DateTime.Now },
+                new Sale { CustomerId = 1, CreatedBy = 1, CreatedAt = DateTime.Now, SaleCode = "23423434545", SaleAmount = 30000, SaleDate = DateTime.Now, SaleAmountPaid = 20600, AmountPaidTime = DateTime.Now },
+                new Sale { CustomerId = 3, CreatedBy = 1, CreatedAt = DateTime.Now, SaleCode = "54656778886", SaleAmount = 60000, SaleDate = DateTime.Now, SaleAmountPaid = 20600, AmountPaidTime = DateTime.Now },
+                new Sale { CustomerId = 3, CreatedBy = 1, CreatedAt = DateTime.Now, SaleCode = "22423435345", SaleAmount = 70000, SaleDate = DateTime.Now, SaleAmountPaid = 20600, AmountPaidTime = DateTime.Now },
+                new Sale { CustomerId = 3, CreatedBy = 1, CreatedAt = DateTime.Now, SaleCode = "23137888887", SaleAmount = 250000, SaleDate = DateTime.Now, SaleAmountPaid = 26000, AmountPaidTime = DateTime.Now },
+                new Sale { CustomerId = 1, CreatedBy = 1, CreatedAt = DateTime.Now, SaleCode = "43356532233", SaleAmount = 20600, SaleDate = DateTime.Now, SaleAmountPaid = 20060, AmountPaidTime = DateTime.Now },
+                new Sale { CustomerId = 1, CreatedBy = 1, CreatedAt = DateTime.Now, SaleCode = "45656567774", SaleAmount = 2700, SaleDate = DateTime.Now, SaleAmountPaid = 20070, AmountPaidTime = DateTime.Now },
+                new Sale { CustomerId = 1, CreatedBy = 1, CreatedAt = DateTime.Now, SaleCode = "33535454545", SaleAmount = 60000, SaleDate = DateTime.Now, SaleAmountPaid = 20700, AmountPaidTime = DateTime.Now },
+                new Sale { CustomerId = 1, CreatedBy = 1, CreatedAt = DateTime.Now, SaleCode = "34577566756", SaleAmount = 28000, SaleDate = DateTime.Now, SaleAmountPaid = 20700, AmountPaidTime = DateTime.Now },
+                new Sale { CustomerId = 1, CreatedBy = 1, CreatedAt = DateTime.Now, SaleCode = "54656456456", SaleAmount = 28000, SaleDate = DateTime.Now, SaleAmountPaid = 20300, AmountPaidTime = DateTime.Now },
+                new Sale { CustomerId = 2, CreatedBy = 1, CreatedAt = DateTime.Now, SaleCode = "56767676322", SaleAmount = 23000, SaleDate = DateTime.Now, SaleAmountPaid = 203400, AmountPaidTime = DateTime.Now },
+                new Sale { CustomerId = 2, CreatedBy = 1, CreatedAt = DateTime.Now, SaleCode = "54545676878", SaleAmount = 26000, SaleDate = DateTime.Now, SaleAmountPaid = 200300, AmountPaidTime = DateTime.Now },
+            };
+
+            sales.ForEach(x => context.Sales.AddOrUpdate(c => c.Id, x));
+            context.SaveChanges();
+
+            var saleDetails = new List<SaleDetail>
+            {
+                new SaleDetail { QuantitySold = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 1, SaleId = 1 },
+                new SaleDetail { QuantitySold = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 2, SaleId = 1 },
+                new SaleDetail { QuantitySold = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 3, SaleId = 1 },
+                new SaleDetail { QuantitySold = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 4, SaleId = 1 },
+                new SaleDetail { QuantitySold = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 5, SaleId = 1 },
+                new SaleDetail { QuantitySold = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 1, SaleId = 2 },
+                new SaleDetail { QuantitySold = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 1, SaleId = 3 },
+                new SaleDetail { QuantitySold = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 1, SaleId = 4 },
+                new SaleDetail { QuantitySold = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 1, SaleId = 5 },
+                new SaleDetail { QuantitySold = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 1, SaleId = 6 },
+                new SaleDetail { QuantitySold = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 1, SaleId = 7 },
+                new SaleDetail { QuantitySold = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 1, SaleId = 8 },
+                new SaleDetail { QuantitySold = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 1, SaleId = 8 },
+                new SaleDetail { QuantitySold = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 1, SaleId = 10 },
+                new SaleDetail { QuantitySold = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 1, SaleId = 11 },
+                new SaleDetail { QuantitySold = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 1, SaleId = 12 },
+                new SaleDetail { QuantitySold = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 1, SaleId = 13 },
+                new SaleDetail { QuantitySold = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 1, SaleId = 14 },
+                new SaleDetail { QuantitySold = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 1, SaleId = 15 },
+                new SaleDetail { QuantitySold = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 1, SaleId = 16 },
+                new SaleDetail { QuantitySold = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 1, SaleId = 17 },
+                new SaleDetail { QuantitySold = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 1, SaleId = 18 },
+                new SaleDetail { QuantitySold = 20, PricePerUnit = 20000, TotalPrice = 400000, ProductId = 1, SaleId = 19 },
+            };
+
+            saleDetails.ForEach(x => context.SaleDetails.AddOrUpdate(c => c.Id, x));
+            context.SaveChanges();
         }
     }
 }

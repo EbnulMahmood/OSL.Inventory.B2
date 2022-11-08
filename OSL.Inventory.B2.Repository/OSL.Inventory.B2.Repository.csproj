@@ -82,10 +82,15 @@
     <Compile Include="Migrations\202211070819501_AddPurchaseSupplierPurchaseDetailToDatabase.designer.cs">
       <DependentUpon>202211070819501_AddPurchaseSupplierPurchaseDetailToDatabase.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202211080437327_AddCustomerSaleSaleDetailToDatabase.cs" />
+    <Compile Include="Migrations\202211080437327_AddCustomerSaleSaleDetailToDatabase.designer.cs">
+      <DependentUpon>202211080437327_AddCustomerSaleSaleDetailToDatabase.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ProductRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PurchaseRepository.cs" />
+    <Compile Include="SaleRepository.cs" />
     <Compile Include="UnitOfWork.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -107,6 +112,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202211070819501_AddPurchaseSupplierPurchaseDetailToDatabase.resx">
       <DependentUpon>202211070819501_AddPurchaseSupplierPurchaseDetailToDatabase.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202211080437327_AddCustomerSaleSaleDetailToDatabase.resx">
+      <DependentUpon>202211080437327_AddCustomerSaleSaleDetailToDatabase.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

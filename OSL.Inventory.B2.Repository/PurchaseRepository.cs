@@ -31,76 +31,96 @@ namespace OSL.Inventory.B2.Repository
         #region ListInstance
         #region Sorting
         // sort by order desc
-        // private IEnumerable<Purchase> SortByColumnWithOrder(string order, string orderDir, IEnumerable<Purchase> data)
-        // {
-        //     // Initialization.   
-        //     IEnumerable<Purchase> sortedEntities = Enumerable.Empty<Purchase>();
+        private IEnumerable<Purchase> SortByColumnWithOrder(string order, string orderDir, IEnumerable<Purchase> data)
+        {
+            // Initialization.   
+            IEnumerable<Purchase> sortedEntities = Enumerable.Empty<Purchase>();
 
-        //     try
-        //     {
-        //         // Sorting   
-        //         switch (order)
-        //         {
-        //             case "0":
-        //                 // Setting.   
-        //                 sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ?
-        //                     data.OrderByDescending(p => p.Name)
-        //                     .ToList()
-        //                     .Select(product => SelectProduct(product)) :
-        //                     data.OrderBy(p => p.Name)
-        //                     .ToList()
-        //                     .Select(product => SelectProduct(product));
-        //                 break;
-        //             case "1":
-        //                 // Setting.   
-        //                 sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ?
-        //                     data.OrderByDescending(p => p.InStock)
-        //                     .ToList()
-        //                     .Select(product => SelectProduct(product)) :
-        //                     data.OrderBy(p => p.InStock)
-        //                     .ToList()
-        //                     .Select(product => SelectProduct(product));
-        //                 break;
-        //             case "2":
-        //                 // Setting.   
-        //                 sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ?
-        //                     data.OrderByDescending(p => p.PricePerUnit)
-        //                     .ToList()
-        //                     .Select(product => SelectProduct(product)) :
-        //                     data.OrderBy(p => p.PricePerUnit)
-        //                     .ToList()
-        //                     .Select(product => SelectProduct(product));
-        //                 break;
-        //             case "3":
-        //                 // Setting.   
-        //                 sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ?
-        //                     data.OrderByDescending(p => p.Status)
-        //                     .ToList()
-        //                     .Select(product => SelectProduct(product)) :
-        //                     data.OrderBy(p => p.Status)
-        //                     .ToList()
-        //                     .Select(product => SelectProduct(product));
-        //                 break;
-        //             default:
-        //                 // Setting.   
-        //                 sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ?
-        //                     data.OrderByDescending(p => p.CreatedAt)
-        //                     .ToList()
-        //                     .Select(product => SelectProduct(product)) :
-        //                     data.OrderBy(p => p.CreatedAt)
-        //                     .ToList()
-        //                     .Select(product => SelectProduct(product));
-        //                 break;
-        //         }
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         // info.   
-        //         Console.Write(ex);
-        //     }
-        //     // info.   
-        //     return sortedEntities;
-        // }
+            try
+            {
+                // Sorting   
+                switch (order)
+                {
+                    case "0":
+                        // Setting.   
+                        sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ?
+                            data.OrderByDescending(p => p.PurchaseCode)
+                            .ToList()
+                            .Select(purchase => SelectPurchase(purchase)) :
+                            data.OrderBy(p => p.PurchaseCode)
+                            .ToList()
+                            .Select(purchase => SelectPurchase(purchase));
+                        break;
+                    case "1":
+                        // Setting.   
+                        sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ?
+                            data.OrderByDescending(p => p.PurchaseAmount)
+                            .ToList()
+                            .Select(purchase => SelectPurchase(purchase)) :
+                            data.OrderBy(p => p.PurchaseAmount)
+                            .ToList()
+                            .Select(purchase => SelectPurchase(purchase));
+                        break;
+                    case "2":
+                        // Setting.   
+                        sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ?
+                            data.OrderByDescending(p => p.PurchaseDate)
+                            .ToList()
+                            .Select(purchase => SelectPurchase(purchase)) :
+                            data.OrderBy(p => p.PurchaseDate)
+                            .ToList()
+                            .Select(purchase => SelectPurchase(purchase));
+                        break;
+                    case "3":
+                        // Setting.   
+                        sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ?
+                            data.OrderByDescending(p => p.PurchaseAmountPaid)
+                            .ToList()
+                            .Select(purchase => SelectPurchase(purchase)) :
+                            data.OrderBy(p => p.PurchaseAmountPaid)
+                            .ToList()
+                            .Select(purchase => SelectPurchase(purchase));
+                        break;
+                    case "4":
+                        // Setting.   
+                        sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ?
+                            data.OrderByDescending(p => p.AmountPaidTime)
+                            .ToList()
+                            .Select(purchase => SelectPurchase(purchase)) :
+                            data.OrderBy(p => p.AmountPaidTime)
+                            .ToList()
+                            .Select(purchase => SelectPurchase(purchase));
+                        break;
+                    case "5":
+                        // Setting.   
+                        sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ?
+                            data.OrderByDescending(p => p.Status)
+                            .ToList()
+                            .Select(purchase => SelectPurchase(purchase)) :
+                            data.OrderBy(p => p.Status)
+                            .ToList()
+                            .Select(purchase => SelectPurchase(purchase));
+                        break;
+                    default:
+                        // Setting.   
+                        sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ?
+                            data.OrderByDescending(p => p.CreatedAt)
+                            .ToList()
+                            .Select(purchase => SelectPurchase(purchase)) :
+                            data.OrderBy(p => p.CreatedAt)
+                            .ToList()
+                            .Select(purchase => SelectPurchase(purchase));
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                // info.   
+                Console.Write(ex);
+            }
+            // info.   
+            return sortedEntities;
+        }
         #endregion
 
         private Purchase SelectPurchase(Purchase purchase)
@@ -134,6 +154,7 @@ namespace OSL.Inventory.B2.Repository
                                                     (x.Status == filterByStatus || filterByStatus == 0));
 
             IEnumerable<Purchase> listEntites = (await _context.Purchases
+                                                .Include(x => x.Supplier)
                                                 .Where(x =>
                                                     (x.Status != Status.Deleted) &&
                                                     (x.PurchaseCode.ToLower().Contains(searchByPurchaseCode.ToLower()) || string.IsNullOrEmpty(searchByPurchaseCode)) &&
@@ -146,10 +167,9 @@ namespace OSL.Inventory.B2.Repository
                                                 .Select(purchase => SelectPurchase(purchase));
 
             // Sorting 
-            // var result = SortByColumnWithOrder(order, orderDir, listEntites);
+            var result = SortByColumnWithOrder(order, orderDir, listEntites);
 
-            // return (result, totalRecord, recordCount);
-            return (listEntites, totalRecord, recordCount);
+            return (result, totalRecord, recordCount);
         }
         #endregion
 
