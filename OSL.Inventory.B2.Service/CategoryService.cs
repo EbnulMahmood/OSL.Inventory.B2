@@ -5,7 +5,6 @@ using OSL.Inventory.B2.Service.DTOs.Enums;
 using OSL.Inventory.B2.Service.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace OSL.Inventory.B2.Service
@@ -15,7 +14,6 @@ namespace OSL.Inventory.B2.Service
         IDictionary<string, string> ValidateCategoryDtoService(CategoryDto entityDto);
         Task<(List<object>, int, int)> ListCategoriesWithSortingFilteringPagingServiceAsync(int start, int length,
             string order, string orderDir, string searchByName, StatusDto filterByStatusDto = 0);
-        Task<IEnumerable<CategoryDto>> ListCategoriesAsync();
         Task<CategoryDto> GetCategoryByIdServiceAsync(long? entityDtoToGetId);
         Task<bool> CreateCategoryServiceAsync(CategoryDto entityDtoToCreate);
         Task<bool> UpdateCategoryServiceAsync(CategoryDto entityDtoToUpdate);
@@ -63,25 +61,6 @@ namespace OSL.Inventory.B2.Service
         #endregion
 
         #region LoadInstance
-        public async Task<IEnumerable<CategoryDto>> ListCategoriesAsync()
-        {
-            try
-            {
-                var entities = await _unitOfWork.CategoryRepository.ListEntitiesAsync();
-
-                return from category in entities
-                                  select new CategoryDto
-                                  {
-                                      Id = category.Id,
-                                      Name = category.Name,
-                                  };
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
 
         public async Task<(List<object>, int, int)> ListCategoriesWithSortingFilteringPagingServiceAsync(int start, int length,
             string order, string orderDir, string searchByName, StatusDto filterByStatusDto = 0)

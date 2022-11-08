@@ -1,8 +1,10 @@
-﻿namespace OSL.Inventory.B2.Service.DTOs
+﻿using OSL.Inventory.B2.Service.DTOs.BaseDto;
+using OSL.Inventory.B2.Service.DTOs.BaseDto.Interfaces;
+
+namespace OSL.Inventory.B2.Service.DTOs
 {
-    public class CustomerDto
+    public class CustomerDto : BaseDto<long>, IDto
     {
-        public long Id { get; set; }
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public string EmailAddress { get; set; } = string.Empty;

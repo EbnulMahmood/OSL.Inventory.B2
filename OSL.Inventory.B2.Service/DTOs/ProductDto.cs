@@ -1,9 +1,11 @@
-﻿using OSL.Inventory.B2.Service.DTOs.Enums;
+﻿using OSL.Inventory.B2.Service.DTOs.BaseDto;
+using OSL.Inventory.B2.Service.DTOs.BaseDto.Interfaces;
+using OSL.Inventory.B2.Service.DTOs.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace OSL.Inventory.B2.Service.DTOs
 {
-    public class ProductDto
+    public class ProductDto : BaseDto<long>, IDto
     {
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;

@@ -116,9 +116,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CategoryService.cs" />
+    <Compile Include="CustomerService.cs" />
     <Compile Include="DTOs\BaseDto\BaseDto.cs" />
     <Compile Include="DTOs\BaseDto\Interfaces\IDto.cs" />
     <Compile Include="DTOs\CategoryDto.cs" />
+    <Compile Include="DTOs\CategoryViewDto.cs" />
     <Compile Include="DTOs\Enums\BasicUnitDto.cs" />
     <Compile Include="DTOs\Enums\StatusDto.cs" />
     <Compile Include="DTOs\ProductDto.cs" />
@@ -136,6 +138,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PurchaseService.cs" />
     <Compile Include="SaleService.cs" />
+    <Compile Include="SupplierService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OSL.Inventory.B2.Entity\OSL.Inventory.B2.Entity.csproj">

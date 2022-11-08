@@ -15,3 +15,4 @@ namespace OSL.Inventory.B2.Entity
         public string ZipCode { get; set; } = string.Empty;
     }
 }
+ 

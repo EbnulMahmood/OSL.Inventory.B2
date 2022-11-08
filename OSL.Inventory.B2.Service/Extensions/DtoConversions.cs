@@ -61,10 +61,10 @@ namespace OSL.Inventory.B2.Service.Extensions
                     $"</div>";
         }
 
-        public static IEnumerable<CategoryDto> ConvertToDto(this IEnumerable<Category> categories)
+        public static IEnumerable<CategoryViewDto> ConvertToDto(this IEnumerable<Category> categories)
         {
             return (from category in categories
-                    select new CategoryDto
+                    select new CategoryViewDto
                     {
                         Name = category.Name,
                         StatusHtml = $"<span class='text text-{ConditionClassStatus((StatusDto)category.Status)}'>" +

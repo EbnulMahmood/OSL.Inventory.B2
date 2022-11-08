@@ -21,6 +21,7 @@ namespace OSL.Inventory.B2.Service
         Task<bool> UpdateProductServiceAsync(ProductDto entityDtoToUpdate);
         IDictionary<string, string> ValidateProductDtoService(ProductDto entityDto);
         List<CategoryDto> SelectCategoriesListItems();
+        Task<IEnumerable<CategoryDto>> ListCategoriesAsync();
         Task<List<CategoryDto>> ListCategoriesByNameServiceAsync(string name);
     }
 
@@ -53,6 +54,26 @@ namespace OSL.Inventory.B2.Service
             if (entityDto.Description.Trim().Length == 0)
                 errors.Add("Description", "Description is required.");
             return errors;
+        }
+
+        public async Task<IEnumerable<CategoryDto>> ListCategoriesAsync()
+        {
+            try
+            {
+                var entities = await _unitOfWork.CategoryRepository.ListEntitiesAsync();
+
+                return from category in entities
+                       select new CategoryDto
+                       {
+                           Id = category.Id,
+                           Name = category.Name,
+                       };
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         public async Task<List<CategoryDto>> ListCategoriesByNameServiceAsync(string name)
@@ -144,7 +165,23 @@ namespace OSL.Inventory.B2.Service
                 var entity = await _unitOfWork.ProductRepository.GetEntityByIdAsync(entityDtoToGetId);
                 if (entity == null) throw new Exception();
 
-                var entityDto = entity.ConvertToDto();
+                var entityDto = new ProductDto
+                {
+                    Id = entity.Id,
+                    Name = entity.Name,
+                    Description = entity.Description,
+                    ImageUrl = entity.ImageUrl,
+                    Limited = entity.Limited,
+                    InStock = entity.InStock,
+                    PricePerUnit = entity.PricePerUnit,
+                    BasicUnit = (BasicUnitDto)entity.BasicUnit,
+                    CategoryId = entity.CategoryId,
+                    Status = (StatusDto)entity.Status,
+                    CreatedAt = entity.CreatedAt,
+                    CreatedBy = entity.CreatedBy,
+                    ModifiedAt = entity.ModifiedAt,
+                    ModifiedBy = entity.ModifiedBy,
+                };
                 return entityDto;
             }
             catch (Exception)
@@ -188,9 +225,25 @@ namespace OSL.Inventory.B2.Service
         {
             try
             {
-                var entity = entityDtoToUpdate.ConvertToEntity();
-                entity.ModifiedAt = DateTime.Now;
-                entity.ModifiedBy = 2;
+                var category = await _unitOfWork.CategoryRepository.GetEntityByIdAsync(entityDtoToUpdate.CategoryId);
+                var entity = new Product
+                {
+                    Id = entityDtoToUpdate.Id,
+                    Name = entityDtoToUpdate.Name,
+                    Description = entityDtoToUpdate.Description,
+                    ImageUrl = entityDtoToUpdate.ImageUrl,
+                    Limited = entityDtoToUpdate.Limited,
+                    InStock = entityDtoToUpdate.InStock,
+                    PricePerUnit = entityDtoToUpdate.PricePerUnit,
+                    BasicUnit = (BasicUnit)entityDtoToUpdate.BasicUnit,
+                    CategoryId = entityDtoToUpdate.CategoryId,
+                    Category = category,
+                    Status = (Status)entityDtoToUpdate.Status,
+                    CreatedAt = entityDtoToUpdate.CreatedAt,
+                    CreatedBy = entityDtoToUpdate.CreatedBy,
+                    ModifiedAt = DateTime.Now,
+                    ModifiedBy = 2,
+                };
 
                 if (!_unitOfWork.ProductRepository.UpdateEntity(entity)) throw new Exception();
 

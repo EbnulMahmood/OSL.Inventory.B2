@@ -14,12 +14,10 @@ namespace OSL.Inventory.B2.Web.Controllers
     public class ProductController : Controller
     {
         private readonly IProductService _service;
-        private readonly ICategoryService _categoryService;
 
-        public ProductController(IProductService service, ICategoryService categoryService)
+        public ProductController(IProductService service)
         {
             _service = service;
-            _categoryService = categoryService;
         }
 
         // GET: Product
@@ -84,6 +82,33 @@ namespace OSL.Inventory.B2.Web.Controllers
                        });
         }
 
+        private IEnumerable<SelectListItem> FilterBasicUnitDto()
+        {
+            return Enum.GetValues(typeof(BasicUnitDto))
+                       .Cast<BasicUnitDto>()
+                       .Select(e => new SelectListItem
+                       {
+                           Value = ((int)e).ToString(),
+                           Text = e.ToString()
+                       });
+        }
+
+        private async Task<IEnumerable<SelectListItem>> FilterCategoriesDto()
+        {
+            var categories = await _service.ListCategoriesAsync();
+            return categories.Select(c => new SelectListItem
+            {
+                Value = c.Id.ToString(),
+                Text = c.Name,
+            });
+        }
+
+        private async Task<SelectList> SelectListCategories()
+        {
+            var categories = await _service.ListCategoriesAsync();
+            return new SelectList(categories, "Id", "Name");
+        }
+
         // GET: Product/Details/5
         public async Task<ActionResult> Details(long? id)
         {
@@ -101,12 +126,6 @@ namespace OSL.Inventory.B2.Web.Controllers
 
                 throw;
             }
-        }
-
-        private async Task<SelectList> SelectListCategories()
-        {
-            var categories = await _categoryService.ListCategoriesAsync();
-            return new SelectList(categories, "Id", "Name");
         }
 
         // GET: Product/Create
@@ -156,7 +175,9 @@ namespace OSL.Inventory.B2.Web.Controllers
                 {
                     return HttpNotFound();
                 }
-                ViewBag.SelectList = FilterStatusDto();
+                ViewBag.SelectStatusList = FilterStatusDto();
+                ViewBag.SelectBasicUnitList = FilterBasicUnitDto();
+                ViewBag.SelectCategoriesList = await FilterCategoriesDto();
                 return View(entitiyDto);
             }
             catch (Exception)
@@ -170,7 +191,7 @@ namespace OSL.Inventory.B2.Web.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Id,Name,Description,ImageUrl,Limited,InStock,PricePerUnit,BasicUnit,CategoryName,Status,CreatedAt,CreatedBy")] ProductDto entityDto)
+        public async Task<ActionResult> Edit([Bind(Include = "Id,Name,Description,ImageUrl,Limited,InStock,PricePerUnit,Status,BasicUnit,CategoryId,CreatedAt,CreatedBy")] ProductDto entityDto)
         {
             try
             {
