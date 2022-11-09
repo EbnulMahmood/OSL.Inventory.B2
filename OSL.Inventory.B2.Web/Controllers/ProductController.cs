@@ -144,9 +144,6 @@ namespace OSL.Inventory.B2.Web.Controllers
         {
             try
             {
-                IDictionary<string, string> errors = _service.ValidateProductDtoService(entityDto);
-
-                if (errors.Count > 0) ModelState.MergeError(errors);
                 if (!ModelState.IsValid) return View(entityDto);
 
                 await _service.CreateProductServiceAsync(entityDto);
@@ -195,9 +192,6 @@ namespace OSL.Inventory.B2.Web.Controllers
         {
             try
             {
-                IDictionary<string, string> errors = _service.ValidateProductDtoService(entityDto);
-
-                if (errors.Count > 0) ModelState.MergeError(errors);
                 if (!ModelState.IsValid) return View(entityDto);
 
                 await _service.UpdateProductServiceAsync(entityDto);

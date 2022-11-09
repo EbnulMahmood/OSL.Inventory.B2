@@ -14,6 +14,7 @@ namespace OSL.Inventory.B2.Repository
         Task<(IEnumerable<Supplier>, int, int)> ListSuppliersWithSortingFilteringPagingAsync(int start, int length, string order, string orderDir,
             string searchByName, Status filterByStatus = 0);
         Task<bool> SoftDeleteEntity(long id);
+        Task<IEnumerable<Supplier>> ListSuppliersIdNameAsync();
     }
 
     public class SupplierRepository : BaseRepository<Supplier>, ISupplierRepository
@@ -30,78 +31,100 @@ namespace OSL.Inventory.B2.Repository
 
         #region ListInstance
 
+        public async Task<IEnumerable<Supplier>> ListSuppliersIdNameAsync()
+        {
+            var entities = (await _context.Suppliers.ToListAsync())
+                .Select(x => new Supplier()
+                {
+                    Id = x.Id,
+                    FirstName = x.FirstName,
+                });
+
+            return entities;
+        }
+
         #region Sorting
         // sort by order desc
-        // private IEnumerable<Supplier> SortByColumnWithOrder(string order, string orderDir, IEnumerable<Supplier> data)
-        // {
-        //     // Initialization.   
-        //     IEnumerable<Supplier> sortedEntities = Enumerable.Empty<Supplier>();
+        private IEnumerable<Supplier> SortByColumnWithOrder(string order, string orderDir, IEnumerable<Supplier> data)
+        {
+            // Initialization.   
+            IEnumerable<Supplier> sortedEntities = Enumerable.Empty<Supplier>();
 
-        //     try
-        //     {
-        //         // Sorting   
-        //         switch (order)
-        //         {
-        //             case "0":
-        //                 // Setting.   
-        //                 sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ?
-        //                     data.OrderByDescending(p => p.Name)
-        //                     .ToList()
-        //                     .Select(product => SelectProduct(product)) :
-        //                     data.OrderBy(p => p.Name)
-        //                     .ToList()
-        //                     .Select(product => SelectProduct(product));
-        //                 break;
-        //             case "1":
-        //                 // Setting.   
-        //                 sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ?
-        //                     data.OrderByDescending(p => p.InStock)
-        //                     .ToList()
-        //                     .Select(product => SelectProduct(product)) :
-        //                     data.OrderBy(p => p.InStock)
-        //                     .ToList()
-        //                     .Select(product => SelectProduct(product));
-        //                 break;
-        //             case "2":
-        //                 // Setting.   
-        //                 sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ?
-        //                     data.OrderByDescending(p => p.PricePerUnit)
-        //                     .ToList()
-        //                     .Select(product => SelectProduct(product)) :
-        //                     data.OrderBy(p => p.PricePerUnit)
-        //                     .ToList()
-        //                     .Select(product => SelectProduct(product));
-        //                 break;
-        //             case "3":
-        //                 // Setting.   
-        //                 sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ?
-        //                     data.OrderByDescending(p => p.Status)
-        //                     .ToList()
-        //                     .Select(product => SelectProduct(product)) :
-        //                     data.OrderBy(p => p.Status)
-        //                     .ToList()
-        //                     .Select(product => SelectProduct(product));
-        //                 break;
-        //             default:
-        //                 // Setting.   
-        //                 sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ?
-        //                     data.OrderByDescending(p => p.CreatedAt)
-        //                     .ToList()
-        //                     .Select(product => SelectProduct(product)) :
-        //                     data.OrderBy(p => p.CreatedAt)
-        //                     .ToList()
-        //                     .Select(product => SelectProduct(product));
-        //                 break;
-        //         }
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         // info.   
-        //         Console.Write(ex);
-        //     }
-        //     // info.   
-        //     return sortedEntities;
-        // }
+            try
+            {
+                // Sorting   
+                switch (order)
+                {
+                    case "0":
+                        // Setting.   
+                        sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ?
+                            data.OrderByDescending(p => p.FirstName)
+                            .ToList()
+                            .Select(supplier => SelectSupplier(supplier)) :
+                            data.OrderBy(p => p.FirstName)
+                            .ToList()
+                            .Select(supplier => SelectSupplier(supplier));
+                        break;
+                    case "1":
+                        // Setting.   
+                        sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ?
+                            data.OrderByDescending(p => p.EmailAddress)
+                            .ToList()
+                            .Select(supplier => SelectSupplier(supplier)) :
+                            data.OrderBy(p => p.EmailAddress)
+                            .ToList()
+                            .Select(supplier => SelectSupplier(supplier));
+                        break;
+                    case "2":
+                        // Setting.   
+                        sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ?
+                            data.OrderByDescending(p => p.PhoneNumber)
+                            .ToList()
+                            .Select(supplier => SelectSupplier(supplier)) :
+                            data.OrderBy(p => p.PhoneNumber)
+                            .ToList()
+                            .Select(supplier => SelectSupplier(supplier));
+                        break;
+                    case "3":
+                        // Setting.   
+                        sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ?
+                            data.OrderByDescending(p => p.State)
+                            .ToList()
+                            .Select(supplier => SelectSupplier(supplier)) :
+                            data.OrderBy(p => p.State)
+                            .ToList()
+                            .Select(supplier => SelectSupplier(supplier));
+                        break;
+                    case "4":
+                        // Setting.   
+                        sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ?
+                            data.OrderByDescending(p => p.Status)
+                            .ToList()
+                            .Select(supplier => SelectSupplier(supplier)) :
+                            data.OrderBy(p => p.Status)
+                            .ToList()
+                            .Select(supplier => SelectSupplier(supplier));
+                        break;
+                    default:
+                        // Setting.   
+                        sortedEntities = orderDir.Equals("DESC", StringComparison.CurrentCultureIgnoreCase) ?
+                            data.OrderByDescending(p => p.CreatedAt)
+                            .ToList()
+                            .Select(supplier => SelectSupplier(supplier)) :
+                            data.OrderBy(p => p.CreatedAt)
+                            .ToList()
+                            .Select(supplier => SelectSupplier(supplier));
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                // info.   
+                Console.Write(ex);
+            }
+            // info.   
+            return sortedEntities;
+        }
         #endregion
 
         private Supplier SelectSupplier(Supplier supplier)
@@ -129,14 +152,12 @@ namespace OSL.Inventory.B2.Repository
             var recordCount = await _context.Suppliers.CountAsync(x =>
                                                     (x.Status != Status.Deleted) &&
                                                     (x.FirstName.ToLower().Contains(searchByName.ToLower()) || string.IsNullOrEmpty(searchByName)) &&
-                                                    (x.LastName.ToLower().Contains(searchByName.ToLower()) || string.IsNullOrEmpty(searchByName)) &&
                                                     (x.Status == filterByStatus || filterByStatus == 0));
 
             IEnumerable<Supplier> listEntites = (await _context.Suppliers
                                                 .Where(x =>
                                                     (x.Status != Status.Deleted) &&
                                                     (x.FirstName.ToLower().Contains(searchByName.ToLower()) || string.IsNullOrEmpty(searchByName)) &&
-                                                    (x.LastName.ToLower().Contains(searchByName.ToLower()) || string.IsNullOrEmpty(searchByName)) &&
                                                     (x.Status == filterByStatus || filterByStatus == 0))
                                                 .OrderByDescending(d => d.CreatedAt)
                                                 .Skip(start).Take(length)
@@ -144,10 +165,9 @@ namespace OSL.Inventory.B2.Repository
                                                 .Select(supplier => SelectSupplier(supplier));
 
             // Sorting 
-            // var result = SortByColumnWithOrder(order, orderDir, listEntites);
+            var result = SortByColumnWithOrder(order, orderDir, listEntites);
 
-            // return (result, totalRecord, recordCount);
-            return (listEntites, totalRecord, recordCount);
+            return (result, totalRecord, recordCount);
         }
         #endregion
 

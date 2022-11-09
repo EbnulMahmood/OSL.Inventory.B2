@@ -17,3 +17,4 @@ namespace OSL.Inventory.B2.Entity
         public virtual ICollection<PurchaseDetail> purchaseDetails { get; set; }
     }
 }
+ 

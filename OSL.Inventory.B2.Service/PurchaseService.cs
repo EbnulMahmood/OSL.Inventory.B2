@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using OSL.Inventory.B2.Service.DTOs.Enums;
 using OSL.Inventory.B2.Service.Extensions;
 using Humanizer;
+using System.Linq;
 
 namespace OSL.Inventory.B2.Service
 {
@@ -15,7 +16,8 @@ namespace OSL.Inventory.B2.Service
     {
         Task<(List<object>, int, int)> ListPurchasesWithSortingFilteringPagingServiceAsync(int start, int length,
             string order, string orderDir, string searchByPurchaseCode, Nullable<DateTime> dateFrom, Nullable<DateTime> dateTo,
-            StatusDto filterByStatusDto = 0);
+            string filterBySupplier, StatusDto filterByStatusDto = 0);
+        Task<IEnumerable<SupplierDto>> SelectSupplierListItemsAsync();
         Task<bool> CreatePurchaseServiceAsync(PurchaseDto entityDtoToCreate);
         Task<PurchaseDto> GetPurchaseByIdServiceAsync(long? entityDtoToGetId);
         Task<bool> UpdatePurchaseServiceAsync(PurchaseDto entityDtoToUpdate);
@@ -59,14 +61,27 @@ namespace OSL.Inventory.B2.Service
         #endregion
 
         #region ListInstance
+
+        public async Task<IEnumerable<SupplierDto>> SelectSupplierListItemsAsync()
+        {
+            var entities = await _unitOfWork.SupplierRepository.ListSuppliersIdNameAsync();
+            var entitiesDto = (from x in entities
+                               select new SupplierDto()
+                               {
+                                   Id = x.Id,
+                                   FirstName = x.FirstName,
+                               }).ToList();
+            return entitiesDto;
+        }
+        
         public async Task<(List<object>, int, int)> ListPurchasesWithSortingFilteringPagingServiceAsync(int start, int length,
             string order, string orderDir, string searchByPurchaseCode, Nullable<DateTime> dateFrom, Nullable<DateTime> dateTo,
-            StatusDto filterByStatusDto = 0)
+            string filterBySupplier, StatusDto filterByStatusDto = 0)
         {
             try
             {
                 var listPurchasesTuple = await _unitOfWork.PurchaseRepository.ListPurchasesWithSortingFilteringPagingAsync(start, length,
-                    order, orderDir, searchByPurchaseCode, dateFrom, dateTo, (Status)filterByStatusDto);
+                    order, orderDir, searchByPurchaseCode, dateFrom, dateTo, filterBySupplier, (Status)filterByStatusDto);
 
                 int totalRecord = listPurchasesTuple.Item2;
                 int filterRecord = listPurchasesTuple.Item3;
@@ -97,6 +112,8 @@ namespace OSL.Inventory.B2.Service
                 throw;
             }
         }
+
+
         #endregion
 
         #region Operations

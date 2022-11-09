@@ -44,10 +44,10 @@
         <input class="form-control" type="text" id="search-by-PurchaseCode" placeholder="Search Code" />
     </div>
     <div class="col-md-2 p-2">
-        <input class="form-control" type="date" id="date-From" name="trip-start" value="" >
+        <input class="form-control" type="date" id="date-From" name="trip-start" value="">
     </div>
     <div class="col-md-2 p-2">
-        <input class="form-control" type="date" id="date-To" name="trip-start" value="" >
+        <input class="form-control" type="date" id="date-To" name="trip-start" value="">
     </div>
 
     @* <div class="col-md-2 p-2">
@@ -74,6 +74,15 @@
             <option selected value="">Select Status</option>
             <option value="@StatusDto.Active">Active</option>
             <option value="@StatusDto.Inactive">Inactive</option>
+        </select>
+    </div>
+    <div class="col-md-2 p-2">
+        <select class="form-control" id="filter-by-supplier">
+            <option selected value="">Select Supplier</option>
+            @foreach (var item in ViewBag.Suppliers)
+            {
+                <option value="@item.Id">@item.FirstName</option>
+            }
         </select>
     </div>
     <div class="col p-2 text-end">
@@ -112,6 +121,7 @@
                     searchByPurchaseCode: "#search-by-PurchaseCode",
                     dateFrom: "#date-From",
                     dateTo: "#date-To",
+                    filterBySupplier: "#filter-by-supplier",
                     filterByStatus: "#filter-by-status",
                 }
             }

@@ -18,7 +18,6 @@ namespace OSL.Inventory.B2.Service
         Task<(List<object>, int, int)> ListCustomersWithSortingFilteringPagingServiceAsync(int start, int length, string order, string orderDir,
             string searchByName, StatusDto filterByStatusDto = 0);
         Task<bool> UpdateCustomerServiceAsync(CustomerDto entityDtoToUpdate);
-        IDictionary<string, string> ValidateCustomerDtoService(CustomerDto entityDto);
     }
 
     public class CustomerService : ICustomerService
@@ -31,18 +30,6 @@ namespace OSL.Inventory.B2.Service
         }
 
         #region SingleInstance
-        public IDictionary<string, string> ValidateCustomerDtoService(CustomerDto entityDto)
-        {
-            Guard.AgainstNullParameter(entityDto, nameof(entityDto));
-
-            Dictionary<string, string> errors = new Dictionary<string, string>();
-
-            if (entityDto.FirstName.Trim().Length == 0)
-                errors.Add("FirstName", "First Name is required.");
-            if (entityDto.LastName.Trim().Length == 0)
-                errors.Add("LastName", "Last Name is required.");
-            return errors;
-        }
 
         public async Task<CustomerDto> GetCustomerByIdServiceAsync(long? entityDtoToGetId)
         {

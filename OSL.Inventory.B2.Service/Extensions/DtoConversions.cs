@@ -175,7 +175,7 @@ namespace OSL.Inventory.B2.Service.Extensions
                         Address = $"{customer.City}, {customer.State}, {customer.ZipCode}, {customer.Country}",
                         StatusHtml = $"<span class='text text-{ConditionClassStatus((StatusDto)customer.Status)}'>" +
                              $"{ConditionTextStatus((StatusDto)customer.Status)}</span>",
-                        ActionLinkHtml = ActionLinks("Product", customer.Id),
+                        ActionLinkHtml = ActionLinks("Customer", customer.Id),
                     }).ToList();
         }
 
@@ -191,7 +191,7 @@ namespace OSL.Inventory.B2.Service.Extensions
                         Address = $"{supplier.City}, {supplier.State}, {supplier.ZipCode}, {supplier.Country}",
                         StatusHtml = $"<span class='text text-{ConditionClassStatus((StatusDto)supplier.Status)}'>" +
                              $"{ConditionTextStatus((StatusDto)supplier.Status)}</span>",
-                        ActionLinkHtml = ActionLinks("Product", supplier.Id),
+                        ActionLinkHtml = ActionLinks("Supplier", supplier.Id),
                     }).ToList();
         }
     }

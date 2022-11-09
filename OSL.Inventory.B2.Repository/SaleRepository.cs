@@ -12,7 +12,7 @@ namespace OSL.Inventory.B2.Repository
     public interface ISaleRepository : IBaseRepository<Sale>
     {
         Task<(IEnumerable<Sale>, int, int)> ListSalesWithSortingFilteringPagingAsync(int start, int length, string order, string orderDir, 
-            string searchBySaleCode, DateTime? dateFrom, DateTime? dateTo, Status filterByStatus = 0);
+            string searchBySaleCode, DateTime? dateFrom, DateTime? dateTo, string filterByCustomer, Status filterByStatus = 0);
     }
 
     public class SaleRepository : BaseRepository<Sale>, ISaleRepository
@@ -139,16 +139,22 @@ namespace OSL.Inventory.B2.Repository
 
         public async Task<(IEnumerable<Sale>, int, int)> ListSalesWithSortingFilteringPagingAsync(int start, int length,
             string order, string orderDir, string searchBySaleCode, Nullable<DateTime> dateFrom, Nullable<DateTime> dateTo,
-            Status filterByStatus = 0)
+            string filterByCustomer, Status filterByStatus = 0)
         {
             // get total count of data in table
             int totalRecord = await _context.Sales.CountAsync();
+            long customerId = 0;
+            if (!string.IsNullOrEmpty(filterByCustomer))
+            {
+                customerId = long.Parse(filterByCustomer);
+            }
 
             var recordCount = await _context.Sales.CountAsync(x =>
                                                     (x.Status != Status.Deleted) &&
                                                     (x.SaleCode.ToLower().Contains(searchBySaleCode.ToLower()) || string.IsNullOrEmpty(searchBySaleCode)) &&
                                                     (DbFunctions.TruncateTime(x.SaleDate) >= dateFrom || dateFrom == null) &&
                                                     (DbFunctions.TruncateTime(x.SaleDate) <= dateTo || dateTo == null) &&
+                                                    (x.CustomerId == customerId || customerId == 0) &&
                                                     (x.Status == filterByStatus || filterByStatus == 0));
 
             IEnumerable<Sale> listEntites = (await _context.Sales
@@ -158,6 +164,7 @@ namespace OSL.Inventory.B2.Repository
                                                     (x.SaleCode.ToLower().Contains(searchBySaleCode.ToLower()) || string.IsNullOrEmpty(searchBySaleCode)) &&
                                                     (DbFunctions.TruncateTime(x.SaleDate) >= dateFrom || dateFrom == null) &&
                                                     (DbFunctions.TruncateTime(x.SaleDate) <= dateTo || dateTo == null) &&
+                                                    (x.CustomerId == customerId || customerId == 0) &&
                                                     (x.Status == filterByStatus || filterByStatus == 0))
                                                 .OrderByDescending(d => d.CreatedAt)
                                                 .Skip(start).Take(length)

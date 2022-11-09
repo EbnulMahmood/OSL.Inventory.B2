@@ -14,7 +14,7 @@ namespace OSL.Inventory.B2.Repository
     {
         Task<(IEnumerable<Purchase>, int, int)> ListPurchasesWithSortingFilteringPagingAsync(int start, int length,
             string order, string orderDir, string searchByPurchaseCode, Nullable<DateTime> dateFrom, Nullable<DateTime> dateTo,
-            Status filterByStatus = 0);
+            string filterBySupplier, Status filterByStatus = 0);
     }
 
     public class PurchaseRepository : BaseRepository<Purchase>, IPurchaseRepository
@@ -141,16 +141,22 @@ namespace OSL.Inventory.B2.Repository
 
         public async Task<(IEnumerable<Purchase>, int, int)> ListPurchasesWithSortingFilteringPagingAsync(int start, int length,
             string order, string orderDir, string searchByPurchaseCode, Nullable<DateTime> dateFrom, Nullable<DateTime> dateTo,
-            Status filterByStatus = 0)
+            string filterBySupplier, Status filterByStatus = 0)
         {
             // get total count of data in table
             int totalRecord = await _context.Purchases.CountAsync();
+            long supplierId = 0;
+            if (!string.IsNullOrEmpty(filterBySupplier))
+            {
+                supplierId = long.Parse(filterBySupplier);
+            }
 
             var recordCount = await _context.Purchases.CountAsync(x =>
                                                     (x.Status != Status.Deleted) &&
                                                     (x.PurchaseCode.ToLower().Contains(searchByPurchaseCode.ToLower()) || string.IsNullOrEmpty(searchByPurchaseCode)) &&
                                                     (DbFunctions.TruncateTime(x.PurchaseDate) >= dateFrom || dateFrom == null) &&
                                                     (DbFunctions.TruncateTime(x.PurchaseDate) <= dateTo || dateTo == null) &&
+                                                    (x.SupplierId == supplierId || supplierId == 0) &&
                                                     (x.Status == filterByStatus || filterByStatus == 0));
 
             IEnumerable<Purchase> listEntites = (await _context.Purchases
@@ -160,6 +166,7 @@ namespace OSL.Inventory.B2.Repository
                                                     (x.PurchaseCode.ToLower().Contains(searchByPurchaseCode.ToLower()) || string.IsNullOrEmpty(searchByPurchaseCode)) &&
                                                     (DbFunctions.TruncateTime(x.PurchaseDate) >= dateFrom || dateFrom == null) &&
                                                     (DbFunctions.TruncateTime(x.PurchaseDate) <= dateTo || dateTo == null) &&
+                                                    (x.SupplierId == supplierId || supplierId == 0) &&
                                                     (x.Status == filterByStatus || filterByStatus == 0))
                                                 .OrderByDescending(d => d.CreatedAt)
                                                 .Skip(start).Take(length)

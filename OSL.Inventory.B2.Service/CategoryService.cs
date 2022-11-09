@@ -11,7 +11,6 @@ namespace OSL.Inventory.B2.Service
 {
     public interface ICategoryService
     {
-        IDictionary<string, string> ValidateCategoryDtoService(CategoryDto entityDto);
         Task<(List<object>, int, int)> ListCategoriesWithSortingFilteringPagingServiceAsync(int start, int length,
             string order, string orderDir, string searchByName, StatusDto filterByStatusDto = 0);
         Task<CategoryDto> GetCategoryByIdServiceAsync(long? entityDtoToGetId);

@@ -19,7 +19,6 @@ namespace OSL.Inventory.B2.Service
         Task<(List<object>, int, int)> ListProductsWithSortingFilteringPagingServiceAsync(int start, int length, string order, 
             string orderDir, string searchByName, string filterByCategory, StatusDto filterByStatusDto = 0);
         Task<bool> UpdateProductServiceAsync(ProductDto entityDtoToUpdate);
-        IDictionary<string, string> ValidateProductDtoService(ProductDto entityDto);
         List<CategoryDto> SelectCategoriesListItems();
         Task<IEnumerable<CategoryDto>> ListCategoriesAsync();
         Task<List<CategoryDto>> ListCategoriesByNameServiceAsync(string name);
@@ -35,18 +34,6 @@ namespace OSL.Inventory.B2.Service
         }
 
         #region SingleInstance
-        public IDictionary<string, string> ValidateProductDtoService(ProductDto entityDto)
-        {
-            Guard.AgainstNullParameter(entityDto, nameof(entityDto));
-
-            Dictionary<string, string> errors = new Dictionary<string, string>();
-
-            if (entityDto.Name.Trim().Length == 0)
-                errors.Add("Name", "Name is required.");
-            if (entityDto.Description.Trim().Length == 0)
-                errors.Add("Description", "Description is required.");
-            return errors;
-        }
 
         public async Task<ProductDto> GetProductByIdServiceAsync(long? entityDtoToGetId)
         {

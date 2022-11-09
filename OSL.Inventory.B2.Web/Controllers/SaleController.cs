@@ -19,24 +19,25 @@ namespace OSL.Inventory.B2.Web.Controllers
         }
 
         // GET: Sale
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
+            var entities = await _service.SelectCustomerListItemsAsync();
+            ViewBag.Customers = entities;
             return View();
         }
 
         [HttpPost, ActionName("Index")]
         public async Task<JsonResult> ListSalesAsync(int draw, int start, int length,
             string searchBySaleCode, Nullable<DateTime> dateFrom, Nullable<DateTime> dateTo,
-            StatusDto filterByStatus = 0)
+            string filterByCustomer, StatusDto filterByStatus = 0)
         {
             try
             {
                 string order = Request.Form.GetValues("order[0][column]")[0];
                 string orderDir = Request.Form.GetValues("order[0][dir]")[0];
 
-                var listSalesTuple = await _service
-                    .ListSalesWithSortingFilteringPagingServiceAsync(start, length,
-                    order, orderDir, searchBySaleCode, dateFrom, dateTo, filterByStatus);
+                var listSalesTuple = await _service.ListSalesWithSortingFilteringPagingServiceAsync(start, length,
+                    order, orderDir, searchBySaleCode, dateFrom, dateTo, filterByCustomer, filterByStatus);
 
                 int totalRecord = listSalesTuple.Item2;
                 int filterRecord = listSalesTuple.Item3;
