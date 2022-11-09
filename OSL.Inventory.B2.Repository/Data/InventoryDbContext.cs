@@ -12,7 +12,7 @@ namespace OSL.Inventory.B2.Repository.Data
         }
 
         public DbSet<Category> Categories { get; set; }
-        public DbSet<User> Users { get; set; }
+        public DbSet<InventoryUser> Users { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }
         public DbSet<Purchase> Purchases { get; set; }
@@ -53,12 +53,12 @@ namespace OSL.Inventory.B2.Repository.Data
             builder.Entity<Category>().Property(c => c.Description).HasMaxLength(500);
 
             // User constraints
-            builder.Entity<User>().Property(c => c.FirstName).HasMaxLength(255);
-            builder.Entity<User>().Property(c => c.LastName).HasMaxLength(255);
-            builder.Entity<User>().Property(c => c.Country).HasMaxLength(50);
-            builder.Entity<User>().Property(c => c.City).HasMaxLength(80);
-            builder.Entity<User>().Property(c => c.State).HasMaxLength(80);
-            builder.Entity<User>().Property(c => c.ZipCode).HasMaxLength(20);
+            builder.Entity<InventoryUser>().Property(c => c.FirstName).HasMaxLength(255);
+            builder.Entity<InventoryUser>().Property(c => c.LastName).HasMaxLength(255);
+            builder.Entity<InventoryUser>().Property(c => c.Country).HasMaxLength(50);
+            builder.Entity<InventoryUser>().Property(c => c.City).HasMaxLength(80);
+            builder.Entity<InventoryUser>().Property(c => c.State).HasMaxLength(80);
+            builder.Entity<InventoryUser>().Property(c => c.ZipCode).HasMaxLength(20);
 
             // product constraints
             builder.Entity<Product>().Property(x => x.Name).HasMaxLength(255);

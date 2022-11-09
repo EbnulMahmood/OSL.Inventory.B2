@@ -41,6 +41,10 @@ namespace OSL.Inventory.B2.Service.DependencyRegistry
             builder.RegisterType<SupplierService>()
                 .As<ISupplierService>()
                 .InstancePerLifetimeScope();
+            builder.RegisterType<ReportService>()
+                .As<IReportService>()
+                .InstancePerLifetimeScope();
+
 
             base.Load(builder);
         }

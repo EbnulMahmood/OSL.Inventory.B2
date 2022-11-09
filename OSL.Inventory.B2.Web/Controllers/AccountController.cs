@@ -8,6 +8,8 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using OSL.Inventory.B2.Service;
+using OSL.Inventory.B2.Service.DTOs;
 using OSL.Inventory.B2.Web.Models;
 
 namespace OSL.Inventory.B2.Web.Controllers
@@ -22,10 +24,11 @@ namespace OSL.Inventory.B2.Web.Controllers
         {
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, UserService userService )
         {
             UserManager = userManager;
             SignInManager = signInManager;
+            _userService = userService;
         }
 
         public ApplicationSignInManager SignInManager
@@ -152,17 +155,21 @@ namespace OSL.Inventory.B2.Web.Controllers
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+
+
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
+
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                     // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                     // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
+                    // await _userService.CreateUserAsync(model.FirstName, model.LastName, model.Country, model.City, model.State, model.ZipCode, user.Id);
+                    
                     return RedirectToAction("Index", "Home");
                 }
                 AddErrors(result);
@@ -426,6 +433,9 @@ namespace OSL.Inventory.B2.Web.Controllers
         #region Helpers
         // Used for XSRF protection when adding external logins
         private const string XsrfKey = "XsrfId";
+        private readonly UserService _userService;
+
+        // osl.inventory user service
 
         private IAuthenticationManager AuthenticationManager
         {

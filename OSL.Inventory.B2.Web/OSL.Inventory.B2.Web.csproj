@@ -206,11 +206,17 @@
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\PurchaseController.cs" />
+    <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\SaleController.cs" />
     <Compile Include="Controllers\SupplierController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202211090927201_IdentityDb.cs" />
+    <Compile Include="Migrations\202211090927201_IdentityDb.designer.cs">
+      <DependentUpon>202211090927201_IdentityDb.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
@@ -325,9 +331,11 @@
     <Content Include="Views\Supplier\Index.cshtml" />
     <Content Include="Views\Customer\_CustomerDeletePartial.cshtml" />
     <Content Include="Views\Supplier\_SupplierDeletePartial.cshtml" />
+    <Content Include="Views\Product\Stock.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Report\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />
@@ -361,6 +369,11 @@
       <Project>{5E6FDFB6-8F76-451E-95DC-6C342788D8A6}</Project>
       <Name>OSL.Inventory.B2.Service</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202211090927201_IdentityDb.resx">
+      <DependentUpon>202211090927201_IdentityDb.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

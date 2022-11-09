@@ -75,6 +75,14 @@
     <Compile Include="Migrations\202211080710319_AddBasicUnitEnumToProductTable.designer.cs">
       <DependentUpon>202211080710319_AddBasicUnitEnumToProductTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202211090922544_AddIdentityUserIdToUserTable.cs" />
+    <Compile Include="Migrations\202211090922544_AddIdentityUserIdToUserTable.designer.cs">
+      <DependentUpon>202211090922544_AddIdentityUserIdToUserTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202211091108417_ChangeUserTableName.cs" />
+    <Compile Include="Migrations\202211091108417_ChangeUserTableName.designer.cs">
+      <DependentUpon>202211091108417_ChangeUserTableName.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ProductRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -82,6 +90,7 @@
     <Compile Include="SaleRepository.cs" />
     <Compile Include="SupplierRepository.cs" />
     <Compile Include="UnitOfWork.cs" />
+    <Compile Include="UserRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -96,6 +105,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202211080710319_AddBasicUnitEnumToProductTable.resx">
       <DependentUpon>202211080710319_AddBasicUnitEnumToProductTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202211090922544_AddIdentityUserIdToUserTable.resx">
+      <DependentUpon>202211090922544_AddIdentityUserIdToUserTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202211091108417_ChangeUserTableName.resx">
+      <DependentUpon>202211091108417_ChangeUserTableName.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

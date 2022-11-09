@@ -13,6 +13,7 @@ namespace OSL.Inventory.B2.Repository
     {
         Task<(IEnumerable<Sale>, int, int)> ListSalesWithSortingFilteringPagingAsync(int start, int length, string order, string orderDir, 
             string searchBySaleCode, DateTime? dateFrom, DateTime? dateTo, string filterByCustomer, Status filterByStatus = 0);
+        Task<IEnumerable<Sale>> ListSalesPerDayAsync();
     }
 
     public class SaleRepository : BaseRepository<Sale>, ISaleRepository
@@ -175,6 +176,11 @@ namespace OSL.Inventory.B2.Repository
             var result = SortByColumnWithOrder(order, orderDir, listEntites);
 
             return (result, totalRecord, recordCount);
+        }
+
+        public Task<IEnumerable<Sale>> ListSalesPerDayAsync()
+        {
+            return null;
         }
         #endregion
 

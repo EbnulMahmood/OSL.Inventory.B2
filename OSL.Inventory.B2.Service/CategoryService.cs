@@ -45,18 +45,6 @@ namespace OSL.Inventory.B2.Service
             }
         }
 
-        public IDictionary<string, string> ValidateCategoryDtoService(CategoryDto entityDto)
-        {
-            Guard.AgainstNullParameter(entityDto, nameof(entityDto));
-
-            Dictionary<string, string> errors = new Dictionary<string, string>();
-
-            if (entityDto.Name.Trim().Length == 0)
-                errors.Add("Name", "Name is required.");
-            if (entityDto.Description.Trim().Length == 0)
-                errors.Add("Description", "Description is required.");
-            return errors;
-        }
         #endregion
 
         #region LoadInstance

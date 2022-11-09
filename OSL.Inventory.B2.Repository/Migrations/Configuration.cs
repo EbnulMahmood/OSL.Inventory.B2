@@ -20,6 +20,7 @@ namespace OSL.Inventory.B2.Repository.Migrations
 
             //  You can use the DbSet<T>.AddOrUpdate() helper extension method
             //  to avoid creating duplicate seed data.
+            /*
             var categories = new List<Category>
             {
                 new Category { Name = "Electronics", CreatedBy = 1, CreatedAt = DateTime.Now, Description = "Sit amet commodo nulla facilisi nullam vehicula ipsum a arcu. Sit amet consectetur adipiscing elit. Ut etiam sit amet nisl purus in mollis." },
@@ -201,6 +202,7 @@ namespace OSL.Inventory.B2.Repository.Migrations
 
             saleDetails.ForEach(x => context.SaleDetails.AddOrUpdate(c => c.Id, x));
             context.SaveChanges();
+            */
         }
     }
 }

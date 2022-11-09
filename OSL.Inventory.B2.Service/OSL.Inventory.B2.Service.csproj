@@ -128,21 +128,25 @@
     <Compile Include="DTOs\ProductViewDto.cs" />
     <Compile Include="DTOs\PurchaseDetailDto.cs" />
     <Compile Include="DTOs\PurchaseViewDto.cs" />
+    <Compile Include="DTOs\ReportDto.cs" />
     <Compile Include="DTOs\SaleDetailDto.cs" />
     <Compile Include="DTOs\SaleDto.cs" />
     <Compile Include="DTOs\PurchaseDto.cs" />
     <Compile Include="DTOs\CustomerDto.cs" />
+    <Compile Include="DTOs\SalesPerDayDto.cs" />
     <Compile Include="DTOs\SaleViewDto.cs" />
     <Compile Include="DTOs\SupplierDto.cs" />
     <Compile Include="DTOs\SupplierViewDto.cs" />
+    <Compile Include="DTOs\UserDto.cs" />
     <Compile Include="Extensions\DtoConversions.cs" />
     <Compile Include="DependencyRegistry\AutofacModule.cs" />
-    <Compile Include="Extensions\ModelExtensions.cs" />
     <Compile Include="ProductService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PurchaseService.cs" />
+    <Compile Include="ReportService.cs" />
     <Compile Include="SaleService.cs" />
     <Compile Include="SupplierService.cs" />
+    <Compile Include="UserService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OSL.Inventory.B2.Entity\OSL.Inventory.B2.Entity.csproj">
