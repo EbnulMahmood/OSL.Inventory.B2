@@ -9,6 +9,8 @@ using System;
 using OSL.Inventory.B2.Service.Extensions;
 using Humanizer;
 using System.Linq;
+using System.Web.Mvc;
+using Autofac.Core;
 
 namespace OSL.Inventory.B2.Service
 {
@@ -16,7 +18,10 @@ namespace OSL.Inventory.B2.Service
     {
         Task<bool> CreateSaleServiceAsync(SaleDto entityDtoToCreate);
         Task<SaleDto> GetSaleByIdServiceAsync(long? entityDtoToGetId);
+        decimal GetProductUnitPriceService(long id);
         Task<IEnumerable<CustomerDto>> SelectCustomerListItemsAsync();
+        Task<IEnumerable<SelectListItem>> SelectListCustomersServiceAsync();
+        Task<IEnumerable<SelectListItem>> SelectListProductsServiceAsync();
         Task<(List<object>, int, int)> ListSalesWithSortingFilteringPagingServiceAsync(int start, int length, string order, string orderDir,
             string searchBySaleCode, DateTime? dateFrom, DateTime? dateTo, string filterByCustomer, StatusDto filterByStatusDto = 0);
         Task<bool> UpdateSaleServiceAsync(SaleDto entityDtoToUpdate);
@@ -32,6 +37,21 @@ namespace OSL.Inventory.B2.Service
         }
 
         #region SingleInstance
+
+        public decimal GetProductUnitPriceService(long id)
+        {
+            try
+            {
+                var unitPrice = _unitOfWork.ProductRepository.GetProductUnitPrice(id);
+                return unitPrice;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<SaleDto> GetSaleByIdServiceAsync(long? entityDtoToGetId)
         {
             try
@@ -61,6 +81,18 @@ namespace OSL.Inventory.B2.Service
 
         #region ListInstance
 
+        public async Task<IEnumerable<SelectListItem>> SelectListCustomersServiceAsync()
+        {
+            var entitiesList = await _unitOfWork.CustomerRepository.ListCustomersIdNameAsync();
+
+            return (from entity in entitiesList
+                    select new SelectListItem()
+                    {
+                        Value = entity.Id.ToString(),
+                        Text = $"{entity.FirstName} {entity.LastName}",
+                    }).ToList();
+        }
+
         public async Task<IEnumerable<CustomerDto>> SelectCustomerListItemsAsync()
         {
             var entities = await _unitOfWork.CustomerRepository.ListCustomersIdNameAsync();
@@ -71,6 +103,19 @@ namespace OSL.Inventory.B2.Service
                                    FirstName = x.FirstName,
                                }).ToList();
             return entitiesDto;
+        }
+
+        public async Task<IEnumerable<SelectListItem>> SelectListProductsServiceAsync()
+        {
+            var entities = await _unitOfWork.ProductRepository.ListProductsIdNameAsync();
+            var selectListItems = (from x in entities
+                                   select new SelectListItem()
+                                   {
+                                       Text = x.Name,
+                                       Value = x.Id.ToString(),
+                                       Selected = false,
+                                   }).ToList();
+            return selectListItems;
         }
 
         public async Task<(List<object>, int, int)> ListSalesWithSortingFilteringPagingServiceAsync(int start, int length,

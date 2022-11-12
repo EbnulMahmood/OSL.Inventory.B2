@@ -1,136 +1,301 @@
 ﻿@model OSL.Inventory.B2.Service.DTOs.SaleDto
 
 @{
-    ViewBag.Title = "Create";
+    ViewBag.Title = "Sale";
 }
 
-<h2>Create</h2>
+<h2>Sale</h2>
 
 
-@using (Html.BeginForm()) 
-{
-    @Html.AntiForgeryToken()
     
-    <div class="form-horizontal">
-        <h4>SaleDto</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            @Html.LabelFor(model => model.SaleCode, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.SaleCode, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.SaleCode, "", new { @class = "text-danger" })
+<div class="form-horizontal">
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="form-group">
+        @Html.LabelFor(model => model.SaleCode, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.SaleCode, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.SaleCode, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.SaleAmount, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.SaleAmount, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.SaleAmount, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.SaleDate, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.SaleDate, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.SaleDate, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.SaleAmountPaid, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.SaleAmountPaid, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.SaleAmountPaid, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.AmountPaidTime, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.AmountPaidTime, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.AmountPaidTime, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.CustomerId, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-12">
+            @Html.DropDownListFor(model => model.CustomerId, (IEnumerable<SelectListItem>)ViewBag.Customers,
+                new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.CustomerId, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+        Total: 
+        <div class="col-md-12">
+            <input type="text" value="0.00" name="finalTotal" readonly="readonly" disabled id="txtFinalTotal" class="form-control" />
+        </div>
+    </div>
+
+    <fieldset>
+        <legend>Items</legend>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        Product:
+                        @Html.DropDownList("product", new SelectList(ViewBag.Products, "Value", "Text"), new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        Unit Price:
+                        <input type="text" disabled readonly="readonly" id="txtUnitPrice" name="unitPrice" min="0.0" value="0.0" class="form-control" />
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        Quantity:
+                        <input type="text" id="txtQuantity" name="Quantity" min="0" value="0.0" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        Discount:
+                        <input type="text" id="txtDiscount" name="discount" min="0.0" value="0.0" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        Total:
+                        <input type="text" disabled readonly="readonly" min="0.0" id="txtTotal" name="Total" value="0.0" class="form-control" />
+                    </div>
+                </div>
+            </div>
+            <div class="row pt-4">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <input type="button" value="Add to List" name="AddToList" id="btnAddToList" class="btn btn-outline-primary" />
+                    </div>
+                </div>
             </div>
         </div>
+    </fieldset>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.SaleAmount, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.SaleAmount, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.SaleAmount, "", new { @class = "text-danger" })
-            </div>
+    <fieldset>
+        <legend>Listed Items</legend>
+        <div class="table-responsive">
+            <table class="table" id="tblSaleItemList">
+                <thead>
+                    <tr>
+                        <th hidden scope="col">Item Id</th>
+                        <th scope="col">Product Name</th>
+                        <th scope="col">Unit Price</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Total</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+            </table>
         </div>
+    </fieldset>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.SaleDate, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.SaleDate, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.SaleDate, "", new { @class = "text-danger" })
-            </div>
+    <div class="form-group pt-4">
+        <div class="col-md-offset-2 col-md-10">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                    data-bs-target="#paymemtModal" name="checkout" id="btnCheckout">
+                Checkout
+            </button>
         </div>
+    </div>
+</div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.SaleAmountPaid, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.SaleAmountPaid, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.SaleAmountPaid, "", new { @class = "text-danger" })
+<div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="paymemtModal" tabindex="-1" aria-labelledby="paymemtModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="paymemtModalLabel">Modal title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.AmountPaidTime, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.AmountPaidTime, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.AmountPaidTime, "", new { @class = "text-danger" })
+            <div class="modal-body">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6">
+                            Payment Total:
+                            <input type="text" id="txtPaymentTotal" readonly="readonly" disabled value="0.00" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            Payment Amount:
+                            <input type="text" id="txtPaymentAmount" value="0.00" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            Return Amount:
+                            <input type="text" id="txtReturnAmount" value="0.00" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            Banlance Amount:
+                            <input type="text" id="txtBanlanceAmount" readonly="readonly" disabled value="0.00" class="form-control" />
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.ActionLinkHtml, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.ActionLinkHtml, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.ActionLinkHtml, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.StatusHtml, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.StatusHtml, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.StatusHtml, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.CustomerId, "CustomerId", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("CustomerId", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.CustomerId, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Status, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EnumDropDownListFor(model => model.Status, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.CreatedAt, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.CreatedAt, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.CreatedAt, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.ModifiedAt, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.ModifiedAt, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.ModifiedAt, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.CreatedBy, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.CreatedBy, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.CreatedBy, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.ModifiedBy, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.ModifiedBy, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.ModifiedBy, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="btnPayment">Save changes</button>
             </div>
         </div>
     </div>
-}
-
-<div>
-    @Html.ActionLink("Back to List", "Index")
 </div>
 
 @section Scripts {
+
+    <script>
+
+        const getProductUnitPrice = (itemId) => {
+            $.ajax({
+                async: true,
+                type: 'GET',
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                data: { itemId: itemId },
+                url: 'GetItemUnitPrice',
+                success: function (unitPrice) {
+                    $('#txtUnitPrice').val(parseFloat(unitPrice).toFixed(2));
+                },
+                error: function () {
+                    console.log('Something went wrong!');
+                },
+            });
+        }
+
+        const calculateSubTotal = () => {
+            const unitPrice = $('#txtUnitPrice').val();
+            const quantity = $('#txtQuantity').val();
+            const discount = $('#txtDiscount').val();
+
+            if (discount < 0 || unitPrice < 0 || quantity < 0) return; 
+
+            const total = (unitPrice * quantity) - discount;
+            $('#txtTotal').val(parseFloat(total).toFixed(2));
+        }
+
+        const resetItem = () => {
+            $('#txtUnitPrice').val('0.00');
+            $('#txtQuantity').val('0.00');
+            $('#txtDiscount').val('0.00');
+            $('#product').val(0);
+            $('#txtTotal').val('0.00');
+        }
+
+        const removeItem = (itemId) => {
+            $(itemId).closest('tr').remove();
+        }
+
+        const finalItemTotal = () => {
+            $('#txtFinalTotal').val('0.00');
+
+            let finalTotal = 0.00;
+            $('#tblSaleItemList').find('tr:gt(0)').each(function () {
+                const total = parseFloat($(this).find('td:eq(5)').text());
+                finalTotal += total;
+            })
+            $('#txtFinalTotal').val(parseFloat(finalTotal).toFixed(2));
+            $('#txtPaymentTotal').val(parseFloat(finalTotal).toFixed(2));
+            $('#txtBanlanceAmount').val(parseFloat(finalTotal).toFixed(2));
+        }
+
+        function calculateBalance() {
+            const paymentTotal = $('#txtPaymentTotal').val();
+            const paymentAmount = $('#txtPaymentAmount').val();
+            const returnAmount = $('#txtReturnAmount').val();
+            let banlanceAmount = parseFloat(paymentTotal) - parseFloat(paymentAmount) + parseFloat(returnAmount);
+            $('#txtBanlanceAmount').val(parseFloat((banlanceAmount).toFixed(2)));
+
+            console.log(banlanceAmount)
+            if (parseFloat(banlanceAmount) == 0) {
+                $('#btnPayment').prop("disabled", false);
+            } else {
+                $('#btnPayment').prop("disabled", true);
+            }
+        }
+
+        const addToTheItemList = () => {
+            const tblSaleItemList = $('#tblSaleItemList');
+
+            const unitPrice = $('#txtUnitPrice').val();
+            const quantity = $('#txtQuantity').val();
+            const discount = $('#txtDiscount').val();
+            const productId = $('#product').val();
+            const productName = $('#product option:selected').text();
+            const total = (unitPrice * quantity) - discount;
+
+            const itemList = `<tr><td hidden>${productId}</td>
+                                <td>${productName}</td>
+                                <td>${parseFloat(unitPrice).toFixed(2) }</td>
+                                <td>${quantity}</td>
+                                <td>${parseFloat(discount).toFixed(2)}</td>
+                                <td>${parseFloat(total).toFixed(2)}</td>
+                                <td><input type="button" value="Remove" name="remove" class="btn text-danger" onclick="removeItem(this)" /></td></tr>`;
+
+            tblSaleItemList.append(itemList);
+            finalItemTotal();
+            resetItem();
+        }
+
+        $(document).ready(function () {
+
+            $('#product').val(0);
+            $('#product').change(function () {
+                const itemId = $("#product").val();
+
+                getProductUnitPrice(itemId);
+            });
+
+            $('input[type=text]').change(function () {
+                calculateSubTotal();
+            });
+
+            $('input[type=text]').keyup(function () {
+                calculateBalance();
+            });
+
+            $('#btnAddToList').on('click', function () {
+                if ($('#product').val() && $('#txtQuantity').val() != 0.0) {
+                    addToTheItemList();
+                }
+            });
+        })
+    </script>
+
     @Scripts.Render("~/bundles/jqueryval")
 }

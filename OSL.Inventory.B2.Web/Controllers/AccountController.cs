@@ -24,11 +24,10 @@ namespace OSL.Inventory.B2.Web.Controllers
         {
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, UserService userService )
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
         {
             UserManager = userManager;
             SignInManager = signInManager;
-            _userService = userService;
         }
 
         public ApplicationSignInManager SignInManager

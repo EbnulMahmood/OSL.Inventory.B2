@@ -6,7 +6,6 @@ using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
-using System.Xml.Linq;
 
 namespace OSL.Inventory.B2.Repository
 {
@@ -14,6 +13,8 @@ namespace OSL.Inventory.B2.Repository
     {
         Task<(IEnumerable<Product>, int, int)> ListProductsWithSortingFilteringPagingAsync(int start, int length,
             string order, string orderDir, string searchByName, string filterByCategory, Status filterByStatus = 0);
+        Task<IEnumerable<Product>> ListProductsIdNameAsync();
+        decimal GetProductUnitPrice(long id);
         Task<bool> SoftDeleteEntity(long id);
     }
      
@@ -27,9 +28,36 @@ namespace OSL.Inventory.B2.Repository
         }
 
         #region SingleInstance
+
+        public decimal GetProductUnitPrice(long id)
+        {
+            try
+            {
+                var unitPrice = _context.Products.Single(x => x.Id == id).PricePerUnit;
+                return unitPrice;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        
         #endregion
 
         #region ListInstance
+
+        public async Task<IEnumerable<Product>> ListProductsIdNameAsync()
+        {
+            var entities = (await _context.Products.ToListAsync())
+                .Select(x => new Product()
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                });
+
+            return entities;
+        }
 
         #region Sorting
         // sort by order desc
@@ -157,6 +185,25 @@ namespace OSL.Inventory.B2.Repository
         #endregion
 
         #region Operations
+
+        public override bool CreateEntity(Product entityToCreate)
+        {
+            var entity = _context.Products.Find(entityToCreate.Id);
+                    
+            if (entity != null) throw new Exception("Product already exist in the database");
+
+            return base.CreateEntity(entityToCreate);
+        }
+
+        public override bool UpdateEntity(Product entityToUpdate)
+        {
+            if (_context.Products.Any(x => x.Id != entityToUpdate.Id &&
+                x.Name.ToLower().Equals(entityToUpdate.Name.ToLower())))
+                throw new Exception($"{entityToUpdate.Name} with same name already exists");
+
+            return base.UpdateEntity(entityToUpdate);
+        }
+
         public async Task<bool> SoftDeleteEntity(long id)
         {
             try

@@ -73,11 +73,28 @@ namespace OSL.Inventory.B2.Web.Controllers
             return View(entityDto);
         }
 
+        [HttpGet]
+        public JsonResult GetItemUnitPrice(long itemId)
+        {
+            try
+            {
+                var unitPrice = _service.GetProductUnitPriceService(itemId);
+                return Json(unitPrice, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         // GET: Sale/Create
-        public ActionResult Create()
+        public async Task<ActionResult> Create()
         {
             // ViewBag.CustomerId = new SelectList(db.CustomerDtoes, "Id", "FirstName");
-            ViewBag.CustomerId = 1;
+
+            ViewBag.Customers = await _service.SelectListCustomersServiceAsync();
+            ViewBag.Products = await _service.SelectListProductsServiceAsync();
             return View();
         }
 
