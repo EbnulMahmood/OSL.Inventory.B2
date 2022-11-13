@@ -83,6 +83,10 @@
     <Compile Include="Migrations\202211091108417_ChangeUserTableName.designer.cs">
       <DependentUpon>202211091108417_ChangeUserTableName.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202211130731424_AddNullableToPurchase-SaleTables.cs" />
+    <Compile Include="Migrations\202211130731424_AddNullableToPurchase-SaleTables.designer.cs">
+      <DependentUpon>202211130731424_AddNullableToPurchase-SaleTables.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ProductRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -111,6 +115,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202211091108417_ChangeUserTableName.resx">
       <DependentUpon>202211091108417_ChangeUserTableName.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202211130731424_AddNullableToPurchase-SaleTables.resx">
+      <DependentUpon>202211130731424_AddNullableToPurchase-SaleTables.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

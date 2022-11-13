@@ -120,6 +120,7 @@
     <Compile Include="DTOs\BaseDto\BaseDto.cs" />
     <Compile Include="DTOs\BaseDto\Interfaces\IDto.cs" />
     <Compile Include="DTOs\CategoryDto.cs" />
+    <Compile Include="DTOs\CategorySearchDto.cs" />
     <Compile Include="DTOs\CategoryViewDto.cs" />
     <Compile Include="DTOs\CustomerViewDto.cs" />
     <Compile Include="DTOs\Enums\BasicUnitDto.cs" />

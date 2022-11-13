@@ -185,6 +185,7 @@ namespace OSL.Inventory.B2.Repository
         #endregion
 
         #region Operations
+
         #endregion
     }
 }

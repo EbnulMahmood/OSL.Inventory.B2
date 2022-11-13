@@ -10,8 +10,8 @@ namespace OSL.Inventory.B2.Entity
         public string PurchaseCode { get; set; } = string.Empty;
         public decimal PurchaseAmount { get; set; }
         public DateTime PurchaseDate { get; set; }
-        public decimal PurchaseAmountPaid { get; set; }
-        public DateTime AmountPaidTime { get; set; }
+        public decimal? PurchaseAmountPaid { get; set; }
+        public DateTime? AmountPaidTime { get; set; }
         public long SupplierId { get; set; }
         public virtual Supplier Supplier { get; set; }
         public virtual ICollection<PurchaseDetail> purchaseDetails { get; set; }

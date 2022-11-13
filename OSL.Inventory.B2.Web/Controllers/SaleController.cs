@@ -102,17 +102,26 @@ namespace OSL.Inventory.B2.Web.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Id,SaleCode,SaleAmount,SaleDate,SaleAmountPaid,AmountPaidTime,CustomerId,Status,CreatedAt,ModifiedAt,CreatedBy,ModifiedBy")] SaleDto saleDto)
+        public async Task<ActionResult> Create(SaleDto saleDto)
         {
-            if (ModelState.IsValid)
+            string msg;
+            try
             {
-                await _service.CreateSaleServiceAsync(saleDto);   
-                return RedirectToAction("Index");
+                await _service.CreateSaleServiceAsync(saleDto);
+                msg = "Sale Successful";
             }
-
-            // ViewBag.CustomerId = new SelectList(db.CustomerDtoes, "Id", "FirstName", saleDto.CustomerId);
-            return View(saleDto);
+            catch (Exception ex)
+            {
+                msg = "Something went wrong!";
+            }
+            if (Request.IsAjaxRequest())
+            {
+                return Json(msg, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return View(saleDto);
+            }
         }
 
         // GET: Sale/Edit/5

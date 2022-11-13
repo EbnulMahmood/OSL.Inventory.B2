@@ -32,6 +32,7 @@ namespace OSL.Inventory.B2.Repository
         #endregion
 
         #region ListInstance
+
         public async Task<IEnumerable<Category>> ListCategoriesByNameAsync(string name)
         {
             var entities = await _context.Categories
@@ -120,6 +121,7 @@ namespace OSL.Inventory.B2.Repository
             {
                 // info.   
                 Console.Write(ex);
+                throw new Exception(ex.Message);
             }
             // info.   
             return sortedEntities;

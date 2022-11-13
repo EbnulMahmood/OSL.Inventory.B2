@@ -1,10 +1,6 @@
 ﻿using Autofac;
 using Autofac.Integration.Mvc;
 using OSL.Inventory.B2.Service.DependencyRegistry;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace OSL.Inventory.B2.Web.Configurations

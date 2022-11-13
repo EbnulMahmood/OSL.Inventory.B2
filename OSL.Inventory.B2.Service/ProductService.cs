@@ -21,6 +21,8 @@ namespace OSL.Inventory.B2.Service
         Task<bool> UpdateProductServiceAsync(ProductDto entityDtoToUpdate);
         List<CategoryDto> SelectCategoriesListItems();
         Task<IEnumerable<CategoryDto>> ListCategoriesAsync();
+        Task<object> ListCategoriesServiceAsync(string name, int page
+            , int resultCount);
         Task<List<CategoryDto>> ListCategoriesByNameServiceAsync(string name);
     }
 
@@ -70,6 +72,30 @@ namespace OSL.Inventory.B2.Service
         #endregion
 
         #region ListInstance
+
+        public async Task<object> ListCategoriesServiceAsync(string name, int page
+            , int resultCount)
+        {
+            var entitiesTupe = await _unitOfWork.ProductRepository
+                                    .ListCategoriesAsync(name, page, resultCount);
+
+            var results = (from c in entitiesTupe.Item1
+                           select new CategorySearchDto()
+                           {
+                               id = c.Id,
+                               text = c.Name,
+                           }).ToArray();
+
+            bool more = entitiesTupe.Item2;
+            var pagination = new { more = more };
+
+            return new
+            {
+                results,
+                pagination,
+            };
+        }
+
         public async Task<IEnumerable<CategoryDto>> ListCategoriesAsync()
         {
             try

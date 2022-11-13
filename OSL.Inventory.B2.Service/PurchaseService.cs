@@ -96,7 +96,7 @@ namespace OSL.Inventory.B2.Service
                         item.PurchaseAmount.ToString(),
                         item.PurchaseDate.ToUniversalTime().Humanize(),
                         item.PurchaseAmountPaid.ToString(),
-                        item.AmountPaidTime.ToUniversalTime().Humanize(),
+                        item.AmountPaidTime?.ToUniversalTime().Humanize(),
                         item.StatusHtml,
                         item.ActionLinkHtml
                     };

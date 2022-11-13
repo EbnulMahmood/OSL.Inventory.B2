@@ -13,40 +13,8 @@
     <div class="form-group">
         @Html.LabelFor(model => model.SaleCode, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
-            @Html.EditorFor(model => model.SaleCode, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.EditorFor(model => model.SaleCode, new { htmlAttributes = new { @class = "form-control", @id = "SaleCode" } })
             @Html.ValidationMessageFor(model => model.SaleCode, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.SaleAmount, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.SaleAmount, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.SaleAmount, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.SaleDate, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.SaleDate, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.SaleDate, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.SaleAmountPaid, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.SaleAmountPaid, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.SaleAmountPaid, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.AmountPaidTime, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.AmountPaidTime, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.AmountPaidTime, "", new { @class = "text-danger" })
         </div>
     </div>
 
@@ -54,7 +22,7 @@
         @Html.LabelFor(model => model.CustomerId, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-12">
             @Html.DropDownListFor(model => model.CustomerId, (IEnumerable<SelectListItem>)ViewBag.Customers,
-                new { @class = "form-control" })
+                new { @class = "form-control", @id = "CustomerId" })
             @Html.ValidationMessageFor(model => model.CustomerId, "", new { @class = "text-danger" })
         </div>
     </div>
@@ -203,7 +171,7 @@
             const quantity = $('#txtQuantity').val();
             const discount = $('#txtDiscount').val();
 
-            if (discount < 0 || unitPrice < 0 || quantity < 0) return; 
+            if (unitPrice < 0 || quantity < 0) return; 
 
             const total = (unitPrice * quantity) - discount;
             $('#txtTotal').val(parseFloat(total).toFixed(2));
@@ -228,7 +196,8 @@
             $('#tblSaleItemList').find('tr:gt(0)').each(function () {
                 const total = parseFloat($(this).find('td:eq(5)').text());
                 finalTotal += total;
-            })
+            });
+
             $('#txtFinalTotal').val(parseFloat(finalTotal).toFixed(2));
             $('#txtPaymentTotal').val(parseFloat(finalTotal).toFixed(2));
             $('#txtBanlanceAmount').val(parseFloat(finalTotal).toFixed(2));
@@ -241,7 +210,6 @@
             let banlanceAmount = parseFloat(paymentTotal) - parseFloat(paymentAmount) + parseFloat(returnAmount);
             $('#txtBanlanceAmount').val(parseFloat((banlanceAmount).toFixed(2)));
 
-            console.log(banlanceAmount)
             if (parseFloat(banlanceAmount) == 0) {
                 $('#btnPayment').prop("disabled", false);
             } else {
@@ -272,6 +240,48 @@
             resetItem();
         }
 
+        const finalPayment = () => {
+            const SaleDto = {};
+            const ListSaleDetailsDto = new Array();
+
+            SaleDto.SaleCode = $('#SaleCode').val();
+            SaleDto.CustomerId = $('#CustomerId').val();
+            SaleDto.SaleAmount = $('#txtFinalTotal').val();
+
+            $('#tblSaleItemList').find('tr:gt(0)').each(function () {
+                const SaleDetailsDto = {};
+
+                SaleDetailsDto.ProductId = $(this).find('td:eq(0)').text();
+                SaleDetailsDto.PricePerUnit = parseFloat($(this).find('td:eq(2)').text());
+                SaleDetailsDto.QuantitySold = parseFloat($(this).find('td:eq(3)').text());
+                SaleDetailsDto.TaxAmount = parseFloat($(this).find('td:eq(4)').text());
+                SaleDetailsDto.TotalPrice = parseFloat($(this).find('td:eq(5)').text());
+
+                ListSaleDetailsDto.push(SaleDetailsDto);
+            });
+
+            SaleDto.SaleDetailsDto = ListSaleDetailsDto;
+
+            return SaleDto;
+        }
+
+        const postPaymentAjax = (data, url) => {
+            $.ajax({
+                async: true,
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(data),
+                url: url,
+                success: function (data) {
+                    console.log(data);
+                },
+                error: function () {
+                    console.log('Error posting data');
+                },
+            });
+        }
+
         $(document).ready(function () {
 
             $('#product').val(0);
@@ -293,6 +303,13 @@
                 if ($('#product').val() && $('#txtQuantity').val() != 0.0) {
                     addToTheItemList();
                 }
+            });
+
+            $('#btnPayment').on('click', function () {
+
+                const data = finalPayment();
+
+                postPaymentAjax(data, 'Create');
             });
         })
     </script>

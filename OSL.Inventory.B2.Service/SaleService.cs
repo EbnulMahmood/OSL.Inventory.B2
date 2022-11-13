@@ -140,7 +140,7 @@ namespace OSL.Inventory.B2.Service
                         item.SaleAmount.ToString(),
                         item.SaleDate.ToUniversalTime().Humanize(),
                         item.SaleAmountPaid.ToString(),
-                        item.AmountPaidTime.ToUniversalTime().Humanize(),
+                        item.AmountPaidTime?.ToUniversalTime().Humanize(),
                         item.StatusHtml,
                         item.ActionLinkHtml
                     };
@@ -164,27 +164,34 @@ namespace OSL.Inventory.B2.Service
         {
             try
             {
+                var saleDetails = (from x in entityDtoToCreate.SaleDetailsDto
+                                  select new SaleDetail()
+                                  {
+                                      QuantitySold = x.QuantitySold,
+                                      PricePerUnit = x.PricePerUnit,
+                                      TotalPrice = x.TotalPrice,
+                                      ProductId = x.ProductId,
+                                  }).ToList();
+
                 var entity = new Sale
                 {
-                    Id = entityDtoToCreate.Id,
                     SaleCode = entityDtoToCreate.SaleCode,
                     SaleAmount = entityDtoToCreate.SaleAmount,
-                    SaleDate = entityDtoToCreate.SaleDate,
-                    SaleAmountPaid = entityDtoToCreate.SaleAmountPaid,
-                    AmountPaidTime = entityDtoToCreate.AmountPaidTime,
+                    SaleDate = DateTime.Now,
                     CustomerId = entityDtoToCreate.CustomerId,
+                    SaleDetails = saleDetails,
+                    Status = Status.Active,
                     CreatedAt = DateTime.Now,
-                    CreatedBy = 1
+                    CreatedBy = 1,
                 };
 
-                if (!_unitOfWork.SaleRepository.CreateEntity(entity)) throw new Exception();
+                _unitOfWork.SaleRepository.CreateEntity(entity);
 
                 return await _unitOfWork.SaveAsync();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                throw new Exception(ex.Message);
             }
         }
 

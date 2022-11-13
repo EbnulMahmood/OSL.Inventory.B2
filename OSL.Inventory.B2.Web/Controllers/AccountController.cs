@@ -432,7 +432,6 @@ namespace OSL.Inventory.B2.Web.Controllers
         #region Helpers
         // Used for XSRF protection when adding external logins
         private const string XsrfKey = "XsrfId";
-        private readonly UserService _userService;
 
         // osl.inventory user service
 

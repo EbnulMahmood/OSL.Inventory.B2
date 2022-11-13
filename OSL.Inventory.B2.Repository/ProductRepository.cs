@@ -14,6 +14,8 @@ namespace OSL.Inventory.B2.Repository
         Task<(IEnumerable<Product>, int, int)> ListProductsWithSortingFilteringPagingAsync(int start, int length,
             string order, string orderDir, string searchByName, string filterByCategory, Status filterByStatus = 0);
         Task<IEnumerable<Product>> ListProductsIdNameAsync();
+        Task<(IEnumerable<Category>, bool)> ListCategoriesAsync(string name, int page
+            , int resultCount);
         decimal GetProductUnitPrice(long id);
         Task<bool> SoftDeleteEntity(long id);
     }
@@ -42,10 +44,38 @@ namespace OSL.Inventory.B2.Repository
                 throw;
             }
         }
-        
+
         #endregion
 
         #region ListInstance
+
+        public async Task<(IEnumerable<Category>, bool)> ListCategoriesAsync(string name, int page
+            , int resultCount)
+        {
+            int offset = (page - 1) * resultCount;
+
+            int entitiesCount = await _context.Categories.Where(x =>
+                                    (string.IsNullOrEmpty(name) ||
+                                    x.Name.ToLower().Contains(name.ToLower())))
+                                .CountAsync();
+
+            var entities = (await _context.Categories.Where(x =>
+                                (string.IsNullOrEmpty(name) ||
+                                x.Name.ToLower().Contains(name.ToLower())))
+                            .OrderByDescending(x => x.Name)
+                            .Skip(offset).Take(resultCount)
+                            .ToListAsync())
+                            .Select(x => new Category()
+                            {
+                                Id = x.Id,
+                                Name = x.Name,
+                            });
+
+            int endCount = offset + resultCount;
+            bool morePages = endCount < entitiesCount;
+
+            return (entities, morePages);
+        }
 
         public async Task<IEnumerable<Product>> ListProductsIdNameAsync()
         {

@@ -44,14 +44,19 @@
         <input class="form-control" type="text" id="search-by-name" placeholder="Search Name" />
     </div>
 
-    <div class="col-md-2 p-2">
-        <select class="form-control" id="filter-by-category">
-            <option selected value="">Select Category</option>
-            @foreach (var item in ViewBag.Categories)
-            {
-                <option value="@item.Id">@item.Name</option>
-            }
-        </select>
+    @*
+        <div class="col-md-2 p-2">
+            <select class="form-control" id="">
+                <option selected value="">Select Category</option>
+                @foreach (var item in ViewBag.Categories)
+                {
+                    <option value="@item.Id">@item.Name</option>
+                }
+            </select>
+        </div>
+    *@
+    <div class="col-md-2 pt-2">
+        <select id="filter-by-category" class="form-control"></select>
     </div>
 
     @* <div class="form-group">
@@ -97,12 +102,57 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <script>
+        const Select2Search = (elementId, url, placeHolderText) => {
+            $(elementId).select2({
+                placeholder: placeHolderText,
+                allowClear: true,
+                async: true,
+                ajax: {
+                    type: "GET",
+                    dataType: 'json',
+                    url: url,
+                    data: function (params) {
+                        return {
+                            term: params.term || '',
+                            page: params.page || 1
+                        }
+                    },
+                    cache: true
+                },
+                processResults: function (data) {
+                    console.log(data);
+                    return {
+                        results: $.map(data, function (item) {
+                            return {
+                                text: item.Text,
+                                id: item.Id,
+                            }
+                        })
+                    }
+                },
+            });
+        }
+
         $(document).ready(function () {
             // datatable
+
+            const select2CategorySearch = () => {
+                const option = {}
+                $('#filter-by-category').on('change', function () {
+                    const id = $("#filter-by-category option:selected").val();
+                    if (id != undefined){
+                        option["filterByCategory"] = id.toString();
+                    }
+                    console.log(option);
+                });
+            }
+
+            console.log(select2CategorySearch());
+
             const filterSearchOptionsForProduct = () => {
                 return {
                     searchByName: "#search-by-name",
-                    filterByCategory: "#filter-by-category",
+                    // filterByCategory: "#filter-by-category",
                     filterByStatus: "#filter-by-status",
                 }
             }
@@ -118,30 +168,13 @@
             const placeHolderId = '#modal-placeholder-product';
             const btnDeleteClass = '.btn-product-delete';
             Modal(url, idElement, placeHolderId, btnDeleteClass);
+            
+            
+            // search category select option
+            Select2Search('#filter-by-category', '/Product/SearchCategoriesSelect', '--Select Category--');
 
-            /*
-            // search category select2
-            $('#selectCategory').select2({
-                placeholder: '--Select Category--',
-                ajax: {
-                    type: "GET",
-                    dataType: 'json',
-                    url: '/Product/CategoriesDropdown',
-                    processResults: function (data) {
-                        return {
-                            results: $.map(data.data, function (item) {
-                                return {
-                                    text: item.Text,
-                                    id: item.Value,
-                                }
-                            })
-                        }
-                    }
-                    // Additional AJAX parameters go here; see the end of this chapter for the full code of this example
-                }
-            });
-            */
         });
+
     </script>
 
     @Scripts.Render("~/bundles/jqueryval")

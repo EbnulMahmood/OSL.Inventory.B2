@@ -28,6 +28,15 @@ namespace OSL.Inventory.B2.Web.Controllers
             return View();
         }
 
+        [HttpGet, ActionName("SearchCategoriesSelect")]
+        public async Task<JsonResult> SearchCategoriesSelectAsync(string term, int page)
+        {
+            int resultCount = 5;
+            var entities = await _service.ListCategoriesServiceAsync(term, page, resultCount);
+
+            return Json(entities, JsonRequestBehavior.AllowGet );
+        }
+
         [HttpPost, ActionName("Index")]
         public async Task<JsonResult> ListProductsAsync(int draw, int start, int length,
             string searchByName, string filterByCategory, StatusDto filterByStatus = 0)

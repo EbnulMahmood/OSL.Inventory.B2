@@ -58,9 +58,9 @@ namespace OSL.Inventory.B2.Repository
                     return await query.ToListAsync();
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return new List<TEntity>();
+                throw new Exception(ex.Message);
             }
         }
 
@@ -74,9 +74,9 @@ namespace OSL.Inventory.B2.Repository
 
                 return entity;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return null;
+                throw new Exception(ex.Message);
             }
         }
 
@@ -87,9 +87,9 @@ namespace OSL.Inventory.B2.Repository
                 _dbSet.Add(entityToCreate);
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return false;
+                throw new Exception(ex.Message);
             }
         }
 
@@ -101,9 +101,9 @@ namespace OSL.Inventory.B2.Repository
                 _context.Entry(entityToUpdate).State = EntityState.Modified;
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return false;
+                throw new Exception(ex.Message);
             }
         }
 
@@ -116,9 +116,9 @@ namespace OSL.Inventory.B2.Repository
 
                 return DeleteEntity(entity);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return false;
+                throw new Exception(ex.Message);
             }
         }
 
@@ -133,9 +133,9 @@ namespace OSL.Inventory.B2.Repository
                 _dbSet.Remove(entityToDelete);
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                throw new Exception(ex.Message);
             }
         }
     }
