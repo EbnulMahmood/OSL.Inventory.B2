@@ -6,22 +6,77 @@
 
 <h2>Create</h2>
 
-
-@using (Html.BeginForm()) 
-{
+<form method="post" action="Create" id="purchaseForm">
     @Html.AntiForgeryToken()
     
-    <div class="form-horizontal">
-        <h4>PurchaseDto</h4>
-        <hr />
+    <div class="row form-horizontal">
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
+        <div class="form-group col-md-6">
             @Html.LabelFor(model => model.PurchaseCode, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
+            <div>
                 @Html.EditorFor(model => model.PurchaseCode, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.PurchaseCode, "", new { @class = "text-danger" })
             </div>
         </div>
+
+        <div class="form-group col-md-6">
+            @Html.LabelFor(model => model.SupplierId, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div>
+                @Html.DropDownList("ProductId", new SelectList(ViewBag.Suppliers, "Value", "Text"), "--Select Supplier--", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.SupplierId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <table id="detailsItemTable" class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Product Name</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Unit Price</th>
+                    <th scope="col">Total</th>
+                    <th>
+                        <button id="btnItemAdd" type="button" class="btn btn-sm btn-success">Add</button>
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="purchaseRowContainer">
+                <tr id="itemRow" hidden>
+                    <td>@Html.DropDownList("ProductId", new SelectList(ViewBag.Products, "Value", "Text"), "--Select Product--", new { @class = "form-control productSelectClass" })</td>
+                    <td>
+                        <input class="form-control itemQuantityClass" />
+                    </td>
+                    <td>
+                        <input class="form-control itemPriceClass" />
+                    </td>
+                    <td>
+                        <input class="form-control itemTotalClass" disabled readonly="readonly" />
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-close" onclick="DeleteItem(this)"></button>
+                    </td>
+                </tr>
+                @for (int i = 0; i < Model.PurchaseDetails.Count; i++)
+                {
+                    <tr class="purchase_tr">
+                        <td>
+                            @Html.DropDownList("ProductId", new SelectList(ViewBag.Products, "Value", "Text"), "--Select Product--", new { @class = "form-control productSelectClass" })
+                        </td>
+                        <td>
+                            <input class="form-control itemQuantityClass">
+                        </td>
+                        <td>
+                            <input class="form-control itemPriceClass">
+                        </td>
+                        <td>
+                            <input class="form-control itemTotalClass" disabled readonly="readonly" />
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-close" onclick="DeleteItem(this)"></button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
 
         <div class="form-group">
             @Html.LabelFor(model => model.PurchaseAmount, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -40,29 +95,12 @@
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.PurchaseAmountPaid, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.PurchaseAmountPaid, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.PurchaseAmountPaid, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.AmountPaidTime, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.AmountPaidTime, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.AmountPaidTime, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-
-        <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Create" class="btn btn-default" />
             </div>
         </div>
     </div>
-}
+</form>
 
 <div>
     @Html.ActionLink("Back to List", "Index")
@@ -70,4 +108,95 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+
+        $(document).ready(function (){
+            rebindValidators();
+        });
+
+        const DeleteItem = (that) => {
+            $(that).closest('tr').remove();
+
+            rebindValidators();
+            CalculateTotal();
+        }
+
+        $('#btnItemAdd').on('click', function() {
+            AddTrToTbody();
+        });
+
+        const AddTrToTbody = () => {
+            const rowContainer = document.getElementById('detailsItemTable');
+
+            const innerRow = document.getElementById('itemRow').innerHTML;
+            const newRow = document.createElement('tr');
+            newRow.className = 'purchase_tr';
+            newRow.insertAdjacentHTML('beforeend', innerRow);
+
+            $('#detailsItemTable > tbody > tr:last').after(newRow);
+            
+            rebindValidators();
+        }
+
+        document.addEventListener('keyup', function (e){    
+            CalculateTotal();
+        }, false);
+
+        const rebindValidators = () => {
+            $('#purchaseRowContainer .purchase_tr').each(function (idx) {
+                
+                // set name
+                $(this).find('.itemQuantityClass').attr('name', `PurchaseDetails[${idx}].QuantityPurchased`);
+                $(this).find('.itemPriceClass').attr('name', `PurchaseDetails[${idx}].PricePerUnit`);
+                $(this).find('.itemTotalClass').attr('name', `PurchaseDetails[${idx}].TotalPrice`);
+                $(this).find('.productSelectClass').attr('name', `PurchaseDetails[${idx}].ProductId`);
+
+                
+                // set id
+                $(this).find('.itemQuantityClass').attr('id', `PurchaseDetails_${idx}__QuantityPurchased`);
+                $(this).find('.itemPriceClass').attr('id', `PurchaseDetails_${idx}__PricePerUnit`);
+                $(this).find('.itemTotalClass').attr('id', `PurchaseDetails_${idx}__TotalPrice`);
+                $(this).find('.productSelectClass').attr('id', `PurchaseDetails_${idx}__ProductId`);
+            });
+        }
+
+        const CalculateTotal = () => {
+            const totalItem = document.getElementsByClassName('itemQuantityClass');
+            let finalTotal = 0;
+            
+            for(let i = 0; i < totalItem.length; i++)
+            {
+                const quantityId = document.getElementById(`PurchaseDetails_${i}__QuantityPurchased`);
+                const priceId = document.getElementById(`PurchaseDetails_${i}__PricePerUnit`);
+                const totalId = document.getElementById(`PurchaseDetails_${i}__TotalPrice`);
+
+                const quantity = quantity.value ?? 0.00;
+                const price = price.value ?? 0.00;
+                const total = total.value ?? 0.00;
+                
+                @* if(quantity == null || quantity === ""){
+                    document.getElementById(`PurchaseDetails_${i}__QuantityPurchased`).value = 0.0;
+                }
+                if(price == null || price === ""){
+                    document.getElementById(`PurchaseDetails_[${i}]__PricePerUnit`).value = 0.0;
+                }
+                if(total == null || total === ""){
+                    document.getElementById(`PurchaseDetails_${i}__TotalPrice`).value = 0.0;
+                } *@
+            
+                document.getElementById(`PurchaseDetails_${i}__TotalPrice`).value = eval(quantity*price);
+
+                finalTotal = finalTotal + eval(document.getElementById(`PurchaseDetails_${i}__TotalPrice`).value);
+                console.log(finalTotal)
+                @* document.getElementById('Subtotal').value = eval(finalTotal.toString());
+                const subtotal = document.getElementById('Subtotal').value;
+                const discount = document.getElementById('Discount').value; *@
+                document.getElementById('PurchaseAmount').value = finalTotal;
+                
+            }
+            console.log(finalTotal)
+        }
+
+    </script>
 }

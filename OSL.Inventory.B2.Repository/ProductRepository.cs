@@ -52,41 +52,57 @@ namespace OSL.Inventory.B2.Repository
         public async Task<(IEnumerable<Category>, bool)> ListCategoriesAsync(string name, int page
             , int resultCount)
         {
-            int offset = (page - 1) * resultCount;
+            try
+            {
+                int offset = (page - 1) * resultCount;
 
-            int entitiesCount = await _context.Categories.Where(x =>
+                int entitiesCount = await _context.Categories.Where(x =>
+                                        (string.IsNullOrEmpty(name) ||
+                                        x.Name.ToLower().Contains(name.ToLower())))
+                                    .CountAsync();
+
+                var entities = (await _context.Categories.Where(x =>
                                     (string.IsNullOrEmpty(name) ||
                                     x.Name.ToLower().Contains(name.ToLower())))
-                                .CountAsync();
+                                .OrderByDescending(x => x.Name)
+                                .Skip(offset).Take(resultCount)
+                                .ToListAsync())
+                                .Select(x => new Category()
+                                {
+                                    Id = x.Id,
+                                    Name = x.Name,
+                                });
 
-            var entities = (await _context.Categories.Where(x =>
-                                (string.IsNullOrEmpty(name) ||
-                                x.Name.ToLower().Contains(name.ToLower())))
-                            .OrderByDescending(x => x.Name)
-                            .Skip(offset).Take(resultCount)
-                            .ToListAsync())
-                            .Select(x => new Category()
-                            {
-                                Id = x.Id,
-                                Name = x.Name,
-                            });
+                int endCount = offset + resultCount;
+                bool morePages = endCount < entitiesCount;
 
-            int endCount = offset + resultCount;
-            bool morePages = endCount < entitiesCount;
+                return (entities, morePages);
+            }
+            catch (Exception ex)
+            {
 
-            return (entities, morePages);
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task<IEnumerable<Product>> ListProductsIdNameAsync()
         {
-            var entities = (await _context.Products.ToListAsync())
-                .Select(x => new Product()
-                {
-                    Id = x.Id,
-                    Name = x.Name,
-                });
+            try
+            {
+                var entities = (await _context.Products.ToListAsync())
+                        .Select(x => new Product()
+                        {
+                            Id = x.Id,
+                            Name = x.Name,
+                        });
 
-            return entities;
+                return entities;
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception(ex.Message);
+            }
         }
 
         #region Sorting
@@ -180,37 +196,45 @@ namespace OSL.Inventory.B2.Repository
         public async Task<(IEnumerable<Product>, int, int)> ListProductsWithSortingFilteringPagingAsync(int start, int length,
             string order, string orderDir, string searchByName, string filterByCategory, Status filterByStatus = 0)
         {
-            // get total count of data in table
-            int totalRecord = await _context.Products.CountAsync();
-
-            long categoryId = 0;
-            if (!string.IsNullOrEmpty(filterByCategory))
+            try
             {
-                categoryId = long.Parse(filterByCategory);
+                // get total count of data in table
+                int totalRecord = await _context.Products.CountAsync();
+
+                long categoryId = 0;
+                if (!string.IsNullOrEmpty(filterByCategory))
+                {
+                    categoryId = long.Parse(filterByCategory);
+                }
+
+                var recordCount = await _context.Products.CountAsync(x =>
+                                                        (x.Status != Status.Deleted) &&
+                                                        (x.Name.ToLower().Contains(searchByName.ToLower()) || string.IsNullOrEmpty(searchByName)) &&
+                                                        (x.Status == filterByStatus || filterByStatus == 0) &&
+                                                        (x.CategoryId == categoryId || categoryId == 0));
+
+                IEnumerable<Product> listEntites = (await _context.Products
+                                                    .Include(p => p.Category)
+                                                    .Where(x =>
+                                                        (x.Status != Status.Deleted) &&
+                                                        (x.Name.ToLower().Contains(searchByName.ToLower()) || string.IsNullOrEmpty(searchByName)) &&
+                                                        (x.Status == filterByStatus || filterByStatus == 0) &&
+                                                        (x.CategoryId == categoryId || categoryId == 0))
+                                                    .OrderByDescending(d => d.CreatedAt)
+                                                    .Skip(start).Take(length)
+                                                    .ToListAsync())
+                                                    .Select(product => SelectProduct(product));
+
+                // Sorting 
+                var result = SortByColumnWithOrder(order, orderDir, listEntites);
+
+                return (result, totalRecord, recordCount);
             }
+            catch (Exception ex)
+            {
 
-            var recordCount = await _context.Products.CountAsync(x =>
-                                                    (x.Status != Status.Deleted) &&
-                                                    (x.Name.ToLower().Contains(searchByName.ToLower()) || string.IsNullOrEmpty(searchByName)) &&
-                                                    (x.Status == filterByStatus || filterByStatus == 0) &&
-                                                    (x.CategoryId == categoryId || categoryId == 0));
-
-            IEnumerable<Product> listEntites = (await _context.Products
-                                                .Include(p => p.Category)
-                                                .Where(x =>
-                                                    (x.Status != Status.Deleted) &&
-                                                    (x.Name.ToLower().Contains(searchByName.ToLower()) || string.IsNullOrEmpty(searchByName)) &&
-                                                    (x.Status == filterByStatus || filterByStatus == 0) &&
-                                                    (x.CategoryId == categoryId || categoryId == 0))
-                                                .OrderByDescending(d => d.CreatedAt)
-                                                .Skip(start).Take(length)
-                                                .ToListAsync())
-                                                .Select(product => SelectProduct(product));
-
-            // Sorting 
-            var result = SortByColumnWithOrder(order, orderDir, listEntites);
-
-            return (result, totalRecord, recordCount);
+                throw new Exception(ex.Message);
+            }
         }
         #endregion
 
@@ -218,20 +242,38 @@ namespace OSL.Inventory.B2.Repository
 
         public override bool CreateEntity(Product entityToCreate)
         {
-            var entity = _context.Products.Find(entityToCreate.Id);
-                    
-            if (entity != null) throw new Exception("Product already exist in the database");
+            try
+            {
+                var entity = _context.Products.Find(entityToCreate.Id);
 
-            return base.CreateEntity(entityToCreate);
+                if (entity != null) throw new Exception("Product already exist in the database");
+
+                return base.CreateEntity(entityToCreate);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception(ex.Message);
+            }
         }
 
         public override bool UpdateEntity(Product entityToUpdate)
         {
-            if (_context.Products.Any(x => x.Id != entityToUpdate.Id &&
-                x.Name.ToLower().Equals(entityToUpdate.Name.ToLower())))
-                throw new Exception($"{entityToUpdate.Name} with same name already exists");
+            try
+            {
 
-            return base.UpdateEntity(entityToUpdate);
+                if (_context.Products.Any(x => x.Id != entityToUpdate.Id &&
+                    x.Name.ToLower().Equals(entityToUpdate.Name.ToLower())))
+                    throw new Exception($"{entityToUpdate.Name} with same name already exists");
+
+                return base.UpdateEntity(entityToUpdate);
+
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task<bool> SoftDeleteEntity(long id)
@@ -247,9 +289,10 @@ namespace OSL.Inventory.B2.Repository
 
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return false;
+
+                throw new Exception(ex.Message);
             }
         }
         #endregion

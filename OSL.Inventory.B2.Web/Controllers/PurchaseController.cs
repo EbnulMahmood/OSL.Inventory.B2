@@ -21,9 +21,17 @@ namespace OSL.Inventory.B2.Web.Controllers
         // GET: Purchase
         public async Task<ActionResult> Index()
         {
-            var entities = await _service.SelectSupplierListItemsAsync();
-            ViewBag.Suppliers = entities;
-            return View();
+            try
+            {
+                var entities = await _service.ListSuppliersIdNameServiceAsync();
+                ViewBag.Suppliers = entities;
+                return View();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         [HttpPost, ActionName("Index")]
@@ -62,23 +70,46 @@ namespace OSL.Inventory.B2.Web.Controllers
         // GET: Purchase/Details/5
         public async Task<ActionResult> Details(long? id)
         {
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                var entityDto = await _service.GetPurchaseByIdServiceAsync(id);
+                if (entityDto == null)
+                {
+                    return HttpNotFound();
+                }
+                return View(entityDto);
             }
-            var entityDto = await _service.GetPurchaseByIdServiceAsync(id);
-            if (entityDto == null)
+            catch (Exception)
             {
-                return HttpNotFound();
+
+                throw;
             }
-            return View(entityDto);
         }
 
         // GET: Purchase/Create
-        public ActionResult Create()
+        public async Task<ActionResult> Create()
         {
-            ViewBag.SupplierId = 1;
-            return View();
+            try
+            {
+
+                ViewBag.Suppliers = await _service.SelectListSuppliersServiceAsync();
+                ViewBag.Products = await _service.SelectListProductsServiceAsync();
+
+                PurchaseDto purchaseDto = new PurchaseDto()
+                {
+                    PurchaseDetails = new List<PurchaseDetailDto>() { new PurchaseDetailDto() },
+                };
+                return View(purchaseDto);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         // POST: Purchase/Create
@@ -86,32 +117,48 @@ namespace OSL.Inventory.B2.Web.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Id,PurchaseCode,PurchaseAmount,PurchaseDate,PurchaseAmountPaid,AmountPaidTime,SupplierId")] PurchaseDto purchaseDto)
+        public async Task<ActionResult> Create(PurchaseDto purchaseDto)
         {
-            if (ModelState.IsValid)
+            try
             {
-                await _service.CreatePurchaseServiceAsync(purchaseDto);
-                return RedirectToAction("Index");
-            }
+                if (ModelState.IsValid)
+                {
+                    await _service.CreatePurchaseServiceAsync(purchaseDto);
+                    return RedirectToAction("Index");
+                }
 
-            // ViewBag.SupplierId = new SelectList(db.SupplierDtoes, "Id", "FirstName", purchaseDto.SupplierId);
-            return View(purchaseDto);
+                // ViewBag.SupplierId = new SelectList(db.SupplierDtoes, "Id", "FirstName", purchaseDto.SupplierId);
+                return View(purchaseDto);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         // GET: Purchase/Edit/5
         public async Task<ActionResult> Edit(long? id)
         {
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                var entityDto = await _service.GetPurchaseByIdServiceAsync(id);
+                if (entityDto == null)
+                {
+                    return HttpNotFound();
+                }
+                // ViewBag.SupplierId = new SelectList(db.SupplierDtoes, "Id", "FirstName", purchaseDto.SupplierId);
+                return View(entityDto);
             }
-            var entityDto = await _service.GetPurchaseByIdServiceAsync(id);
-            if (entityDto == null)
+            catch (Exception)
             {
-                return HttpNotFound();
+
+                throw;
             }
-            // ViewBag.SupplierId = new SelectList(db.SupplierDtoes, "Id", "FirstName", purchaseDto.SupplierId);
-            return View(entityDto);
         }
 
         // POST: Purchase/Edit/5
@@ -121,13 +168,21 @@ namespace OSL.Inventory.B2.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit([Bind(Include = "Id,PurchaseCode,PurchaseAmount,PurchaseDate,PurchaseAmountPaid,AmountPaidTime,SupplierId")] PurchaseDto purchaseDto)
         {
-            if (ModelState.IsValid)
+            try
             {
-                await _service.UpdatePurchaseServiceAsync(purchaseDto);
-                return RedirectToAction("Index");
+                if (ModelState.IsValid)
+                {
+                    await _service.UpdatePurchaseServiceAsync(purchaseDto);
+                    return RedirectToAction("Index");
+                }
+                // ViewBag.SupplierId = new SelectList(db.SupplierDtoes, "Id", "FirstName", purchaseDto.SupplierId);
+                return View(purchaseDto);
             }
-            // ViewBag.SupplierId = new SelectList(db.SupplierDtoes, "Id", "FirstName", purchaseDto.SupplierId);
-            return View(purchaseDto);
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 }

@@ -9,17 +9,19 @@ using OSL.Inventory.B2.Service.DTOs.Enums;
 using OSL.Inventory.B2.Service.Extensions;
 using Humanizer;
 using System.Linq;
+using System.Web.Mvc;
 
 namespace OSL.Inventory.B2.Service
 {
     public interface IPurchaseService
     {
-        Task<(List<object>, int, int)> ListPurchasesWithSortingFilteringPagingServiceAsync(int start, int length,
-            string order, string orderDir, string searchByPurchaseCode, Nullable<DateTime> dateFrom, Nullable<DateTime> dateTo,
-            string filterBySupplier, StatusDto filterByStatusDto = 0);
-        Task<IEnumerable<SupplierDto>> SelectSupplierListItemsAsync();
         Task<bool> CreatePurchaseServiceAsync(PurchaseDto entityDtoToCreate);
         Task<PurchaseDto> GetPurchaseByIdServiceAsync(long? entityDtoToGetId);
+        Task<(List<object>, int, int)> ListPurchasesWithSortingFilteringPagingServiceAsync(int start, int length, string order, string orderDir,
+            string searchByPurchaseCode, DateTime? dateFrom, DateTime? dateTo, string filterBySupplier, StatusDto filterByStatusDto = 0);
+        Task<IEnumerable<SupplierDto>> ListSuppliersIdNameServiceAsync();
+        Task<IEnumerable<SelectListItem>> SelectListProductsServiceAsync();
+        Task<IEnumerable<SelectListItem>> SelectListSuppliersServiceAsync();
         Task<bool> UpdatePurchaseServiceAsync(PurchaseDto entityDtoToUpdate);
     }
 
@@ -62,18 +64,67 @@ namespace OSL.Inventory.B2.Service
 
         #region ListInstance
 
-        public async Task<IEnumerable<SupplierDto>> SelectSupplierListItemsAsync()
+        public async Task<IEnumerable<SupplierDto>> ListSuppliersIdNameServiceAsync()
         {
-            var entities = await _unitOfWork.SupplierRepository.ListSuppliersIdNameAsync();
-            var entitiesDto = (from x in entities
-                               select new SupplierDto()
-                               {
-                                   Id = x.Id,
-                                   FirstName = x.FirstName,
-                               }).ToList();
-            return entitiesDto;
+            try
+            {
+                var entities = await _unitOfWork.SupplierRepository.ListSuppliersIdNameAsync();
+                var entitiesDto = (from x in entities
+                                   select new SupplierDto()
+                                   {
+                                       Id = x.Id,
+                                       FirstName = x.FirstName,
+                                   }).ToList();
+                return entitiesDto;
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception(ex.Message);
+            }
         }
-        
+
+        public async Task<IEnumerable<SelectListItem>> SelectListSuppliersServiceAsync()
+        {
+            try
+            {
+                var entitiesList = await _unitOfWork.SupplierRepository.ListSuppliersIdNameAsync();
+
+                return (from entity in entitiesList
+                        select new SelectListItem()
+                        {
+                            Value = entity.Id.ToString(),
+                            Text = $"{entity.FirstName} {entity.LastName}",
+                        }).ToList();
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<IEnumerable<SelectListItem>> SelectListProductsServiceAsync()
+        {
+            try
+            {
+                var entities = await _unitOfWork.ProductRepository.ListProductsIdNameAsync();
+                var selectListItems = (from x in entities
+                                       select new SelectListItem()
+                                       {
+                                           Text = x.Name,
+                                           Value = x.Id.ToString(),
+                                           Selected = false,
+                                       }).ToList();
+                return selectListItems;
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception(ex.Message);
+            }
+        }
+
         public async Task<(List<object>, int, int)> ListPurchasesWithSortingFilteringPagingServiceAsync(int start, int length,
             string order, string orderDir, string searchByPurchaseCode, Nullable<DateTime> dateFrom, Nullable<DateTime> dateTo,
             string filterBySupplier, StatusDto filterByStatusDto = 0)

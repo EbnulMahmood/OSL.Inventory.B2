@@ -127,11 +127,20 @@
                     filterByStatus: "#filter-by-status",
                 }
             }
+
+            const configFilterSearchOptions = (options) => {
+                const configOption = {};
+                for (const [key, value] of Object.entries(options())) {
+                    configOption[key] = $(value).val().toLowerCase();
+                }
+                return configOption;
+            }
+
             const SaleDatatableId = '#SaleDatatable';
             const SaleIndexUrl = 'Sale/Index';
 
             DataTable(SaleDatatableId, SaleIndexUrl,
-                filterSearchOptionsForSale);
+                filterSearchOptionsForSale, configFilterSearchOptions);
 
             // modal
             const url = 'Sale/Delete';

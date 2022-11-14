@@ -10,7 +10,6 @@ using OSL.Inventory.B2.Service.Extensions;
 using Humanizer;
 using System.Linq;
 using System.Web.Mvc;
-using Autofac.Core;
 
 namespace OSL.Inventory.B2.Service
 {
@@ -19,9 +18,9 @@ namespace OSL.Inventory.B2.Service
         Task<bool> CreateSaleServiceAsync(SaleDto entityDtoToCreate);
         Task<SaleDto> GetSaleByIdServiceAsync(long? entityDtoToGetId);
         decimal GetProductUnitPriceService(long id);
-        Task<IEnumerable<CustomerDto>> SelectCustomerListItemsAsync();
         Task<IEnumerable<SelectListItem>> SelectListCustomersServiceAsync();
         Task<IEnumerable<SelectListItem>> SelectListProductsServiceAsync();
+        Task<IEnumerable<CustomerDto>> ListCustomersNameIdServiceAsync();
         Task<(List<object>, int, int)> ListSalesWithSortingFilteringPagingServiceAsync(int start, int length, string order, string orderDir,
             string searchBySaleCode, DateTime? dateFrom, DateTime? dateTo, string filterByCustomer, StatusDto filterByStatusDto = 0);
         Task<bool> UpdateSaleServiceAsync(SaleDto entityDtoToUpdate);
@@ -45,10 +44,10 @@ namespace OSL.Inventory.B2.Service
                 var unitPrice = _unitOfWork.ProductRepository.GetProductUnitPrice(id);
                 return unitPrice;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                throw;
+                throw new Exception(ex.Message);
             }
         }
 
@@ -71,10 +70,10 @@ namespace OSL.Inventory.B2.Service
                 };
                 return entityDto;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                throw;
+                throw new Exception(ex.Message);
             }
         }
         #endregion
@@ -83,39 +82,63 @@ namespace OSL.Inventory.B2.Service
 
         public async Task<IEnumerable<SelectListItem>> SelectListCustomersServiceAsync()
         {
-            var entitiesList = await _unitOfWork.CustomerRepository.ListCustomersIdNameAsync();
+            try
+            {
+                var entitiesList = await _unitOfWork.CustomerRepository.ListCustomersIdNameAsync();
 
-            return (from entity in entitiesList
-                    select new SelectListItem()
-                    {
-                        Value = entity.Id.ToString(),
-                        Text = $"{entity.FirstName} {entity.LastName}",
-                    }).ToList();
+                return (from entity in entitiesList
+                        select new SelectListItem()
+                        {
+                            Value = entity.Id.ToString(),
+                            Text = $"{entity.FirstName} {entity.LastName}",
+                        }).ToList();
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception(ex.Message);
+            }
         }
 
-        public async Task<IEnumerable<CustomerDto>> SelectCustomerListItemsAsync()
+        public async Task<IEnumerable<CustomerDto>> ListCustomersNameIdServiceAsync()
         {
-            var entities = await _unitOfWork.CustomerRepository.ListCustomersIdNameAsync();
-            var entitiesDto = (from x in entities
-                               select new CustomerDto()
-                               {
-                                   Id = x.Id,
-                                   FirstName = x.FirstName,
-                               }).ToList();
-            return entitiesDto;
+            try
+            {
+                var entities = await _unitOfWork.CustomerRepository.ListCustomersIdNameAsync();
+                var entitiesDto = (from x in entities
+                                   select new CustomerDto()
+                                   {
+                                       Id = x.Id,
+                                       FirstName = x.FirstName,
+                                   }).ToList();
+                return entitiesDto;
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task<IEnumerable<SelectListItem>> SelectListProductsServiceAsync()
         {
-            var entities = await _unitOfWork.ProductRepository.ListProductsIdNameAsync();
-            var selectListItems = (from x in entities
-                                   select new SelectListItem()
-                                   {
-                                       Text = x.Name,
-                                       Value = x.Id.ToString(),
-                                       Selected = false,
-                                   }).ToList();
-            return selectListItems;
+            try
+            {
+                var entities = await _unitOfWork.ProductRepository.ListProductsIdNameAsync();
+                var selectListItems = (from x in entities
+                                       select new SelectListItem()
+                                       {
+                                           Text = x.Name,
+                                           Value = x.Id.ToString(),
+                                           Selected = false,
+                                       }).ToList();
+                return selectListItems;
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task<(List<object>, int, int)> ListSalesWithSortingFilteringPagingServiceAsync(int start, int length,
@@ -150,10 +173,10 @@ namespace OSL.Inventory.B2.Service
 
                 return (entitiesList, totalRecord, filterRecord);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                throw;
+                throw new Exception(ex.Message);
             }
         }
         #endregion
@@ -191,6 +214,7 @@ namespace OSL.Inventory.B2.Service
             }
             catch (Exception ex)
             {
+
                 throw new Exception(ex.Message);
             }
         }
@@ -216,10 +240,10 @@ namespace OSL.Inventory.B2.Service
 
                 return await _unitOfWork.SaveAsync();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                throw;
+                throw new Exception(ex.Message);
             }
         }
         #endregion

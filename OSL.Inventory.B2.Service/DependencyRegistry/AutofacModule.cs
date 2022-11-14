@@ -21,6 +21,9 @@ namespace OSL.Inventory.B2.Service.DependencyRegistry
             builder.RegisterType<UnitOfWork>()
                .As<IUnitOfWork>()
                .InstancePerLifetimeScope();
+            builder.RegisterType<UserRepository>()
+               .As<IUserRepository>()
+               .InstancePerLifetimeScope();
 
             // register services
             builder.RegisterType<CategoryService>()
@@ -43,6 +46,9 @@ namespace OSL.Inventory.B2.Service.DependencyRegistry
                 .InstancePerLifetimeScope();
             builder.RegisterType<ReportService>()
                 .As<IReportService>()
+                .InstancePerLifetimeScope();
+            builder.RegisterType<UserService>()
+                .As<IUserService>()
                 .InstancePerLifetimeScope();
 
 

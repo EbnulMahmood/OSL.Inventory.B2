@@ -33,14 +33,22 @@ namespace OSL.Inventory.B2.Repository
 
         public async Task<IEnumerable<Supplier>> ListSuppliersIdNameAsync()
         {
-            var entities = (await _context.Suppliers.ToListAsync())
-                .Select(x => new Supplier()
-                {
-                    Id = x.Id,
-                    FirstName = x.FirstName,
-                });
+            try
+            {
+                var entities = (await _context.Suppliers.ToListAsync())
+                        .Select(x => new Supplier()
+                        {
+                            Id = x.Id,
+                            FirstName = x.FirstName,
+                        });
 
-            return entities;
+                return entities;
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception(ex.Message);
+            }
         }
 
         #region Sorting

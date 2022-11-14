@@ -21,7 +21,7 @@ namespace OSL.Inventory.B2.Web.Controllers
         // GET: Sale
         public async Task<ActionResult> Index()
         {
-            var entities = await _service.SelectCustomerListItemsAsync();
+            var entities = await _service.ListCustomersNameIdServiceAsync();
             ViewBag.Customers = entities;
             return View();
         }
@@ -92,10 +92,17 @@ namespace OSL.Inventory.B2.Web.Controllers
         public async Task<ActionResult> Create()
         {
             // ViewBag.CustomerId = new SelectList(db.CustomerDtoes, "Id", "FirstName");
+            try
+            {
+                ViewBag.Customers = await _service.SelectListCustomersServiceAsync();
+                ViewBag.Products = await _service.SelectListProductsServiceAsync();
+                return View();
+            }
+            catch (Exception)
+            {
 
-            ViewBag.Customers = await _service.SelectListCustomersServiceAsync();
-            ViewBag.Products = await _service.SelectListProductsServiceAsync();
-            return View();
+                throw;
+            }
         }
 
         // POST: Sale/Create

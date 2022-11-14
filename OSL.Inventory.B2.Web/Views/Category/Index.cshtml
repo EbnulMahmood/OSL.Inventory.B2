@@ -81,11 +81,20 @@
                     filterByStatus: "#filter-by-status",
                 }
             }
+
+            const configFilterSearchOptions = (options) => {
+                const configOption = {};
+                for (const [key, value] of Object.entries(options())) {
+                    configOption[key] = $(value).val().toLowerCase();
+                }
+                return configOption;
+            }
+
             const categoryDatatableId = '#categoryDatatable';
             const categoryIndexUrl = 'Category/Index';
 
             DataTable(categoryDatatableId, categoryIndexUrl,
-                filterSearchOptionsForCategory);
+                filterSearchOptionsForCategory, configFilterSearchOptions);
 
             // modal
             const url = 'Category/Delete';

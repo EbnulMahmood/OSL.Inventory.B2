@@ -125,11 +125,20 @@
                     filterByStatus: "#filter-by-status",
                 }
             }
+
+            const configFilterSearchOptions = (options) => {
+                const configOption = {};
+                for (const [key, value] of Object.entries(options())) {
+                    configOption[key] = $(value).val().toLowerCase();
+                }
+                return configOption;
+            }
+
             const purchaseDatatableId = '#purchaseDatatable';
             const purchaseIndexUrl = 'Purchase/Index';
 
             DataTable(purchaseDatatableId, purchaseIndexUrl,
-                filterSearchOptionsForPurchase);
+                filterSearchOptionsForPurchase, configFilterSearchOptions);
 
             // modal
             const url = 'Purchase/Delete';
