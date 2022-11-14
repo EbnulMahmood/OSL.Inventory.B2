@@ -44,33 +44,13 @@
         <input class="form-control" type="text" id="search-by-name" placeholder="Search Name" />
     </div>
 
-    @*
-        <div class="col-md-2 p-2">
-            <select class="form-control" id="">
-                <option selected value="">Select Category</option>
-                @foreach (var item in ViewBag.Categories)
-                {
-                    <option value="@item.Id">@item.Name</option>
-                }
-            </select>
-        </div>
-    *@
     <div class="col-md-2 pt-2">
         <select id="filter-by-category" class="form-control"></select>
     </div>
 
-    @* <div class="form-group">
-        <label class="form-label mt-4">Category</label>
-        <input id="selectCategory" class="form-control" />
-    </div> *@
-
-    @* <div class="col-md-2 p-2">
-            @Html.DropDownList("Categories", ViewBag.Categories as SelectList, "Select Category",
-                new { @class= "form-control", @id= "filter-by-category" })
-        </div> *@
     <div class="col-md-2 p-2">
         <select class="form-control" id="filter-by-status">
-            <option selected value="">Select Status</option>
+            <option selected value="">--Select Status--</option>
             <option value="@StatusDto.Active">Active</option>
             <option value="@StatusDto.Inactive">Inactive</option>
         </select>
@@ -96,80 +76,67 @@
 
 @section scripts {
     <script src="//cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="~/Scripts/js/datatable.js"></script>
     <script src="~/Scripts/js/modal.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="~/Scripts/js/select2Search.js"></script>
 
-    <script>
-        const Select2Search = (elementId, url, placeHolderText) => {
-            $(elementId).select2({
-                placeholder: placeHolderText,
-                allowClear: true,
-                async: true,
-                ajax: {
-                    type: "GET",
-                    dataType: 'json',
-                    url: url,
-                    data: function (params) {
-                        return {
-                            term: params.term || '',
-                            page: params.page || 1
-                        }
-                    },
-                    cache: true
-                },
-                processResults: function (data) {
-                    console.log(data);
-                    return {
-                        results: $.map(data, function (item) {
-                            return {
-                                text: item.Text,
-                                id: item.Id,
-                            }
-                        })
-                    }
-                },
-            });
+    <style>
+        .select2-selection__rendered {
+            line-height: 31px !important;
         }
 
+        .select2-container .select2-selection--single {
+            height: 38px !important;
+        }
+
+        .select2-selection__arrow {
+            height: 34px !important;
+        }
+    </style>
+
+    <script>
+
         $(document).ready(function () {
+
             // datatable
-
-            const select2CategorySearch = () => {
-                const option = {}
-                $('#filter-by-category').on('change', function () {
-                    const id = $("#filter-by-category option:selected").val();
-                    if (id != undefined){
-                        option["filterByCategory"] = id.toString();
-                    }
-                    console.log(option);
-                });
-            }
-
-            console.log(select2CategorySearch());
-
             const filterSearchOptionsForProduct = () => {
                 return {
                     searchByName: "#search-by-name",
-                    // filterByCategory: "#filter-by-category",
+                    filterByCategory: "#filter-by-category",
                     filterByStatus: "#filter-by-status",
                 }
             }
+
+            const configFilterSearchOptions = (options) => {
+                const configOption = {};
+                for (const [key, value] of Object.entries(options())) {
+                    if (value === "#filter-by-category") {
+                        configOption[key] = $(`${value} option:selected`).val() ?? '';
+                    } else {
+                        configOption[key] = $(value).val().toLowerCase();
+                    }
+                }
+                return configOption;
+            }
+
             const productDatatableId = '#productDatatable';
             const productIndexUrl = 'Product/Index';
 
             DataTable(productDatatableId, productIndexUrl,
-                filterSearchOptionsForProduct);
+                filterSearchOptionsForProduct, configFilterSearchOptions);
 
             // modal
             const url = 'Product/Delete';
             const idElement = 'data-product-id';
             const placeHolderId = '#modal-placeholder-product';
             const btnDeleteClass = '.btn-product-delete';
+
             Modal(url, idElement, placeHolderId, btnDeleteClass);
-            
-            
+
+
             // search category select option
             Select2Search('#filter-by-category', '/Product/SearchCategoriesSelect', '--Select Category--');
 

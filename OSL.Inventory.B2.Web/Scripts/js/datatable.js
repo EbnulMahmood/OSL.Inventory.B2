@@ -1,13 +1,5 @@
 ﻿// DataTable
-const DataTable = (tableId, url, options) => {
-
-    const configFilterSearchOptions = () => {
-        const configOption = {};
-        for (const [key, value] of Object.entries(options())) {
-            configOption[key] = $(value).val().toLowerCase();
-        }
-        return configOption;
-    }
+const DataTable = (tableId, url, options, configFilterSearchOptions) => {
 
     const idsToBind = () => {
         let idsGrop = "";
@@ -23,6 +15,7 @@ const DataTable = (tableId, url, options) => {
         serverSide: true,
         sort: true,
         searching: false,
+        async: true,
         columnDefs: [
             { orderable: false, targets: -1 }
         ],
@@ -32,7 +25,7 @@ const DataTable = (tableId, url, options) => {
             type: "POST",
             dataType: "json",
             data: (data) => {
-                const configOption = configFilterSearchOptions();
+                const configOption = configFilterSearchOptions(options);
                 return $.extend({}, data, configOption)
             }
         },
