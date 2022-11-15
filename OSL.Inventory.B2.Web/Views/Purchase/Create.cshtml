@@ -127,7 +127,6 @@
         });
 
         const AddTrToTbody = () => {
-            const rowContainer = document.getElementById('detailsItemTable');
 
             const innerRow = document.getElementById('itemRow').innerHTML;
             const newRow = document.createElement('tr');
@@ -171,9 +170,9 @@
                 const priceId = document.getElementById(`PurchaseDetails_${i}__PricePerUnit`);
                 const totalId = document.getElementById(`PurchaseDetails_${i}__TotalPrice`);
 
-                const quantity = quantity.value ?? 0.00;
-                const price = price.value ?? 0.00;
-                const total = total.value ?? 0.00;
+                const quantity = quantityId.value ?? 0.00;
+                const price = priceId.value ?? 0.00;
+                const total = totalId.value ?? 0.00;
                 
                 @* if(quantity == null || quantity === ""){
                     document.getElementById(`PurchaseDetails_${i}__QuantityPurchased`).value = 0.0;
