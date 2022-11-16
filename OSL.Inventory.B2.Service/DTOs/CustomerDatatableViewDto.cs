@@ -1,6 +1,6 @@
 ﻿namespace OSL.Inventory.B2.Service.DTOs
 {
-    public class CustomerViewDto
+    public class CustomerDatatableViewDto
     {
         public string Name { get; set; } = string.Empty;
         public string EmailAddress { get; set; } = string.Empty;

@@ -139,8 +139,18 @@
             const SaleDatatableId = '#SaleDatatable';
             const SaleIndexUrl = 'Sale/Index';
 
+            const columnsMap = [
+                { data: 'SaleCode' },
+                { data: 'SaleAmount' },
+                { data: 'SaleDate' },
+                { data: 'SaleAmountPaid' },
+                { data: 'AmountPaidTime' },
+                { data: 'StatusHtml' },
+                { data: 'ActionLinkHtml' }
+            ];
+
             DataTable(SaleDatatableId, SaleIndexUrl,
-                filterSearchOptionsForSale, configFilterSearchOptions);
+                filterSearchOptionsForSale, configFilterSearchOptions, columnsMap);
 
             // modal
             const url = 'Sale/Delete';

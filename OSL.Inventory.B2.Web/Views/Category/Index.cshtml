@@ -93,8 +93,14 @@
             const categoryDatatableId = '#categoryDatatable';
             const categoryIndexUrl = 'Category/Index';
 
+            const columnsMap = [
+                { data: 'Name' },
+                { data: 'StatusHtml' },
+                { data: 'ActionLinkHtml' }
+            ];
+
             DataTable(categoryDatatableId, categoryIndexUrl,
-                filterSearchOptionsForCategory, configFilterSearchOptions);
+                filterSearchOptionsForCategory, configFilterSearchOptions, columnsMap);
 
             // modal
             const url = 'Category/Delete';

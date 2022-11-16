@@ -1,4 +1,5 @@
-﻿using OSL.Inventory.B2.Entity;
+﻿using Humanizer;
+using OSL.Inventory.B2.Entity;
 using OSL.Inventory.B2.Service.DTOs;
 using OSL.Inventory.B2.Service.DTOs.Enums;
 using System.Collections.Generic;
@@ -61,10 +62,10 @@ namespace OSL.Inventory.B2.Service.Extensions
                     $"</div>";
         }
 
-        public static IEnumerable<CategoryViewDto> ConvertToDto(this IEnumerable<Category> categories)
+        public static IEnumerable<CategoryDatatableViewDto> ConvertToDto(this IEnumerable<Category> categories)
         {
             return (from category in categories
-                    select new CategoryViewDto
+                    select new CategoryDatatableViewDto
                     {
                         Name = category.Name,
                         StatusHtml = $"<span class='text text-{ConditionClassStatus((StatusDto)category.Status)}'>" +
@@ -85,10 +86,11 @@ namespace OSL.Inventory.B2.Service.Extensions
 
         // product
 
-        public static IEnumerable<ProductViewDto> ConvertToDto(this IEnumerable<Product> products)
+
+        public static IEnumerable<ProductDatatableViewDto> ConvertToDto(this IEnumerable<Product> products)
         {
             return (from product in products
-                    select new ProductViewDto
+                    select new ProductDatatableViewDto
                     {
                         Name = product.Name,
                         InStockString = $"{product.InStock} {product.BasicUnit}",
@@ -97,7 +99,7 @@ namespace OSL.Inventory.B2.Service.Extensions
                              $"{ConditionTextStatus((StatusDto)product.Status)}</span>",
                         ActionLinkHtml = ActionLinks("Product", product.Id),
                     }).ToList();
-        }
+        } 
 
         public static ProductDto ConvertToDto(this Product product)
         {
@@ -130,16 +132,16 @@ namespace OSL.Inventory.B2.Service.Extensions
         }
 
         // purchase
-        public static IEnumerable<PurchaseViewDto> ConvertToDto(this IEnumerable<Purchase> purchases)
+        public static IEnumerable<PurchaseDatatableViewDto> ConvertToDto(this IEnumerable<Purchase> purchases)
         {
             return (from purchase in purchases
-                    select new PurchaseViewDto
+                    select new PurchaseDatatableViewDto
                     {
                         PurchaseCode = purchase.PurchaseCode,
                         PurchaseAmount = purchase.PurchaseAmount,
-                        PurchaseDate = purchase.PurchaseDate,
-                        PurchaseAmountPaid = purchase.PurchaseAmountPaid,
-                        AmountPaidTime = purchase.AmountPaidTime,
+                        PurchaseDate = purchase.PurchaseDate.ToUniversalTime().Humanize(),
+                        PurchaseAmountPaid = purchase.PurchaseAmountPaid?.ToString() ?? "<span class='text-warning'>Unpaid</span>",
+                        AmountPaidTime = purchase.AmountPaidTime?.ToUniversalTime().Humanize() ?? "<span class='text-warning'>Unpaid</span>",
                         StatusHtml = $"<span class='text text-{ConditionClassStatus((StatusDto)purchase.Status)}'>" +
                              $"{ConditionTextStatus((StatusDto)purchase.Status)}</span>",
                         ActionLinkHtml = ActionLinks("Purchase", purchase.Id),
@@ -147,16 +149,16 @@ namespace OSL.Inventory.B2.Service.Extensions
         }
         
         // sale
-        public static IEnumerable<SaleViewDto> ConvertToDto(this IEnumerable<Sale> sales)
+        public static IEnumerable<SaleDatatableViewDto> ConvertToDto(this IEnumerable<Sale> sales)
         {
             return (from sale in sales
-                    select new SaleViewDto
+                    select new SaleDatatableViewDto
                     {
                         SaleCode = sale.SaleCode,
                         SaleAmount = sale.SaleAmount,
-                        SaleDate = sale.SaleDate,
-                        SaleAmountPaid = sale.SaleAmountPaid,
-                        AmountPaidTime = sale.AmountPaidTime,
+                        SaleDate = sale.SaleDate.ToUniversalTime().Humanize(),
+                        SaleAmountPaid = sale.SaleAmountPaid?.ToString() ?? "<span class='text-warning'>Unpaid</span>",
+                        AmountPaidTime = sale.AmountPaidTime?.ToUniversalTime().Humanize() ?? "<span class='text-warning'>Unpaid</span>",
                         StatusHtml = $"<span class='text text-{ConditionClassStatus((StatusDto)sale.Status)}'>" +
                              $"{ConditionTextStatus((StatusDto)sale.Status)}</span>",
                         ActionLinkHtml = ActionLinks("Sale", sale.Id),
@@ -164,10 +166,10 @@ namespace OSL.Inventory.B2.Service.Extensions
         }
 
         // customer
-        public static IEnumerable<CustomerViewDto> ConvertToDto(this IEnumerable<Customer> customers)
+        public static IEnumerable<CustomerDatatableViewDto> ConvertToDto(this IEnumerable<Customer> customers)
         {
             return (from customer in customers
-                    select new CustomerViewDto
+                    select new CustomerDatatableViewDto
                     {
                         Name = $"{customer.FirstName} {customer.LastName}",
                         EmailAddress = customer.EmailAddress,
@@ -180,10 +182,10 @@ namespace OSL.Inventory.B2.Service.Extensions
         }
 
         // supplier
-        public static IEnumerable<SupplierViewDto> ConvertToDto(this IEnumerable<Supplier> suppliers)
+        public static IEnumerable<SupplierDatatableViewDto> ConvertToDto(this IEnumerable<Supplier> suppliers)
         {
             return (from supplier in suppliers
-                    select new SupplierViewDto
+                    select new SupplierDatatableViewDto
                     {
                         Name = $"{supplier.FirstName} {supplier.LastName}",
                         EmailAddress = supplier.EmailAddress,

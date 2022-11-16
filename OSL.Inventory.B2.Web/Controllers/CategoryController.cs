@@ -41,7 +41,7 @@ namespace OSL.Inventory.B2.Web.Controllers
 
                 int totalRecord = listCategoriesTuple.Item2;
                 int filterRecord = listCategoriesTuple.Item3;
-                List<object> listCategories = listCategoriesTuple.Item1;
+                IEnumerable<CategoryDatatableViewDto> listCategories = listCategoriesTuple.Item1;
 
                 return Json(new
                 {

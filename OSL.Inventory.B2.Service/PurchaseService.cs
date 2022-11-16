@@ -17,7 +17,7 @@ namespace OSL.Inventory.B2.Service
     {
         Task<bool> CreatePurchaseServiceAsync(PurchaseDto entityDtoToCreate);
         Task<PurchaseDto> GetPurchaseByIdServiceAsync(long? entityDtoToGetId);
-        Task<(List<object>, int, int)> ListPurchasesWithSortingFilteringPagingServiceAsync(int start, int length, string order, string orderDir,
+        Task<(IEnumerable<PurchaseDatatableViewDto>, int, int)> ListPurchasesWithSortingFilteringPagingServiceAsync(int start, int length, string order, string orderDir,
             string searchByPurchaseCode, DateTime? dateFrom, DateTime? dateTo, string filterBySupplier, StatusDto filterByStatusDto = 0);
         Task<IEnumerable<SupplierDto>> ListSuppliersIdNameServiceAsync();
         Task<IEnumerable<SelectListItem>> SelectListProductsServiceAsync();
@@ -125,7 +125,7 @@ namespace OSL.Inventory.B2.Service
             }
         }
 
-        public async Task<(List<object>, int, int)> ListPurchasesWithSortingFilteringPagingServiceAsync(int start, int length,
+        public async Task<(IEnumerable<PurchaseDatatableViewDto>, int, int)> ListPurchasesWithSortingFilteringPagingServiceAsync(int start, int length,
             string order, string orderDir, string searchByPurchaseCode, Nullable<DateTime> dateFrom, Nullable<DateTime> dateTo,
             string filterBySupplier, StatusDto filterByStatusDto = 0)
         {
@@ -138,24 +138,7 @@ namespace OSL.Inventory.B2.Service
                 int filterRecord = listPurchasesTuple.Item3;
                 var listPurchasesDto = listPurchasesTuple.Item1.ConvertToDto();
 
-                List<object> entitiesList = new List<object>();
-                foreach (var item in listPurchasesDto)
-                {
-                    List<string> dataItems = new List<string>
-                    {
-                        item.PurchaseCode,
-                        item.PurchaseAmount.ToString(),
-                        item.PurchaseDate.ToUniversalTime().Humanize(),
-                        item.PurchaseAmountPaid.ToString(),
-                        item.AmountPaidTime?.ToUniversalTime().Humanize(),
-                        item.StatusHtml,
-                        item.ActionLinkHtml
-                    };
-
-                    entitiesList.Add(dataItems);
-                }
-
-                return (entitiesList, totalRecord, filterRecord);
+                return (listPurchasesDto, totalRecord, filterRecord);
             }
             catch (Exception)
             {

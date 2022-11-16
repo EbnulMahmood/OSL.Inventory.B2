@@ -6,7 +6,6 @@ using OSL.Inventory.B2.Service.DTOs;
 using OSL.Inventory.B2.Service.DTOs.Enums;
 using System.Collections.Generic;
 using OSL.Inventory.B2.Service;
-using OSL.Inventory.B2.Service.Extensions;
 
 namespace OSL.Inventory.B2.Web.Controllers
 {
@@ -26,7 +25,7 @@ namespace OSL.Inventory.B2.Web.Controllers
         }
 
         [HttpPost, ActionName("Index")]
-        public async Task<JsonResult> ListCustomersAsync(int draw, int start, int length,
+        public async Task<JsonResult> ListSuppliersAsync(int draw, int start, int length,
             string searchByName, StatusDto filterByStatus = 0)
         {
             try
@@ -40,7 +39,7 @@ namespace OSL.Inventory.B2.Web.Controllers
 
                 int totalRecord = listProductsTuple.Item2;
                 int filterRecord = listProductsTuple.Item3;
-                List<object> listProducts = listProductsTuple.Item1;
+                IEnumerable<SupplierDatatableViewDto> listProducts = listProductsTuple.Item1;
 
                 return Json(new
                 {

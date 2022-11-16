@@ -99,8 +99,17 @@
             const customerDatatableId = '#customerDatatable';
             const customerIndexUrl = 'Customer/Index';
 
+            const columnsMap = [
+                { data: 'Name' },
+                { data: 'EmailAddress' },
+                { data: 'PhoneNumber' },
+                { data: 'Address' },
+                { data: 'StatusHtml' },
+                { data: 'ActionLinkHtml' }
+            ];
+
             DataTable(customerDatatableId, customerIndexUrl,
-                filterSearchOptionsForCustomer, configFilterSearchOptions);
+                filterSearchOptionsForCustomer, configFilterSearchOptions, columnsMap);
 
             // modal
             const url = 'Customer/Delete';

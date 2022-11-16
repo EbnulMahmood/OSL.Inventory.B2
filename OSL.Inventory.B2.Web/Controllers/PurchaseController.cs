@@ -50,7 +50,7 @@ namespace OSL.Inventory.B2.Web.Controllers
 
                 int totalRecord = listPurchasesTuple.Item2;
                 int filterRecord = listPurchasesTuple.Item3;
-                List<object> listPurchases = listPurchasesTuple.Item1;
+                IEnumerable<PurchaseDatatableViewDto> listPurchases = listPurchasesTuple.Item1;
 
                 return Json(new
                 {

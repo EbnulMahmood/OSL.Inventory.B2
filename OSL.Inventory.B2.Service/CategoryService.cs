@@ -11,7 +11,7 @@ namespace OSL.Inventory.B2.Service
 {
     public interface ICategoryService
     {
-        Task<(List<object>, int, int)> ListCategoriesWithSortingFilteringPagingServiceAsync(int start, int length,
+        Task<(IEnumerable<CategoryDatatableViewDto>, int, int)> ListCategoriesWithSortingFilteringPagingServiceAsync(int start, int length,
             string order, string orderDir, string searchByName, StatusDto filterByStatusDto = 0);
         Task<CategoryDto> GetCategoryByIdServiceAsync(long? entityDtoToGetId);
         Task<bool> CreateCategoryServiceAsync(CategoryDto entityDtoToCreate);
@@ -49,7 +49,7 @@ namespace OSL.Inventory.B2.Service
 
         #region LoadInstance
 
-        public async Task<(List<object>, int, int)> ListCategoriesWithSortingFilteringPagingServiceAsync(int start, int length,
+        public async Task<(IEnumerable<CategoryDatatableViewDto>, int, int)> ListCategoriesWithSortingFilteringPagingServiceAsync(int start, int length,
             string order, string orderDir, string searchByName, StatusDto filterByStatusDto = 0)
         {
             try
@@ -61,20 +61,7 @@ namespace OSL.Inventory.B2.Service
                 int filterRecord = listCategoriesTuple.Item3;
                 var listCategoriesDto = listCategoriesTuple.Item1.ConvertToDto();
 
-                List<object> entitiesList = new List<object>();
-                foreach (var item in listCategoriesDto)
-                {
-                    List<string> dataItems = new List<string>
-                    {
-                        item.Name,
-                        item.StatusHtml,
-                        item.ActionLinkHtml
-                    };
-
-                    entitiesList.Add(dataItems);
-                }
-
-                return (entitiesList, totalRecord, filterRecord);
+                return (listCategoriesDto, totalRecord, filterRecord);
             }
             catch (Exception)
             {

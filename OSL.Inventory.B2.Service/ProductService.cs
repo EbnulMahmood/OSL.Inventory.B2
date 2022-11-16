@@ -16,7 +16,7 @@ namespace OSL.Inventory.B2.Service
         Task<bool> CreateProductServiceAsync(ProductDto entityDtoToCreate);
         Task<bool> DeleteProductByIdServiceAsync(long entityDtoToDeleteId);
         Task<ProductDto> GetProductByIdServiceAsync(long? entityDtoToGetId);
-        Task<(List<object>, int, int)> ListProductsWithSortingFilteringPagingServiceAsync(int start, int length, string order, 
+        Task<(IEnumerable<ProductDatatableViewDto>, int, int)> ListProductsWithSortingFilteringPagingServiceAsync(int start, int length, string order, 
             string orderDir, string searchByName, string filterByCategory, StatusDto filterByStatusDto = 0);
         Task<bool> UpdateProductServiceAsync(ProductDto entityDtoToUpdate);
         List<CategoryDto> SelectCategoriesListItems();
@@ -162,7 +162,7 @@ namespace OSL.Inventory.B2.Service
             return categoriesDto;
         }
 
-        public async Task<(List<object>, int, int)> ListProductsWithSortingFilteringPagingServiceAsync(int start,
+        public async Task<(IEnumerable<ProductDatatableViewDto>, int, int)> ListProductsWithSortingFilteringPagingServiceAsync(int start,
             int length, string order, string orderDir, string searchByName, string filterByCategory, StatusDto filterByStatusDto = 0)
         {
             try
@@ -174,22 +174,23 @@ namespace OSL.Inventory.B2.Service
                 int filterRecord = listProductsTuple.Item3;
                 var listProductsDto = listProductsTuple.Item1.ConvertToDto();
 
-                List<object> entitiesList = new List<object>();
-                foreach (var item in listProductsDto)
-                {
-                    List<string> dataItems = new List<string>
-                    {
-                        item.Name,
-                        item.InStockString,
-                        item.PricePerUnitString,
-                        item.StatusHtml,
-                        item.ActionLinkHtml
-                    };
+                // List<object> entitiesList = new List<object>();
+                // foreach (var item in listProductsDto)
+                // {
+                //     List<string> dataItems = new List<string>
+                //     {
+                //         item.Name,
+                //         item.InStockString,
+                //         item.PricePerUnitString,
+                //         item.StatusHtml,
+                //         item.ActionLinkHtml
+                //     };
 
-                    entitiesList.Add(dataItems);
-                }
+                //     entitiesList.Add(dataItems);
+                // }
 
-                return (entitiesList, totalRecord, filterRecord);
+                // return (entitiesList, totalRecord, filterRecord);
+                return (listProductsDto, totalRecord, filterRecord);
             }
             catch (Exception)
             {

@@ -99,8 +99,17 @@
             const supplierDatatableId = '#supplierDatatable';
             const supplierIndexUrl = 'Supplier/Index';
 
+            const columnsMap = [
+                { data: 'Name' },
+                { data: 'EmailAddress' },
+                { data: 'PhoneNumber' },
+                { data: 'Address' },
+                { data: 'StatusHtml' },
+                { data: 'ActionLinkHtml' }
+            ];
+
             DataTable(supplierDatatableId, supplierIndexUrl,
-                filterSearchOptionsForSupplier, configFilterSearchOptions);
+                filterSearchOptionsForSupplier, configFilterSearchOptions, columnsMap);
 
             // modal
             const url = 'Supplier/Delete';

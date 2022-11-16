@@ -1,5 +1,5 @@
 ﻿// DataTable
-const DataTable = (tableId, url, options, configFilterSearchOptions) => {
+const DataTable = (tableId, url, options, configFilterSearchOptions, columns) => {
 
     const idsToBind = () => {
         let idsGrop = "";
@@ -16,6 +16,7 @@ const DataTable = (tableId, url, options, configFilterSearchOptions) => {
         sort: true,
         searching: false,
         async: true,
+        columns: columns,
         columnDefs: [
             { orderable: false, targets: -1 }
         ],

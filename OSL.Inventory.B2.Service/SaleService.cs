@@ -21,7 +21,7 @@ namespace OSL.Inventory.B2.Service
         Task<IEnumerable<SelectListItem>> SelectListCustomersServiceAsync();
         Task<IEnumerable<SelectListItem>> SelectListProductsServiceAsync();
         Task<IEnumerable<CustomerDto>> ListCustomersNameIdServiceAsync();
-        Task<(List<object>, int, int)> ListSalesWithSortingFilteringPagingServiceAsync(int start, int length, string order, string orderDir,
+        Task<(IEnumerable<SaleDatatableViewDto>, int, int)> ListSalesWithSortingFilteringPagingServiceAsync(int start, int length, string order, string orderDir,
             string searchBySaleCode, DateTime? dateFrom, DateTime? dateTo, string filterByCustomer, StatusDto filterByStatusDto = 0);
         Task<bool> UpdateSaleServiceAsync(SaleDto entityDtoToUpdate);
     }
@@ -141,7 +141,7 @@ namespace OSL.Inventory.B2.Service
             }
         }
 
-        public async Task<(List<object>, int, int)> ListSalesWithSortingFilteringPagingServiceAsync(int start, int length,
+        public async Task<(IEnumerable<SaleDatatableViewDto>, int, int)> ListSalesWithSortingFilteringPagingServiceAsync(int start, int length,
             string order, string orderDir, string searchBySaleCode, Nullable<DateTime> dateFrom, Nullable<DateTime> dateTo,
             string filterByCustomer, StatusDto filterByStatusDto = 0)
         {
@@ -154,24 +154,7 @@ namespace OSL.Inventory.B2.Service
                 int filterRecord = listSalesTuple.Item3;
                 var listSalesDto = listSalesTuple.Item1.ConvertToDto();
 
-                List<object> entitiesList = new List<object>();
-                foreach (var item in listSalesDto)
-                {
-                    List<string> dataItems = new List<string>
-                    {
-                        item.SaleCode,
-                        item.SaleAmount.ToString(),
-                        item.SaleDate.ToUniversalTime().Humanize(),
-                        item.SaleAmountPaid.ToString(),
-                        item.AmountPaidTime?.ToUniversalTime().Humanize(),
-                        item.StatusHtml,
-                        item.ActionLinkHtml
-                    };
-
-                    entitiesList.Add(dataItems);
-                }
-
-                return (entitiesList, totalRecord, filterRecord);
+                return (listSalesDto, totalRecord, filterRecord);
             }
             catch (Exception ex)
             {

@@ -15,7 +15,7 @@ namespace OSL.Inventory.B2.Service
         Task<bool> CreateSupplierServiceAsync(SupplierDto entityDtoToCreate);
         Task<bool> DeleteSupplierByIdServiceAsync(long entityDtoToDeleteId);
         Task<SupplierDto> GetSupplierByIdServiceAsync(long? entityDtoToGetId);
-        Task<(List<object>, int, int)> ListSuppliersWithSortingFilteringPagingServiceAsync(int start, int length, string order, string orderDir,
+        Task<(IEnumerable<SupplierDatatableViewDto>, int, int)> ListSuppliersWithSortingFilteringPagingServiceAsync(int start, int length, string order, string orderDir,
             string searchByName, StatusDto filterByStatusDto = 0);
         Task<bool> UpdateSupplierServiceAsync(SupplierDto entityDtoToUpdate);
     }
@@ -66,7 +66,7 @@ namespace OSL.Inventory.B2.Service
         #endregion
 
         #region ListInstance
-        public async Task<(List<object>, int, int)> ListSuppliersWithSortingFilteringPagingServiceAsync(int start, int length, string order, string orderDir,
+        public async Task<(IEnumerable<SupplierDatatableViewDto>, int, int)> ListSuppliersWithSortingFilteringPagingServiceAsync(int start, int length, string order, string orderDir,
             string searchByName, StatusDto filterByStatusDto = 0)
         {
             try
@@ -78,23 +78,7 @@ namespace OSL.Inventory.B2.Service
                 int filterRecord = listSuppliersTuple.Item3;
                 var listSuppliersDto = listSuppliersTuple.Item1.ConvertToDto();
 
-                List<object> entitiesList = new List<object>();
-                foreach (var item in listSuppliersDto)
-                {
-                    List<string> dataItems = new List<string>
-                    {
-                        item.Name,
-                        item.EmailAddress,
-                        item.PhoneNumber,
-                        item.Address,
-                        item.StatusHtml,
-                        item.ActionLinkHtml
-                    };
-
-                    entitiesList.Add(dataItems);
-                }
-
-                return (entitiesList, totalRecord, filterRecord);
+                return (listSuppliersDto, totalRecord, filterRecord);
             }
             catch (Exception)
             {

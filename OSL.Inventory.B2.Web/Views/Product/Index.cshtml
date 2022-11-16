@@ -127,8 +127,16 @@
             const productDatatableId = '#productDatatable';
             const productIndexUrl = 'Product/Index';
 
+            const columnsMap = [
+                { data: 'Name' },
+                { data: 'InStockString' },
+                { data: 'PricePerUnitString' },
+                { data: 'StatusHtml' },
+                { data: 'ActionLinkHtml' }
+            ];
+
             DataTable(productDatatableId, productIndexUrl,
-                filterSearchOptionsForProduct, configFilterSearchOptions);
+                filterSearchOptionsForProduct, configFilterSearchOptions, columnsMap);
 
             // modal
             const url = 'Product/Delete';
